@@ -178,7 +178,7 @@ function chooseAction(w: World, s: StudentState): void {
       // Social/disruptive buckets only when the teacher isn't breathing down their neck.
       add('whisper', n.social * (r.talkOk ? 2.2 : 0.4 + t.rebellious * 0.8));
       add('phone', n.bored * t.rebellious * 1.2 * (r.dim ? 1.6 : 1));
-      add('pass-note', n.social * t.rebellious * 0.25);
+      if (w.features.notes) add('pass-note', n.social * t.rebellious * 0.25);
       add('sharpen', 0.03 + n.bored * 0.06);
       add('raise-hand', (t.goody * 0.12 + t.anxious * 0.05) * (r.talkOk ? 0.3 : 1));
     }

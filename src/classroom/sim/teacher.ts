@@ -755,6 +755,12 @@ export function updateTeacher(w: World): void {
         const goal = approachSpot(w, a.pos);
         moveToward(w, goal, 0.9);
       } else T.moving = false;
+      // A report (a classmate told) keeps the case alive while the teacher walks over: without
+      // this the suspicion decayed during the 1.2 s telegraph and the report was silently lost.
+      if (b.pendingPunish.some((x) => x.target === b.target)) {
+        st.s = Math.max(st.s, 1.05);
+        st.lastEvidenceT = w.t;
+      }
       const evidenceFresh =
         w.t - st.lastEvidenceT < 0.6 || b.pendingPunish.some((x) => x.target === b.target);
       if (st.s >= 1.0 && b.stateT >= 1.2 && evidenceFresh) {

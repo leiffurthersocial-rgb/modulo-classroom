@@ -99,6 +99,64 @@
       ["And you are… {name}? It says so on the chart."],
       ["Name? Never mind, I'll check the chart."],
       ["…"]
+    ],
+    "duck": [
+      [
+        "There is a duck on my screen. Why is there a duck on my screen?",
+        "Ah. A duck. Very large. Very yellow."
+      ],
+      ["Duck. On the projector. Right."],
+      ["Hm."]
+    ],
+    "markerDry": [
+      ["Dry. This is dry. It was fine yesterday.", "*scribble scribble* …Nothing."],
+      ["Come on, marker…"],
+      ["Hm."]
+    ],
+    "markerFetch": [["I'll get a fresh one."], ["Fresh marker. Fine."], ["Hm."]],
+    "sign": [
+      [
+        "'Out of order'. The projector is working perfectly.",
+        "Who printed this? It has a very confident font."
+      ],
+      ["A sign. Right."],
+      ["Hm."]
+    ],
+    "sticky": [
+      ["That is a lot of sticky notes.", "One… two… forty. That's a mosaic."],
+      ["Sticky notes. Everywhere."],
+      ["Hm."]
+    ],
+    "chairs": [
+      ["Why are all the chairs facing backwards?", "Chairs. Backwards. Hm."],
+      ["Turning chairs. Lovely."],
+      ["Hm."]
+    ],
+    "remoteHunt": [["Where is the remote? It was right here."], ["The remote…"], ["Hm."]],
+    "remoteFound": [["…why is it in the plant?"], ["There it is. In the plant."], ["Hm."]],
+    "birds": [
+      ["Is that… birdsong? Indoors?", "Something in here is tweeting."],
+      ["Birds again…"],
+      ["Hm."]
+    ],
+    "cups": [
+      ["A pyramid of paper cups. On my desk. Balanced.", "Well, that is oddly impressive."],
+      ["Cups. Right."],
+      ["Hm."]
+    ],
+    "clockTz": [
+      ["The clock says it's tea time in Tokyo.", "That clock is on holiday."],
+      ["Clock. Again."],
+      ["Hm."]
+    ],
+    "postersFlip": [["The posters are upside down."], ["Upside down again."], ["Hm."]],
+    "smiley": [
+      [
+        "Oh. There is a smiley in the corner. Under the projector.",
+        "A tiny smiley. I'll allow the artistry, not the vandalism."
+      ],
+      ["Smiley. Wiping."],
+      ["Hm."]
     ]
   },
   "student": {

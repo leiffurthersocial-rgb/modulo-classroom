@@ -36,7 +36,7 @@ describe('penalty ladder', () => {
     expect(r.callsHome).toBe(1);
     expect(r.detentionPending).toBe(true);
     expect(r.grades.some((g) => g.label.includes('call home'))).toBe(true);
-    expect(r.strikes).toBe(2); // not stuck at call home
+    expect(r.strikes).toBe(1); // not stuck at call home
     expect(r.offenses).toHaveLength(4);
     expect(r.trust.strict).toBeLessThan(0);
   });

@@ -17,7 +17,8 @@
       "id": "postman",
       "text": "Deliver notes to 4 different classmates",
       "counter": "notesDeliveredUnique",
-      "goal": 4
+      "goal": 4,
+      "feature": "notes"
     },
     {
       "id": "trickster",

@@ -9,7 +9,8 @@ import {
   runLesson,
   type RunResult,
 } from '../src/classroom/sim/bots';
-import { PLAYABLE_LESSON_TYPES } from '../src/classroom/sim/data';
+import { FEATURES, PLAYABLE_LESSON_TYPES, PRANKS } from '../src/classroom/sim/data';
+import { endLesson, newRecord } from '../src/classroom/sim/record';
 import { Rng } from '../src/classroom/sim/rng';
 import { World } from '../src/classroom/sim/world';
 
@@ -17,16 +18,66 @@ const runs = Math.max(1, Number(process.argv[2] ?? 500) || 500);
 const TEACHERS = ['strict', 'lazy', 'distracted', 'hawk', 'substitute'];
 const PENALTIES = ['letoff', 'warning', 'written', 'detention', 'callhome'];
 
+// The postman only exists while note passing is on (data/features.json).
+const STYLES = BOT_STYLES.filter((s) => s !== 'postman' || FEATURES.notes);
+
 const t0 = performance.now();
 const results: RunResult[] = [];
+const prankTally = new Map<string, { clean: number; dirty: number }>();
 for (let i = 0; i < runs; i++) {
-  const style = BOT_STYLES[i % BOT_STYLES.length]!;
+  const style = STYLES[i % STYLES.length]!;
   const seed = 1000 + i;
   const lessonType = PLAYABLE_LESSON_TYPES[seed % PLAYABLE_LESSON_TYPES.length]!;
-  const teacher = TEACHERS[i % TEACHERS.length]!;
+  const teacher = TEACHERS[Math.floor(i / STYLES.length) % TEACHERS.length]!;
   const world = new World({ seed, lessonType, teacher });
   results.push(runLesson(world, new Bot(style, new Rng(seed ^ 0x9e3779b9))));
+  if (style === 'prankster')
+    for (const p of world.stats.pranks) {
+      const t = prankTally.get(p.id) ?? { clean: 0, dirty: 0 };
+      if (p.clean) t.clean++;
+      else t.dirty++;
+      prankTally.set(p.id, t);
+    }
 }
+
+// Repeat-offender campaigns: the same record over 6 consecutive lessons (strikes persist, a
+// quiet lesson heals). Measures how steep the ladder is for someone who keeps misbehaving.
+const CAMPAIGN_STYLES: BotStyle[] = ['gamer', 'prankster', 'chaos'];
+const CAMPAIGN_LESSONS = 6;
+const campaigns = CAMPAIGN_STYLES.map((style) => {
+  const n = Math.max(8, Math.round(runs / 20));
+  let callhomes = 0;
+  let detentions = 0;
+  let writtens = 0;
+  let offenses = 0;
+  let cleanLessons = 0;
+  for (let c = 0; c < n; c++) {
+    const record = newRecord();
+    for (let l = 0; l < CAMPAIGN_LESSONS; l++) {
+      const seed = 5000 + c * 17 + l;
+      const teacher = TEACHERS[(c + l) % TEACHERS.length]!;
+      const lessonType = PLAYABLE_LESSON_TYPES[(seed + l) % PLAYABLE_LESSON_TYPES.length]!;
+      const world = new World({ seed, lessonType, teacher, record });
+      const r = runLesson(world, new Bot(style, new Rng(seed ^ 0x51ed270b)));
+      offenses += r.offenses;
+      callhomes += r.penalties.filter((p) => p === 'callhome').length;
+      detentions += r.penalties.filter((p) => p === 'detention').length;
+      writtens += r.penalties.filter((p) => p === 'written').length;
+      if (r.offenses === 0) cleanLessons++;
+      endLesson(record, r.offenses === 0, teacher);
+    }
+  }
+  const L = n * CAMPAIGN_LESSONS;
+  return {
+    style,
+    n,
+    offenses: offenses / L,
+    callhomes: callhomes / n,
+    detentions: detentions / n,
+    writtens: writtens / n,
+    clean: (100 * cleanLessons) / L,
+  };
+});
 const runtimeS = (performance.now() - t0) / 1000;
 
 const mean = (a: number[]) => (a.length ? a.reduce((x, y) => x + y, 0) / a.length : 0);
@@ -49,7 +100,7 @@ interface StyleAgg {
   test: number | null;
 }
 
-const aggs: StyleAgg[] = BOT_STYLES.map((style) => {
+const aggs: StyleAgg[] = STYLES.map((style) => {
   const rs = results.filter((r) => r.style === style);
   const leads = rs.flatMap((r) => r.telegraphLeads);
   const penalties: Record<string, number> = {};
@@ -76,7 +127,7 @@ const aggs: StyleAgg[] = BOT_STYLES.map((style) => {
 const lines: string[] = [];
 lines.push('# Classroom balance report', '');
 lines.push(
-  `Runs: ${runs} lessons (seeds 1000..${1000 + runs - 1}), runtime ${f(runtimeS, 1)} s.`,
+  `Runs: ${runs} lessons (seeds 1000..${1000 + runs - 1}), runtime ${f(runtimeS, 1)} s. Notes feature: ${FEATURES.notes ? 'on' : 'off (postman bot omitted)'}.`,
   '',
 );
 lines.push('## Per bot style', '');
@@ -89,6 +140,33 @@ for (const a of aggs) {
     `| ${a.style} | ${a.runs} | ${f(a.offensesMean)} | ${f(a.caughtPct, 1)}% | ${PENALTIES.map((p) => a.penalties[p]).join(' | ')} | ${a.leadMin === null ? '-' : f(a.leadMin)} | ${a.leadMean === null ? '-' : f(a.leadMean)} | ${a.violations} | ${f(a.deviceSec, 1)} | ${a.pranksClean}/${a.pranksTotal} | ${f(a.notes)} | ${a.test === null ? '-' : f(a.test, 1)} |`,
   );
 }
+lines.push('', '## Prankster bot: clean rate per prank', '');
+lines.push('| prank | clean | caught | clean % |', '|---|---|---|---|');
+const totalClean = [...prankTally.values()].reduce((a, t) => a + t.clean, 0);
+const totalDirty = [...prankTally.values()].reduce((a, t) => a + t.dirty, 0);
+for (const def of PRANKS) {
+  const t = prankTally.get(def.id);
+  if (t)
+    lines.push(
+      `| ${def.id} | ${t.clean} | ${t.dirty} | ${f(pct(t.clean, t.clean + t.dirty), 0)}% |`,
+    );
+}
+lines.push(
+  `| **all** | ${totalClean} | ${totalDirty} | ${f(pct(totalClean, totalClean + totalDirty), 0)}% |`,
+);
+lines.push(
+  '',
+  `## Repeat offenders (${CAMPAIGN_LESSONS} lessons in a row, one persistent record)`,
+  '',
+);
+lines.push(
+  '| style | campaigns | offenses/lesson | clean lessons | written / campaign | detentions / campaign | call homes / campaign |',
+  '|---|---|---|---|---|---|---|',
+);
+for (const c of campaigns)
+  lines.push(
+    `| ${c.style} | ${c.n} | ${f(c.offenses)} | ${f(c.clean, 0)}% | ${f(c.writtens)} | ${f(c.detentions)} | ${f(c.callhomes)} |`,
+  );
 lines.push('', '## Per teacher profile', '');
 lines.push('| teacher | runs | % lessons with a catch | offenses/lesson |', '|---|---|---|---|');
 for (const t of TEACHERS) {

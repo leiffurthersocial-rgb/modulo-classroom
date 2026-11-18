@@ -5,6 +5,12 @@ import { CAST } from './data';
 
 export const RECORD_VERSION = 2;
 
+/** At most this many strikes can be added within one lesson; further offenses only earn a
+ *  reprimand (a verbal warning that adds no strike). Keeps one bad lesson from snowballing. */
+export const LESSON_STRIKE_CAP = 2;
+/** Lessons with at most one offense in a row needed to heal a strike (clean lessons heal at once). */
+export const CALM_LESSONS_TO_HEAL = 2;
+
 export type PenaltyKind = 'warning' | 'written' | 'detention' | 'callhome' | 'letoff';
 
 export interface OffenseEntry {
@@ -128,9 +134,25 @@ export function applyOffense(
     teacher: string;
     roll: number;
     summary: string;
+    /** Strikes already added during the current lesson. */
+    lessonStrikes?: number;
   },
 ): PenaltyKind {
   const add = opts.severity >= 0.85 ? 2 : 1;
+  if ((opts.lessonStrikes ?? 0) >= LESSON_STRIKE_CAP) {
+    // Already well on the way: the teacher just reprimands (no further escalation this lesson).
+    r.warnings++;
+    r.trust[opts.teacher] = (r.trust[opts.teacher] ?? 0) - 4;
+    r.offenses.push({
+      day: r.day,
+      lesson: r.lessonInDay,
+      kind: opts.kind,
+      penalty: 'warning',
+      summary: opts.summary,
+      teacher: opts.teacher,
+    });
+    return 'warning';
+  }
   if (r.strikes === 0 && add === 1 && opts.roll > opts.strictness) {
     r.offenses.push({
       day: r.day,
@@ -160,7 +182,7 @@ export function applyOffense(
     p = 'callhome';
     r.callsHome++;
     r.grades.push({ day: r.day, label: 'Conduct (call home)', value: 45 });
-    r.strikes = 2; // the slate is not wiped, but it does not stay at "call home" forever
+    r.strikes = 1; // the slate is not wiped, but it does not stay at "call home" forever
   }
   r.trust[opts.teacher] = (r.trust[opts.teacher] ?? 0) - 10;
   r.offenses.push({
@@ -176,12 +198,22 @@ export function applyOffense(
 
 /** Called at the end of every lesson. */
 export function endLesson(r: StudentRecord, clean: boolean, teacher: string): void {
+  const offensesNow = r.offenses.filter((o) => o.day === r.day && o.lesson === r.lessonInDay);
   if (clean) {
     r.strikes = Math.max(0, r.strikes - 1);
     r.trust[teacher] = Math.min(100, (r.trust[teacher] ?? 0) + 3);
     r.counters.cleanLessons = (r.counters.cleanLessons ?? 0) + 1;
+    r.counters.calm = 0;
     if (r.strikes === 0) r.seatOverride = null;
-  }
+  } else if (offensesNow.length <= 1 && r.strikes > 0) {
+    // A lesson with a single slip is "calm enough": two of those in a row heal a strike.
+    r.counters.calm = (r.counters.calm ?? 0) + 1;
+    if (r.counters.calm >= CALM_LESSONS_TO_HEAL) {
+      r.counters.calm = 0;
+      r.strikes = Math.max(0, r.strikes - 1);
+      if (r.strikes === 0) r.seatOverride = null;
+    }
+  } else r.counters.calm = 0;
   r.lessonInDay++;
 }
 

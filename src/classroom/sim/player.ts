@@ -13,7 +13,7 @@ import {
   yawTo,
 } from './geom';
 import { facingDir } from './layout';
-import { canStartPrank, completePrank } from './pranks';
+import { canStartPrank, completePrank, prankOffered, prankVerbsFor } from './pranks';
 import { sendNote } from './social';
 import type { DeviceState, Evidence, PlayerCommand } from './types';
 import type { Interactable, World } from './world';
@@ -169,7 +169,10 @@ export function playerEvidence(w: World): Evidence[] {
   if (ps.peeking) out.push({ kind: 'peek', weight: 0.7, point: 'head' });
   if (ps.cheating) out.push({ kind: 'cheatsheet', weight: 0.8, point: 'lap' });
   if (ps.passingNote) out.push({ kind: 'note', weight: 0.55, point: 'handR' });
-  if (ps.action?.kind === 'prank') out.push({ kind: 'prank', weight: 0.85, point: 'handR' });
+  if (ps.action?.kind === 'prank') {
+    const heat = PRANKS.find((x) => x.id === ps.action?.prankId)?.heat ?? 0.4;
+    out.push({ kind: 'prank', weight: 0.6 + 0.6 * heat, point: 'handR' });
+  }
   if (ps.action?.kind === 'chat' && !r.talkOk)
     out.push({ kind: 'talking', weight: 0.4, point: 'head' });
   if (ps.throwFlash > 0) out.push({ kind: 'throw', weight: 1.0, point: 'handR' });
@@ -462,7 +465,7 @@ export function updatePlayer(w: World, cmd: PlayerCommand): void {
     }
   }
   if (cmd.throwPower !== undefined && p.holding) throwHeld(w, clamp(cmd.throwPower, 0, 1), cmd.yaw);
-  if (cmd.note) {
+  if (cmd.note && w.features.notes) {
     if (!p.sittingIn) hint(w, 'Sit down to pass a note.');
     else if (w.t - ps.lastNoteT < 4) hint(w, 'Give it a moment.');
     else {
@@ -650,6 +653,7 @@ export function interactables(w: World): Interactable[] {
         w.occupantOf(s.id)?.kind === 'student'
       )
         verbs.push({ verb: 'prank:swap-chair', label: 'Swap in the wobbly chair', risk: 'risky' });
+      if (!occ && r.break) verbs.push(...prankVerbsFor(w, 'seat'));
     }
     if (verbs.length)
       out.push({
@@ -694,48 +698,50 @@ export function interactables(w: World): Interactable[] {
   const bin = L.props.find((x) => x.id === 'bin')!;
   add('bin', 'bin', 'Bin', { x: bin.pos[0], z: bin.pos[1], y: 0.4 }, [
     { verb: 'bin', label: p.holding ? 'Throw away' : 'Use bin (cover)' },
+    ...prankVerbsFor(w, 'bin'),
   ]);
   const deskVerbs: Interactable['verbs'] = [{ verb: 'handin', label: 'Hand in papers (cover)' }];
   const held = w.items.find((i) => i.id === p.holding);
   if (held?.kind === 'paper-plane' && !w.objects.planeOnDesk)
     deskVerbs.push({ verb: 'prank:paper-plane', label: 'Leave the paper plane', risk: 'risky' });
+  deskVerbs.push(...prankVerbsFor(w, 'teacher-desk'));
   add('teacher-desk', 'desk', 'Teacher’s desk', { x: 1.2, z: 1.55, y: 1.05 }, deskVerbs, 1.3);
-  if (!w.objects.markerHidden)
-    add(
-      'marker',
-      'marker',
-      'Board marker',
-      { x: 4.5, z: 0.35, y: 0.85 },
-      [{ verb: 'prank:hide-marker', label: 'Hide the marker', risk: 'risky' }],
-      1.3,
-    );
-  if (!w.objects.sticker)
-    add(
-      'board',
-      'board',
-      'Whiteboard',
-      { x: 5.6, z: 0.35, y: 1.4 },
-      [{ verb: 'prank:board-sticker', label: 'Stick a smiley on it', risk: 'risky' }],
-      1.3,
-    );
-  if (w.objects.projectorInput === 1)
+  const pd = (id: string) => PRANKS.find((x) => x.id === id)!;
+  const markerVerbs: Interactable['verbs'] = [];
+  if (!w.objects.markerHidden && prankOffered(w, pd('hide-marker')))
+    markerVerbs.push({ verb: 'prank:hide-marker', label: 'Hide the marker', risk: 'risky' });
+  if (!w.objects.markerHidden) markerVerbs.push(...prankVerbsFor(w, 'marker'));
+  if (markerVerbs.length)
+    add('marker', 'marker', 'Board marker', { x: 4.5, z: 0.35, y: 0.85 }, markerVerbs, 1.3);
+  const boardVerbs: Interactable['verbs'] = [];
+  if (!w.objects.sticker && prankOffered(w, pd('board-sticker')))
+    boardVerbs.push({ verb: 'prank:board-sticker', label: 'Stick a smiley on it', risk: 'risky' });
+  boardVerbs.push(...prankVerbsFor(w, 'board'));
+  if (boardVerbs.length)
+    add('board', 'board', 'Whiteboard', { x: 5.6, z: 0.35, y: 1.4 }, boardVerbs, 1.3);
+  const remoteVerbs: Interactable['verbs'] = [];
+  if (
+    w.objects.projectorInput === 1 &&
+    !w.objects.remoteHidden &&
+    prankOffered(w, pd('projector-input'))
+  )
+    remoteVerbs.push({ verb: 'prank:projector-input', label: 'Switch the input', risk: 'risky' });
+  if (!w.objects.remoteHidden) remoteVerbs.push(...prankVerbsFor(w, 'projector-remote'));
+  if (remoteVerbs.length)
     add(
       'projector-remote',
       'remote',
       'Projector remote',
       { x: 1.6, z: 1.55, y: 1.06 },
-      [{ verb: 'prank:projector-input', label: 'Switch the input', risk: 'risky' }],
+      remoteVerbs,
       1.2,
     );
+  const camVerbs: Interactable['verbs'] = [];
   if (!w.objects.docCamFlipped)
-    add(
-      'doc-camera',
-      'doccam',
-      'Document camera',
-      { x: 0.85, z: 1.55, y: 1.3 },
-      [{ verb: 'prank:doc-cam-flip', label: 'Flip the camera', risk: 'risky' }],
-      1.2,
-    );
+    camVerbs.push({ verb: 'prank:doc-cam-flip', label: 'Flip the camera', risk: 'risky' });
+  camVerbs.push(...prankVerbsFor(w, 'doc-camera'));
+  if (camVerbs.length)
+    add('doc-camera', 'doccam', 'Document camera', { x: 0.85, z: 1.55, y: 1.3 }, camVerbs, 1.2);
   const win = spot('window', [8.55, 1.4]);
   add(
     'window-a',
@@ -750,24 +756,27 @@ export function interactables(w: World): Interactable[] {
   add('radiator', 'radiator', 'Radiator', { x: rad.x, z: rad.z, y: 0.4 }, [
     { verb: 'prank:radiator-knock', label: 'Make it knock', risk: 'loud' },
   ]);
-  if (w.objects.clockOffsetMin === 0)
-    add(
-      'clock',
-      'clock',
-      'Wall clock',
-      { x: 0.85, z: 6.65, y: 2.4 },
-      [{ verb: 'prank:clock-offset', label: 'Set it 5 min fast', risk: 'risky' }],
-      1.0,
-    );
-  if (w.objects.posterOrder[0] === 0)
-    add(
-      'poster-1',
-      'poster',
-      'Posters',
-      { x: 5.1, z: 6.7, y: 1.65 },
-      [{ verb: 'prank:reorder-posters', label: 'Reorder the posters', risk: 'risky' }],
-      1.0,
-    );
+  const clockVerbs: Interactable['verbs'] = [];
+  if (w.objects.clockOffsetMin === 0 && prankOffered(w, pd('clock-offset')))
+    clockVerbs.push({ verb: 'prank:clock-offset', label: 'Set it 5 min fast', risk: 'risky' });
+  clockVerbs.push(...prankVerbsFor(w, 'clock'));
+  if (clockVerbs.length)
+    add('clock', 'clock', 'Wall clock', { x: 0.85, z: 6.65, y: 2.4 }, clockVerbs, 1.0);
+  const posterVerbs: Interactable['verbs'] = [];
+  if (w.objects.posterOrder[0] === 0 && prankOffered(w, pd('reorder-posters')))
+    posterVerbs.push({
+      verb: 'prank:reorder-posters',
+      label: 'Reorder the posters',
+      risk: 'risky',
+    });
+  posterVerbs.push(...prankVerbsFor(w, 'poster-1'));
+  if (posterVerbs.length)
+    add('poster-1', 'poster', 'Posters', { x: 5.1, z: 6.7, y: 1.65 }, posterVerbs, 1.0);
+  const plantVerbs = prankVerbsFor(w, 'plant');
+  if (plantVerbs.length) {
+    const pl = spot('plant', [8.3, 6.3]);
+    add('plant', 'plant', 'Plant', { x: pl.x, z: pl.z, y: 0.6 }, plantVerbs, 1.3);
+  }
   for (const s of w.students) {
     if (!s.agent.present) continue;
     const verbs: Interactable['verbs'] =

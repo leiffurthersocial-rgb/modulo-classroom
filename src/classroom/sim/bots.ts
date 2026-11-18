@@ -1,7 +1,9 @@
 // Scripted bot players for the headless balance runner and tests. Bots only use cues a human
 // could perceive: where the teacher is and looks, what they're doing, barks/telegraph events.
 import { dist2, type V2, wrapAngle, yawDir, yawTo } from './geom';
-import { NOTES } from './data';
+import { NOTES, PRANKS } from './data';
+import { NavGrid } from './nav';
+import { personBox } from './perception';
 import { interactables } from './player';
 import type { Rng } from './rng';
 import { idleCommand, type PlayerCommand, type SimEvent } from './types';
@@ -25,6 +27,8 @@ export class Bot {
   } | null = null;
   private path: V2[] | null = null;
   private nextNote = 30;
+  private nextPrank = 0;
+  private lieLowUntil = -1;
   private nextChaos = 0;
   private holdThrow = 0;
   private lastPos: V2 = { x: 0, z: 0 };
@@ -43,6 +47,8 @@ export class Bot {
         e.type === 'glance-soon'
       )
         this.alarmT = e.t;
+      // Told off? A sensible prankster lies low for a while.
+      if (e.type === 'penalty') this.lieLowUntil = e.t + 150;
     }
   }
 
@@ -75,7 +81,9 @@ export class Bot {
       else this.walkTo(w, cmd, w.seat(p.seat)!.pos, p.seat!, 'sit');
       return cmd;
     }
-    switch (this.style) {
+    // Without note passing the postman has nothing to deliver: he just does his work.
+    const style = this.style === 'postman' && !w.features.notes ? 'angel' : this.style;
+    switch (style) {
       case 'angel':
         cmd.work = true;
         if (this.rng.chance(0.0006)) cmd.raiseHand = true;
@@ -86,14 +94,14 @@ export class Bot {
         break;
       case 'sneaky':
       case 'postman': {
-        const wantsDevice = this.style === 'sneaky';
+        const wantsDevice = style === 'sneaky';
         if (wantsDevice && !w.ps.phoneConfiscated) {
           if (!dev.kind && this.safeSince > 2.5) cmd.device = 'phone';
           else if (dev.kind && dev.mode !== 'decoy' && danger) cmd.device = 'switch';
           else if (dev.kind && dev.mode === 'decoy' && this.safeSince > 4) cmd.device = 'switch';
           if (dev.mode === 'decoy' || !dev.kind) cmd.work = true;
         } else cmd.work = true;
-        if (this.style === 'postman' && w.t > this.nextNote && !danger && p.sittingIn) {
+        if (style === 'postman' && w.t > this.nextNote && !danger && p.sittingIn) {
           const seated = w.students.filter((s) => s.agent.sittingIn);
           if (seated.length) {
             const to = this.rng.pick(seated).agent.id;
@@ -101,29 +109,57 @@ export class Bot {
           }
           this.nextNote = w.t + 35 + this.rng.next() * 30;
         }
-        if (r.test && this.style === 'sneaky' && !danger) cmd.peek = true;
+        if (r.test && style === 'sneaky' && !danger) cmd.peek = true;
         break;
       }
-      case 'prankster':
+      case 'prankster': {
         cmd.work = true;
+        // Cover: the teacher is busy with a task far from here (an earlier prank, perhaps).
+        const T = w.teacher;
+        const covered = w.brain.state === 'task' && T.present && dist2(T.pos, p.pos) > 3.5;
+        const calm =
+          w.brain.state === 'board' ||
+          w.brain.state === 'laptop' ||
+          w.brain.state === 'away' ||
+          r.break;
         if (
           !this.trip &&
-          !danger &&
-          this.safeSince > 3 &&
-          (w.brain.state === 'board' ||
-            w.brain.state === 'laptop' ||
-            w.brain.state === 'away' ||
-            r.break)
+          w.t >= this.nextPrank &&
+          w.t >= this.lieLowUntil &&
+          (covered || (!danger && this.safeSince > 3 && calm))
         ) {
           const opts = interactables(w).flatMap((i) =>
-            i.verbs.filter((v) => v.verb.startsWith('prank:')).map((v) => ({ i, v })),
+            i.verbs
+              .filter((v) => v.verb.startsWith('prank:') && (covered || v.risk !== 'loud'))
+              .map((v) => ({ i, v })),
           );
-          if (opts.length && this.rng.chance(0.02)) {
-            const o = this.rng.pick(opts);
-            this.trip = { target: o.i.id, verb: o.v.verb, pos: o.i.pos, phase: 'go', t: 0 };
+          if (opts.length && this.rng.chance(0.05)) {
+            // Quick pranks when exposed; the fiddly ones (long setup) only under cover.
+            const weights = opts.map((o) => {
+              const setup = PRANKS.find((x) => `prank:${x.id}` === o.v.verb)?.setup ?? 2;
+              return covered ? setup : 1 / setup;
+            });
+            let roll = this.rng.next() * weights.reduce((a, b) => a + b, 0);
+            let pick = opts[opts.length - 1]!;
+            for (let k = 0; k < opts.length; k++) {
+              roll -= weights[k]!;
+              if (roll <= 0) {
+                pick = opts[k]!;
+                break;
+              }
+            }
+            this.trip = {
+              target: pick.i.id,
+              verb: pick.v.verb,
+              pos: pick.i.pos,
+              phase: 'go',
+              t: 0,
+            };
+            this.nextPrank = w.t + 40 + this.rng.next() * 50;
           }
         }
         break;
+      }
       case 'chaos':
         if (w.t > this.nextChaos) {
           this.nextChaos = w.t + 5 + this.rng.next() * 15;
@@ -157,6 +193,17 @@ export class Bot {
     if (t.t > 40) {
       this.trip = null;
       return;
+    }
+    // A watched prankster gives up and goes back to the seat (unless already at the target).
+    if (
+      this.style === 'prankster' &&
+      t.phase === 'go' &&
+      !p.sittingIn &&
+      (w.t - this.alarmT < 1.5 || w.t < this.lieLowUntil) &&
+      dist2(p.pos, t.pos) > 1.6
+    ) {
+      t.phase = 'back';
+      this.path = null;
     }
     if (t.phase === 'go') {
       if (p.sittingIn) {
@@ -196,6 +243,16 @@ export class Bot {
     return false;
   }
 
+  private navGrid: NavGrid | null = null;
+
+  private peopleNav(w: World): NavGrid {
+    const [W, , D] = w.layout.room.size;
+    this.navGrid ??= new NavGrid(W, D, w.geo.colliders);
+    for (const a of w.allAgents())
+      if (a.id !== 'player' && a.present) this.navGrid.setDynamic(a.id, personBox(a));
+    return this.navGrid;
+  }
+
   private moveTo(w: World, cmd: PlayerCommand, goal: V2, within: number): boolean {
     const p = w.player;
     if (dist2(p.pos, goal) <= within) return true;
@@ -205,7 +262,16 @@ export class Bot {
       this.stuck = 0;
       this.path = null;
     }
-    if (!this.path || this.path.length === 0) this.path = w.nav.findPath(p.pos, goal) ?? [goal];
+    if (!this.path || this.path.length === 0) {
+      // Squeezed into a blocked cell (against a chair or a classmate)? Step to open floor first.
+      // A private grid that also treats classmates (and the teacher) as obstacles, so the bot
+      // does not try to squeeze through a seated student like the NPC grid would allow.
+      const nav = this.peopleNav(w);
+      const open = nav.walkable(p.pos) ? null : nav.nearestWalkable(p.pos);
+      this.path = nav.findPath(open ?? p.pos, goal) ?? w.nav.findPath(p.pos, goal) ?? [goal];
+      if (open) this.path.unshift(open);
+      for (const a of w.allAgents()) nav.setDynamic(a.id, null);
+    }
     let next = this.path[0]!;
     if (dist2(p.pos, next) < 0.2 && this.path.length > 1) {
       this.path.shift();
