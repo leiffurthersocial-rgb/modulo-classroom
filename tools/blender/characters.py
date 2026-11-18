@@ -844,8 +844,8 @@ def build_laptop(mats):
     W = {'Hips': 1.0}
     mb.unskinned = True
     # base on the table (z=0.72) in front of the seat centre; lid tilted back
-    mb.box((0, -0.52, 0.7275), 0.16, 0.115, 0.0075, W, mat='prop')
-    mb.box((0, -0.635, 0.835), 0.16, 0.005, 0.105, W, mat='prop', rot=Matrix.Rotation(math.radians(-12), 3, 'X'))
+    mb.box((0, -0.47, 0.7275), 0.16, 0.115, 0.0075, W, mat='prop')
+    mb.box((0, -0.585, 0.835), 0.16, 0.005, 0.105, W, mat='prop', rot=Matrix.Rotation(math.radians(-12), 3, 'X'))
     return mb
 
 
@@ -1029,10 +1029,11 @@ def foot_flat(P, side, pos, toe=0.0):
     P.D['Foot_' + side] = Quaternion(X, math.radians(toe))
 
 
-def seat_base(P, lean=8.0, twist=0.0, tilt=0.0, hip_y=SEAT_DY, knees_apart=0.0):
+def seat_base(P, lean=8.0, twist=0.0, tilt=0.0, hip_y=SEAT_DY, knees_apart=0.0, u=0.0):
     """Seated: pelvis on the seat, thighs forward, feet on the floor. Upper body not yet posed."""
-    P.root = v3(0, hip_y, HIP_DROP)
-    P.rel_euler('Hips', x=-2.0)
+    ph = TAU * u
+    P.root = v3(0.007 * math.sin(ph), hip_y + 0.004 * math.sin(ph * 2), HIP_DROP)
+    P.rel_euler('Hips', x=-2.0, z=1.5 * math.sin(ph), y=1.2 * math.sin(ph))
     for side in ('L', 'R'):
         sx = sx_of(side)
         foot = v3(sx * (0.115 + knees_apart), -0.44, 0.078)
@@ -1164,14 +1165,15 @@ def walk(P, u):
         arm_hang(P, side, swing=sgn * 0.38 * math.cos(phi), bend=0.12 + 0.18 * max(0, sgn * math.cos(phi)), out=0.07)
 
 
-def seated_arms_table(P, t=0.0, y=-0.31, x=0.17, z=0.745):
-    arm_to(P, 'L', v3(x, y, z), palm='down', fwd=v3(-0.05, -1, -0.08), pole=v3(0.8, 0.5, -0.5))
-    arm_to(P, 'R', v3(-x, y, z), palm='down', fwd=v3(0.05, -1, -0.08), pole=v3(-0.8, 0.5, -0.5))
+def seated_arms_table(P, t=0.0, y=-0.33, x=0.15, z=0.757):
+    # forearms lie on the tabletop, elbows hang down just behind the table edge
+    arm_to(P, 'L', v3(x, y, z), palm='down', fwd=v3(-0.12, -1, -0.02), pole=v3(0.5, 0.3, -1.0))
+    arm_to(P, 'R', v3(-x, y, z), palm='down', fwd=v3(0.12, -1, -0.02), pole=v3(-0.5, 0.3, -1.0))
 
 
 def sit_idle(P, u):
     phi = TAU * u
-    seat_base(P, lean=7.0 + 1.0 * math.sin(phi), twist=1.5 * math.sin(phi * 0.5 + 1.0))
+    seat_base(P, lean=7.0 + 1.0 * math.sin(phi), twist=1.5 * math.sin(phi + 1.0), u=u)
     breathe(P, u, 1.0, 1 / 2.0)
     head_pose(P, pitch=2.0 + 1.5 * math.sin(phi * 2), yaw=0.0, roll=1.2 * math.sin(phi))
     seated_arms_table(P)
@@ -1179,18 +1181,18 @@ def sit_idle(P, u):
 
 def sit_write(P, u):
     phi = TAU * u
-    seat_base(P, lean=19.0 + 1.0 * math.sin(phi), twist=-4.0 + 1.5 * math.sin(phi * 2))
+    seat_base(P, lean=19.0 + 1.0 * math.sin(phi), twist=-4.0 + 1.5 * math.sin(phi * 2), u=u)
     head_pose(P, pitch=28.0 + 2.0 * math.sin(phi), yaw=0.0, roll=-3.0)
     wob = TAU * u * 3
     rx = -0.10 + 0.03 * math.sin(wob) + 0.02 * math.sin(phi)
-    ry = -0.40 + 0.025 * math.sin(wob * 1.3 + 1.0) - 0.03 * math.sin(phi)
-    arm_to(P, 'R', v3(rx, ry, 0.752), palm='down', fwd=v3(0.25, -1, -0.45), pole=v3(-0.8, 0.5, -0.4))
-    arm_to(P, 'L', v3(0.14, -0.38, 0.745), palm='down', fwd=v3(-0.25, -1, -0.1), pole=v3(0.8, 0.5, -0.4))
+    ry = -0.38 + 0.025 * math.sin(wob * 1.3 + 1.0) - 0.03 * math.sin(phi)
+    arm_to(P, 'R', v3(rx, ry, 0.762), palm='down', fwd=v3(0.25, -1, -0.3), pole=v3(-0.5, 0.3, -1.0))
+    arm_to(P, 'L', v3(0.15, -0.36, 0.757), palm='down', fwd=v3(-0.25, -1, -0.02), pole=v3(0.5, 0.3, -1.0))
 
 
 def sit_type(P, u):
     phi = TAU * u
-    seat_base(P, lean=11.0, twist=0.0)
+    seat_base(P, lean=11.0, twist=0.0, u=u)
     breathe(P, u, 1.0, 1.0)
     head_pose(P, pitch=14.0 + 1.5 * math.sin(phi), yaw=0.0, roll=0)
     for side in ('L', 'R'):
@@ -1199,23 +1201,23 @@ def sit_type(P, u):
         arm_to(
             P,
             side,
-            v3(sx * 0.085 + 0.01 * k, -0.43 + 0.014 * k, 0.762 + 0.005 * max(0, k)),
+            v3(sx * 0.085 + 0.01 * k, -0.40 + 0.014 * k, 0.776 + 0.005 * max(0, k)),
             palm='down',
-            fwd=v3(-sx * 0.05, -1, -0.30),
-            pole=v3(sx * 0.8, 0.5, -0.4),
+            fwd=v3(-sx * 0.05, -1, -0.25),
+            pole=v3(sx * 0.5, 0.3, -1.0),
         )
 
 
 def sit_phone(P, u):
     phi = TAU * u
-    seat_base(P, lean=20.0 + 1.5 * math.sin(phi), twist=-2.0)
+    seat_base(P, lean=20.0 + 1.5 * math.sin(phi), twist=-2.0, u=u)
     breathe(P, u, 1.0, 1.0)
     head_pose(P, pitch=38.0 + 2.0 * math.sin(phi * 2), yaw=0.0, roll=-3.0)
     P.rel_euler('Shoulder_L', y=-4.0)
     P.rel_euler('Shoulder_R', y=4.0)
     th = 0.004 * math.sin(phi * 4)
-    arm_to(P, 'R', v3(-0.065, -0.265 + th, 0.700), palm=v3(0.35, 0.15, 0.9), fwd=v3(0.45, -0.85, 0.25), pole=v3(-0.8, 0.7, -0.4))
-    arm_to(P, 'L', v3(0.065, -0.265, 0.695), palm=v3(-0.35, 0.15, 0.9), fwd=v3(-0.45, -0.85, 0.25), pole=v3(0.8, 0.7, -0.4))
+    arm_to(P, 'R', v3(-0.065, -0.265 + th, 0.700), palm=v3(0.35, 0.15, 0.9), fwd=v3(0.45, -0.85, 0.25), pole=v3(-0.4, 0.5, -1.0))
+    arm_to(P, 'L', v3(0.065, -0.265, 0.695), palm=v3(-0.35, 0.15, 0.9), fwd=v3(-0.45, -0.85, 0.25), pole=v3(0.4, 0.5, -1.0))
 
 
 def mouth_point(P, off=(0, -0.0, -0.075)):
@@ -1231,10 +1233,10 @@ def sit_yawn(P, u):
     head_pose(P, pitch=lerp(2.0, -22.0, e) + 1.5 * math.sin(phi * 6) * e, yaw=0.0, roll=-3.0 * e)
     # right hand rises to the mouth
     hold = mouth_point(P, (-0.02, 0.0, -0.065))
-    rest = v3(-0.17, -0.36, 0.745)
+    rest = v3(-0.15, -0.33, 0.757)
     tgt = lerp3(rest, hold, e)
-    arm_to(P, 'R', tgt, palm=lerp3(v3(0, 0, -1), v3(0.2, 0.9, 0.2), e), fwd=lerp3(v3(0.05, -1, -0.08), v3(0.25, -0.25, 1.0), e), pole=v3(-0.8, 0.5, -0.4))
-    arm_to(P, 'L', v3(0.17, -0.36, 0.745), palm='down', fwd=v3(-0.05, -1, -0.08), pole=v3(0.8, 0.5, -0.4))
+    arm_to(P, 'R', tgt, palm=lerp3(v3(0, 0, -1), v3(0.2, 0.9, 0.2), e), fwd=lerp3(v3(0.05, -1, -0.08), v3(0.25, -0.25, 1.0), e), pole=v3(-0.5, 0.3, -1.0))
+    arm_to(P, 'L', v3(0.15, -0.33, 0.757), palm='down', fwd=v3(-0.05, -1, -0.08), pole=v3(0.8, 0.5, -0.4))
 
 
 def sit_cough(P, u):
@@ -1244,10 +1246,10 @@ def sit_cough(P, u):
     seat_base(P, lean=lerp(7.0, 18.0, e) + 6.0 * bumps, twist=0.0)
     head_pose(P, pitch=lerp(2.0, 20.0, e) + 8.0 * bumps, yaw=0.0, roll=0.0)
     hold = mouth_point(P, (-0.01, 0.0, -0.05))
-    rest = v3(-0.17, -0.36, 0.745)
+    rest = v3(-0.15, -0.33, 0.757)
     tgt = lerp3(rest, hold, e)
-    arm_to(P, 'R', tgt, palm=lerp3(v3(0, 0, -1), v3(0.2, 0.9, 0.3), e), fwd=lerp3(v3(0.05, -1, -0.08), v3(0.2, -0.2, 1.0), e), pole=v3(-0.8, 0.5, -0.4))
-    arm_to(P, 'L', v3(0.17, -0.36, 0.745), palm='down', fwd=v3(-0.05, -1, -0.08), pole=v3(0.8, 0.5, -0.4))
+    arm_to(P, 'R', tgt, palm=lerp3(v3(0, 0, -1), v3(0.2, 0.9, 0.3), e), fwd=lerp3(v3(0.05, -1, -0.08), v3(0.2, -0.2, 1.0), e), pole=v3(-0.5, 0.3, -1.0))
+    arm_to(P, 'L', v3(0.15, -0.33, 0.757), palm='down', fwd=v3(-0.05, -1, -0.08), pole=v3(0.8, 0.5, -0.4))
 
 
 def sit_look(P, u):
@@ -1260,7 +1262,7 @@ def sit_look(P, u):
 
 def raise_arm(P, side, sx, e, sway):
     P.rel_euler('Shoulder_' + side, y=sx * -10.0 * e)
-    rest = v3(sx * 0.17, -0.36, 0.745)
+    rest = v3(sx * 0.15, -0.33, 0.757)
     up = v3(sx * 0.17 + 0.02 * sway, -0.06, 1.50 + 0.012 * sway)
     arm_to(P, side, lerp3(rest, up, e), palm=lerp3(v3(0, 0, -1), v3(0, -1, 0), e), fwd=lerp3(v3(0, -1, -0.08), v3(0.05 * sway, -0.12, 1), e), pole=v3(sx * 0.8, 0.9, -0.1))
 
@@ -1271,7 +1273,7 @@ def sit_raise(P, u):
     breathe(P, u, 1.0, 1.0)
     head_pose(P, pitch=-2.0, yaw=0, roll=2.0 * math.sin(phi))
     raise_arm(P, 'R', -1, 1.0, math.sin(phi * 2))
-    arm_to(P, 'L', v3(0.17, -0.34, 0.745), palm='down', fwd=v3(-0.05, -1, -0.08), pole=v3(0.8, 0.5, -0.5))
+    arm_to(P, 'L', v3(0.15, -0.33, 0.757), palm='down', fwd=v3(-0.05, -1, -0.08), pole=v3(0.5, 0.3, -1.0))
 
 
 def sit_whisper(P, u, side):
@@ -1286,7 +1288,7 @@ def sit_whisper(P, u, side):
     ho = 'R' if sx > 0 else 'L'
     mp = mouth_point(P, (sx * 0.075, 0.015, -0.035))
     arm_to(P, hs, mp + v3(0, 0, 0.0), palm=v3(-sx * 0.4, 0.9, 0.2), fwd=v3(-sx * 0.35, -0.55, 0.9), pole=v3(sx * 0.8, 0.9, -0.2))
-    arm_to(P, ho, v3(-sx * 0.17, -0.36, 0.745), palm='down', fwd=v3(sx * 0.05, -1, -0.08), pole=v3(-sx * 0.8, 0.5, -0.5))
+    arm_to(P, ho, v3(-sx * 0.17, -0.36, 0.745), palm='down', fwd=v3(sx * 0.05, -1, -0.02), pole=v3(-sx * 0.5, 0.3, -1.0))
 
 
 def sit_stretch(P, u):
@@ -1298,7 +1300,7 @@ def sit_stretch(P, u):
     for side in ('L', 'R'):
         sx = sx_of(side)
         P.rel_euler('Shoulder_' + side, y=sx * -12.0 * e)
-        rest = v3(sx * 0.17, -0.36, 0.745)
+        rest = v3(sx * 0.15, -0.33, 0.757)
         up = v3(sx * 0.15, 0.06 + 0.01 * math.sin(phi * 3), 1.62)
         arm_to(P, side, lerp3(rest, up, e), palm=lerp3(v3(0, 0, -1), v3(-sx, 0, 0.3), e), fwd=lerp3(v3(0, -1, -0.08), v3(-sx * 0.2, 0.1, 1.0), e), pole=v3(sx * 0.8, 0.3, 0.0))
 
@@ -1338,13 +1340,13 @@ def stand_throw(P, u, seated=False):
     if rec > 0:
         # blend the arm back to the resting pose
         if seated:
-            rest = v3(-0.17, -0.36, 0.745)
+            rest = v3(-0.15, -0.33, 0.757)
         else:
             rest = None
         throw_arm(P, 1.0, 1.0, 0.0, seated) if rec < 1 else None
     throw_arm(P, ew, er, ease((u - 0.5) / 0.12) if u > 0.5 else 0.0, seated)
     if seated:
-        arm_to(P, 'L', v3(0.17, -0.34, 0.745), palm='down', fwd=v3(-0.05, -1, -0.08), pole=v3(0.8, 0.5, -0.5))
+        arm_to(P, 'L', v3(0.15, -0.33, 0.757), palm='down', fwd=v3(-0.05, -1, -0.08), pole=v3(0.5, 0.3, -1.0))
     else:
         arm_hang(P, 'L', bend=0.1)
 

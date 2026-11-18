@@ -300,10 +300,13 @@ export class Character {
   private scale: number;
   private lib: CharacterLibrary;
   private smoothYaw = 0;
+  /** Deterministic loop phase so a room of identical clips does not move in lockstep. */
+  private phase: number;
 
   constructor(lib: CharacterLibrary, spec: CharacterSpec) {
     this.lib = lib;
     this.scale = spec.scale;
+    this.phase = (hashId(spec.body + spec.hair + spec.skin) % 1000) / 1000;
     this.model = cloneSkinned(lib.scene);
     const want = new Set([spec.body, 'hair_' + spec.hair, 'laptop']);
     if (spec.glasses) want.add('glasses');
@@ -388,7 +391,7 @@ export class Character {
     next.timeScale = timeScale;
     next.enabled = true;
     next.setEffectiveWeight(1);
-    if (randomPhase) next.time = Math.random() * clip.duration;
+    if (randomPhase) next.time = this.phase * clip.duration;
     next.play();
     if (this.action && this.action !== next) {
       if (fade > 0) next.crossFadeFrom(this.action, fade, false);
