@@ -103,9 +103,10 @@ describe('gameplay invariants', () => {
   });
 });
 
-describe('notes', () => {
+describe('notes (feature flag on)', () => {
+  const notesOn = { seed: 4, lessonType: 'study', teacher: 'lazy', features: { notes: true } };
   it('player -> neighbour note resolves within 60 s', () => {
-    const w = new World({ seed: 4, lessonType: 'study', teacher: 'lazy' });
+    const w = new World(notesOn);
     const tpl = NOTES.find((n) => !n.answers)!.id;
     expect(w.player.sittingIn).toBe('s-b3');
     expect(sendNote(w, 'player', 'mara', tpl)).toBe(true);
@@ -120,7 +121,7 @@ describe('notes', () => {
     ).toBe(true);
   });
   it('refuses when the recipient is not seated / unknown', () => {
-    const w = new World({ seed: 4, lessonType: 'study', teacher: 'lazy' });
+    const w = new World(notesOn);
     expect(sendNote(w, 'player', 'nobody', 'x')).toBe(false);
   });
 });

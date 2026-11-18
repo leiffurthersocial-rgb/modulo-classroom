@@ -1,5 +1,6 @@
 // Typed access to the JSON content + validation. Pure TS.
 import barksJson from '../data/barks.json';
+import featuresJson from '../data/features.json';
 import layoutJson from '../data/layouts/classroom-a.json';
 import lessonsJson from '../data/lessons.json';
 import notesJson from '../data/notes.json';
@@ -80,16 +81,63 @@ export interface LessonType {
   events: [string, number][];
 }
 
+export type PrankTrigger = 'projector' | 'board' | 'laptop' | 'near' | 'class' | 'timer';
+
+export interface PrankTask {
+  kind: string;
+  dur: number;
+  /** Spot name (layout.spots) where the teacher deals with it. */
+  at: string;
+  bark: string;
+}
+
 export interface PrankDef {
   id: string;
   name: string;
   target: string;
+  /** Seconds of visible fiddling (evidence while doing it). */
   setup: number;
+  /** Seconds until the effect can happen. */
   delay: number;
-  effect: { kind: string; minutes?: number; duration?: number };
+  effect: {
+    kind: string;
+    minutes?: number;
+    duration?: number;
+    /** Recurring noise (e.g. birdsong): kind, radius, spot it comes from. */
+    noise?: { kind: string; radius: number; at: string; every: [number, number] };
+  };
+  /** Seconds the teacher is busy once it triggers (cover for other mischief). */
   distraction: number;
+  /** How conspicuous the fiddling is (scales the setup evidence). */
   heat: number;
-  requires?: string;
+  requires?: 'break' | 'plane' | 'carry-free';
+  /** Interactable verb label shown to the player (generic pranks). */
+  verb?: string;
+  risk?: 'loud' | 'risky';
+  /** What makes the delayed effect surface (generic pranks). */
+  trigger?: PrankTrigger;
+  /** Spot where the teacher's task happens (also the 'near' trigger spot). */
+  at?: string;
+  bark?: string;
+  /** Second task after the first (e.g. fetching a new marker). */
+  followUp?: PrankTask;
+  /** Seconds after which the teacher surfaces it regardless of the trigger (default 120). */
+  patience?: number;
+  /** Seconds after setup in which lingering at the spot, or the teacher passing it, matters. */
+  riskWindow?: number;
+  /** Witness opinions: trait (>= 0.5) → affinity change. Positive fans keep quiet. */
+  opinions?: Partial<Record<keyof Traits, number>>;
+  /** Multiplies witnesses' snitch chance (1 = default). */
+  snitchMul?: number;
+  /** Combo with the lesson: when a phase rule is active the effect surfaces at once and the
+   *  teacher's distraction is longer. */
+  combo?: { rules: (keyof PhaseRules)[]; distractionMul: number; text: string };
+  /** Pranks that cannot coexist with this one. */
+  conflicts?: string[];
+}
+
+export interface Features {
+  notes: boolean;
 }
 
 export interface NoteTemplate {
@@ -105,6 +153,8 @@ export interface Challenge {
   text: string;
   counter: string;
   goal: number;
+  /** Hidden while this feature flag is off. */
+  feature?: keyof Features;
 }
 
 export type BarkTiers = string[][];
@@ -125,7 +175,11 @@ export const BARKS = barksJson as unknown as {
   teacher: Record<string, BarkTiers>;
   student: Record<string, BarkTiers>;
 };
-export const CHALLENGES = (wishlistJson as unknown as { challenges: Challenge[] }).challenges;
+/** Feature flags (features.json). The UI can read `FEATURES.notes`. */
+export const FEATURES: Readonly<Features> = featuresJson as Features;
+export const CHALLENGES = (
+  wishlistJson as unknown as { challenges: Challenge[] }
+).challenges.filter((c) => !c.feature || FEATURES[c.feature]);
 
 export const LESSON_TYPES = Object.keys(LESSONS.types);
 export const PLAYABLE_LESSON_TYPES = LESSON_TYPES.filter((t) => t !== 'detention');
@@ -163,9 +217,29 @@ export function validateContent(): string[] {
     'board',
     'radiator',
     'doc-camera',
+    'plant',
+    'bin',
   ]);
-  for (const p of PRANKS)
+  const spots = LAYOUT.spots ?? {};
+  const prankIds = new Set(PRANKS.map((p) => p.id));
+  for (const p of PRANKS) {
     if (!ids.has(p.target)) errs.push(`prank ${p.id}: unknown target ${p.target}`);
+    if (p.trigger || p.at) {
+      if (!p.trigger) errs.push(`prank ${p.id}: 'at' without trigger`);
+      if (!p.at || !spots[p.at]) errs.push(`prank ${p.id}: unknown spot ${p.at}`);
+      if (p.followUp && !spots[p.followUp.at])
+        errs.push(`prank ${p.id}: unknown follow-up spot ${p.followUp.at}`);
+      if (!p.bark || !BARKS.teacher[p.bark]) errs.push(`prank ${p.id}: missing teacher bark`);
+      if (p.followUp && !BARKS.teacher[p.followUp.bark])
+        errs.push(`prank ${p.id}: missing follow-up bark`);
+      if (!p.verb) errs.push(`prank ${p.id}: generic prank without a verb`);
+    }
+    if (p.effect.noise && !spots[p.effect.noise.at])
+      errs.push(`prank ${p.id}: unknown noise spot ${p.effect.noise.at}`);
+    for (const c of p.conflicts ?? [])
+      if (!prankIds.has(c)) errs.push(`prank ${p.id}: unknown conflict ${c}`);
+    if (p.setup <= 0 || p.distraction <= 0) errs.push(`prank ${p.id}: non-positive timing`);
+  }
   for (const t of TEACHERS) {
     if (t.vision.innerRange > t.vision.midRange) errs.push(`teacher ${t.id}: inner > mid range`);
     for (const k of ['board', 'facing', 'laptop'] as const) {

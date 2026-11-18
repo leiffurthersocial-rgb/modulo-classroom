@@ -6,6 +6,8 @@ import { TICK_DT } from './clock';
 import {
   BARKS,
   CAST,
+  FEATURES,
+  type Features,
   LAYOUT,
   LESSONS,
   type PhaseDef,
@@ -46,6 +48,8 @@ export interface WorldOptions {
   absent?: string[];
   /** Skip straight to a phase (debug). */
   startPhase?: number;
+  /** Override feature flags from data/features.json (tests). */
+  features?: Partial<Features>;
 }
 
 export interface SuspicionState {
@@ -76,6 +80,22 @@ export interface RoomObjects {
   clockOffsetMin: number;
   lightsDim: boolean;
   doorOpen: number;
+  // Generic prank props (render reads these; see render/prank-props.ts).
+  duckOnDocCam: boolean;
+  markerDry: boolean;
+  outOfOrderSign: boolean;
+  stickyMosaic: boolean;
+  /** Seat ids whose (empty) chair was turned to face the back. */
+  turnedSeats: string[];
+  remoteHidden: boolean;
+  cupPyramid: boolean;
+  /** Wall clock shows a silly time-zone time (display only; the lesson timer is untouched). */
+  clockSilly: boolean;
+  postersFlipped: boolean;
+  /** Faint smiley in the board corner: 'hidden' until the projector is on, then 'shown'. */
+  ghostSmiley: 'none' | 'hidden' | 'shown';
+  /** A hidden birdsong alarm is currently chirping in the bin. */
+  birdAlarm: boolean;
 }
 
 export interface Interactable {
@@ -126,6 +146,7 @@ export class World {
   readonly profile: TeacherProfile;
   readonly lessonType: string;
   readonly record: StudentRecord;
+  readonly features: Features;
 
   t = 0;
   tick = 0;
@@ -149,6 +170,8 @@ export class World {
   relations: Relations;
   objects: RoomObjects;
   stats: LessonStats;
+  /** Strikes added to the record during this lesson (see LESSON_STRIKE_CAP). */
+  lessonStrikes = 0;
   private nextItemId = 1;
   private seatsById = new Map<string, Seat>();
 
@@ -162,6 +185,7 @@ export class World {
     this.profile = teacherProfile(opts.teacher);
     this.lessonType = LESSONS.types[opts.lessonType] ? opts.lessonType : 'lecture';
     this.record = opts.record ?? newRecord();
+    this.features = { ...FEATURES, ...opts.features };
     this.geo = buildStaticGeometry(this.layout);
     const [W, , D] = this.layout.room.size;
     this.nav = new NavGrid(W, D, this.geo.colliders);
@@ -242,6 +266,17 @@ export class World {
       clockOffsetMin: 0,
       lightsDim: false,
       doorOpen: 0,
+      duckOnDocCam: false,
+      markerDry: false,
+      outOfOrderSign: false,
+      stickyMosaic: false,
+      turnedSeats: [],
+      remoteHidden: false,
+      cupPyramid: false,
+      clockSilly: false,
+      postersFlipped: false,
+      ghostSmiley: 'none',
+      birdAlarm: false,
     };
     const affinityStart: Record<string, number> = {};
     for (const s of this.students) affinityStart[s.def.id] = this.relations.toPlayer(s.def.id);
@@ -388,6 +423,7 @@ export class World {
 
   /** Player-attributable offense → penalty ladder. Returns the penalty. */
   punishPlayer(kind: string, severity: number, summary: string): PenaltyKind {
+    const before = this.record.strikes;
     const p = applyOffense(this.record, {
       kind,
       severity,
@@ -395,7 +431,10 @@ export class World {
       teacher: this.profile.id,
       roll: this.rngTeacher.next(),
       summary,
+      lessonStrikes: this.lessonStrikes,
     });
+    if (p === 'callhome') this.lessonStrikes += 1;
+    else this.lessonStrikes += Math.max(0, this.record.strikes - before);
     this.stats.offenses.push({ kind, penalty: p, t: this.t });
     if (p === 'written' && this.record.seatOverride) {
       this.player.seat = this.record.seatOverride;

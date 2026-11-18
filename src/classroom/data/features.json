@@ -1,0 +1,4 @@
+{
+  "$comment": "Feature flags (data-driven). notes: classmates pass/reply to notes and the player may send them. Off for now; the code stays. WorldOptions.features overrides these per world (tests).",
+  "notes": false
+}

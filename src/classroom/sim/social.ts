@@ -98,6 +98,7 @@ function route(w: World, fromSeat: string, toSeat: string): string[] | null {
 }
 
 export function sendNote(w: World, from: string, to: string, template: string): boolean {
+  if (!w.features.notes) return false; // note passing is switched off (data/features.json)
   const fa = w.agent(from);
   const ta = w.agent(to);
   if (!fa?.sittingIn || !ta?.sittingIn) {
@@ -149,6 +150,7 @@ function finish(w: World, n: NoteState, state: NoteState['state']): void {
 }
 
 export function updateNotes(w: World): void {
+  if (!w.features.notes) return;
   for (const n of w.notes) {
     if (n.state !== 'moving') continue;
     const carrier = w.agent(n.carrier);
@@ -295,6 +297,10 @@ export function interceptNote(w: World, n: NoteState, how: string): void {
 
 /** Fire queued replies from classmates. Called by the students update. */
 export function updateReplies(w: World): void {
+  if (!w.features.notes) {
+    w.studentReplies = [];
+    return;
+  }
   const due = w.studentReplies.filter((r) => w.t >= r.at);
   if (!due.length) return;
   w.studentReplies = w.studentReplies.filter((r) => w.t < r.at);
