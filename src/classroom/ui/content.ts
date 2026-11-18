@@ -111,7 +111,7 @@ const TOUCH_NAMES: Record<string, string> = {
   switch: 'Hide screen',
   content: 'Game / Video',
   earbud: 'Earbud',
-  paper: 'Paper',
+  paper: 'Paper ball',
   throw: 'Throw',
   raiseHand: 'Hand',
   cheat: 'Cheat sheet',
@@ -192,6 +192,12 @@ const REQUIRES_NOW: Record<string, string> = {
   'carry-free': 'empty your hands first',
 };
 
+const NEEDS_TEXT: Record<string, string> = {
+  break: 'Only during the break.',
+  plane: 'Needs a folded paper plane.',
+  'carry-free': 'Needs empty hands.',
+};
+
 export function requirementText(req: string | undefined): string {
   return req ? (REQUIRES_NOW[req] ?? req.replace(/[-_]+/g, ' ')) : '';
 }
@@ -244,7 +250,9 @@ export interface IdeaSection {
   items: IdeaItem[];
 }
 
-export function buildIdeas(w: World, k: KeyLabels): IdeaSection[] {
+export function buildIdeas(w: World, k: KeyLabels, device: Device = 'keyboard'): IdeaSection[] {
+  /** "1 phone" on keyboards, just the button name on touch. */
+  const pair = (a: string, word: string) => (device === 'touch' ? k(a) : `${k(a)} ${word}`);
   const r = w.rules();
   const ps = w.ps;
   const sections: IdeaSection[] = [];
@@ -296,16 +304,18 @@ export function buildIdeas(w: World, k: KeyLabels): IdeaSection[] {
       {
         title: 'Play Block Drop',
         detail: 'Catch green blocks, dodge red ones. Steer with left / right.',
-        keys: `${k('phone')} phone · ${k('laptop')} laptop`,
-        status: ps.device.kind && ps.device.mode === 'game' ? 'now' : undefined,
-        statusText: 'playing',
+        keys: `${pair('phone', 'phone')} · ${pair('laptop', 'laptop')}`,
+        ...(ps.device.kind && ps.device.mode === 'game'
+          ? { status: 'now' as const, statusText: 'playing' }
+          : {}),
       },
       {
         title: 'Watch a video',
         detail: 'Switch between game and video. An earbud keeps it quiet, but you hear less.',
-        keys: `${k('content')} switch · ${k('earbud')} earbud`,
-        status: ps.device.kind && ps.device.mode === 'video' ? 'now' : undefined,
-        statusText: 'watching',
+        keys: `${pair('content', 'switch')} · ${pair('earbud', 'earbud')}`,
+        ...(ps.device.kind && ps.device.mode === 'video'
+          ? { status: 'now' as const, statusText: 'watching' }
+          : {}),
       },
       {
         title: 'Quick-switch to the notes',
@@ -322,8 +332,7 @@ export function buildIdeas(w: World, k: KeyLabels): IdeaSection[] {
         title: 'Do real work',
         detail: 'Hold to work. It lowers suspicion and earns a participation grade.',
         keys: `hold ${k('work')}`,
-        status: ps.working ? 'now' : undefined,
-        statusText: 'working',
+        ...(ps.working ? { status: 'now' as const, statusText: 'working' } : {}),
       },
       {
         title: 'Peek at a neighbour’s test',
@@ -357,12 +366,13 @@ export function buildIdeas(w: World, k: KeyLabels): IdeaSection[] {
       const why = prankBlockReason(w, def);
       const done = w.pranks.some((p) => p.id === def.id);
       const where = `At ${targetName(def.target)}`;
-      const needs = def.requires ? ` Needs: ${requirementText(def.requires)}.` : '';
+      const needs = def.requires
+        ? ` ${NEEDS_TEXT[def.requires] ?? `Needs ${requirementText(def.requires)}.`}`
+        : '';
       const effort = def.setup >= 2 ? 'Takes a while to set up.' : 'Quick to set up.';
       return {
         title: def.name,
         detail: `${where}.${needs} ${effort}`,
-        keys: k('interact'),
         status: done ? 'done' : why ? 'later' : 'now',
         statusText: done ? 'done' : (why ?? 'available'),
       };
@@ -375,7 +385,10 @@ export function buildIdeas(w: World, k: KeyLabels): IdeaSection[] {
       {
         title: 'Fold and throw',
         detail: 'Make a ball or a plane, then hold Throw to charge. A plane makes a prank.',
-        keys: `${k('paper')} ball · Shift+${k('paper')} plane · hold ${k('throw')}`,
+        keys:
+          device === 'touch'
+            ? `${k('paper')} · ${k('throw')}`
+            : `${k('paper')} ball · Shift+${k('paper')} plane · hold ${k('throw')}`,
       },
     ],
   });
@@ -436,8 +449,10 @@ export const HINTS: Record<string, HintDef> = {
   },
   prompt: {
     id: 'prompt',
-    text: (k) =>
-      `The line under the crosshair says what “${k('interact')}” will do. If it shows “more”, ${k('nextVerb')} or the wheel changes the option. Orange means risky.`,
+    text: (k, d) =>
+      d === 'touch'
+        ? 'The line under the crosshair says what “Use” will do. If there are more options, “Next” appears. Orange means risky.'
+        : `The line under the crosshair says what “${k('interact')}” will do. If there are more options, ${k('nextVerb')} or the wheel cycles them. Orange means risky.`,
   },
   device: {
     id: 'device',

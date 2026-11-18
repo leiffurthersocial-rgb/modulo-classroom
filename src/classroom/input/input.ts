@@ -84,6 +84,8 @@ class KeyboardMouse implements Controller {
   private el: HTMLElement;
   private settings: Settings;
   locked = false;
+  /** Set by the app while a normal menu is open: Tab/Space/Enter keep their browser meaning. */
+  nativeKeys = false;
   /** Set by the app: when false, clicks don't grab the pointer (menus open). */
   wantLock = true;
   private readonly lockSupported: boolean;
@@ -114,7 +116,7 @@ class KeyboardMouse implements Controller {
         (e.target as HTMLElement)?.tagName === 'SELECT'
       )
         return;
-      e.preventDefault();
+      if (!this.nativeKeys || a === 'pause') e.preventDefault();
       if (e.repeat) return;
       if (a === 'paper' && e.shiftKey) this.pressed.add('plane');
       else this.pressed.add(a);
@@ -362,7 +364,7 @@ class Touch implements Controller {
     });
     mainRow.appendChild(this.toolsBtn);
     mk(mainRow, 'work', 'Work', { hold: true });
-    const sit = mk(mainRow, 'sit', 'Sit', { sub: 'or stand' });
+    const sit = mk(mainRow, 'sit', 'Sit', { sub: 'your seat' });
     this.sitLabel = sit.firstElementChild as HTMLElement;
     mk(mainRow, 'interact', 'Use', { cls: 'use' });
     dock.append(this.tray, ctxRow, mainRow);

@@ -126,6 +126,8 @@ export class ClassroomApp {
   private shot: ShotOptions | null;
   private shotFrames = 0;
   private bot: Bot | null = null;
+  /** ?lesson=&teacher=&seed= from a shared link; pre-fills the title screen once. */
+  private sharedLink: URLSearchParams | null = null;
   private lessonCfg = { lesson: 'random', teacher: 'random', seed: '1', cheatSheet: false };
   private hidden = false;
   private footCueT = 0;
@@ -148,6 +150,9 @@ export class ClassroomApp {
     this.shot = shot;
     this.bench = bench;
     this.settings = loadSettings();
+    const link = new URLSearchParams(location.search);
+    if (!shot && !bench && (link.has('seed') || link.has('lesson') || link.has('teacher')))
+      this.sharedLink = link;
     const presetOverride = shot?.preset ?? bench?.preset;
     if (presetOverride && presetOverride in PRESETS)
       this.settings.preset = presetOverride as Settings['preset'];
@@ -246,11 +251,18 @@ export class ClassroomApp {
         { lesson: 'lecture', teacher: 'strict', seed: '1', cheatSheet: false },
         true,
       );
+    const shared = this.sharedLink;
+    this.sharedLink = null;
     this.ui.title({
       record: this.record,
       hasSave: hasSave(),
       detention: this.record.detentionPending,
-      seed: String(parseSeed(this.lessonCfg.seed) + 1),
+      seed: shared?.has('seed')
+        ? String(shared.get('seed'))
+        : String(parseSeed(this.lessonCfg.seed) + 1),
+      prefill: shared
+        ? { lesson: shared.get('lesson') ?? undefined, teacher: shared.get('teacher') ?? undefined }
+        : undefined,
       controls: controlRows(this.deviceKind(), this.keys()).slice(0, 7),
       onControls: () =>
         this.ui.controls(
@@ -445,6 +457,7 @@ export class ClassroomApp {
       return;
     }
 
+    this.input.km.nativeKeys = this.ui.menuOpen && !this.quickMenu;
     const f = this.input.poll();
     this.handleGlobalInput(f.pressed);
     if (this.mode === 'play') {
@@ -574,7 +587,8 @@ export class ClassroomApp {
     this.openMenu();
     this.quickMenu = q;
     const close = () => this.resumePlay();
-    if (q === 'ideas') this.ui.ideas(buildIdeas(this.world!, this.keys()), close);
+    if (q === 'ideas')
+      this.ui.ideas(buildIdeas(this.world!, this.keys(), this.deviceKind()), close);
     else this.ui.controls(close, (d) => this.controlRows(d), this.deviceKind());
   }
 
@@ -606,11 +620,12 @@ export class ClassroomApp {
     const wl = this.wishlistHtml();
     const left = Math.max(0, Math.ceil(w.lesson.totalMinutes - w.clockMinutes()));
     this.ui.pause({
-      summary: `${LESSONS.types[w.lessonType]!.label} with ${w.profile.name} (${w.profile.label}) · ${left} min left. The lesson is paused.`,
+      summary: `${LESSONS.types[w.lessonType]!.label} with ${w.profile.name}${w.profile.name.toLowerCase().includes(w.profile.label.toLowerCase()) ? '' : ` (${w.profile.label})`} · ${left} min left. The lesson is paused.`,
       seedLink: url.toString(),
       wishlist: wl,
       onResume: () => this.resumePlay(),
-      onIdeas: () => this.ui.ideas(buildIdeas(w, this.keys()), () => this.openPause()),
+      onIdeas: () =>
+        this.ui.ideas(buildIdeas(w, this.keys(), this.deviceKind()), () => this.openPause()),
       onNotebook: () => this.ui.notebook(this.record, this.debug, () => this.openPause()),
       onSettings: () => this.openSettings(() => this.openPause()),
       onControls: () =>
@@ -964,7 +979,7 @@ export class ClassroomApp {
     const strong =
       !away && (b.state === 'watch' || b.state === 'confront') && b.target === 'player';
     const toPlayer = Math.abs(wrapAngle(yawTo(T.pos, w.player.pos) - T.headYaw));
-    const looking = !away && (strong || (toPlayer < 0.5 && dist2(T.pos, w.player.pos) < 11));
+    const looking = !away && (strong || (toPlayer < 0.32 && dist2(T.pos, w.player.pos) < 10));
     const now = performance.now();
     const dtH = this.lastHudT ? Math.min(0.2, (now - this.lastHudT) / 1000) : 0.016;
     this.lastHudT = now;
@@ -981,7 +996,9 @@ export class ClassroomApp {
       minutesLeft: left,
       progress: Math.max(0, Math.min(1, w.clockMinutes() / w.lesson.totalMinutes)),
       teacher: w.profile.name,
-      teacherLabel: w.profile.label,
+      teacherLabel: w.profile.name.toLowerCase().includes(w.profile.label.toLowerCase())
+        ? ''
+        : w.profile.label,
       prompt,
       chips,
       charge: this.throwCharge,

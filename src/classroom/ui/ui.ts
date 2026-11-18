@@ -160,7 +160,7 @@ export class UI {
       this.tl.innerHTML = `<div class="hud-row"><span class="hud-clock">${esc(h.clock)}</span><span class="hud-left">${left} min left</span></div>
         <div class="hud-lesson">${esc(h.lesson)}</div><div class="hud-phase">${esc(h.phase)}</div>
         <div class="hud-bar"><i style="width:${Math.round(h.progress * 100)}%"></i></div>
-        <div class="hud-teacher">Teacher: <b>${esc(h.teacher)}</b> (${esc(h.teacherLabel)})</div>`;
+        <div class="hud-teacher">Teacher: <b>${esc(h.teacher)}</b>${h.teacherLabel ? ` (${esc(h.teacherLabel)})` : ''}</div>`;
       const pips = [0, 1, 2]
         .map(
           (i) =>
@@ -338,6 +338,7 @@ export class UI {
     hasSave: boolean;
     detention: boolean;
     seed: string;
+    prefill?: { lesson?: string; teacher?: string };
     controls: [string, string][];
     onStart: (cfg: {
       lesson: string;
@@ -450,6 +451,13 @@ export class UI {
       s.addEventListener('change', upd);
       upd();
     };
+    for (const [id, v] of [
+      ['#t-lesson', opts.prefill?.lesson],
+      ['#t-teacher', opts.prefill?.teacher],
+    ] as const) {
+      const s = p.querySelector(id) as HTMLSelectElement | null;
+      if (s && v && [...s.options].some((o) => o.value === v)) s.value = v;
+    }
     bind('#t-lesson', '#t-lesson-hint', lessonBlurb);
     bind('#t-teacher', '#t-teacher-hint', teacherBlurb);
     (p.querySelector('.btns .btn') as HTMLElement | null)?.focus({ preventScroll: true });
@@ -724,7 +732,7 @@ export class UI {
           `<section class="idea-sec"><h2>${esc(s.title)}</h2>${s.blurb ? `<p class="sub2">${esc(s.blurb)}</p>` : ''}<div class="ideas">${s.items
             .map(
               (i) =>
-                `<div class="idea ${i.status ?? ''}"><h4><span>${esc(i.title)}</span>${i.status || i.statusText ? `<span class="pill ${i.status ?? ''}">${esc(i.statusText ?? (i.status === 'now' ? 'now' : ''))}</span>` : ''}</h4><p>${esc(i.detail)}</p>${i.keys ? `<p class="k">${esc(i.keys)}</p>` : ''}</div>`,
+                `<div class="idea ${i.status ?? ''}"><h4><span>${esc(i.title)}</span>${i.statusText || i.status === 'now' ? `<span class="pill ${i.status ?? ''}">${esc(i.statusText ?? 'now')}</span>` : ''}</h4><p>${esc(i.detail)}</p>${i.keys ? `<p class="k">${esc(i.keys)}</p>` : ''}</div>`,
             )
             .join('')}</div></section>`,
       )
