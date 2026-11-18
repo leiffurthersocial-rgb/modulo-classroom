@@ -34,7 +34,9 @@ export type Action =
   | 'freecam'
   | 'brightUp'
   | 'brightDown'
-  | 'plane';
+  | 'plane'
+  | 'ideas'
+  | 'help';
 
 export interface InputFrame {
   /** Local move: x = strafe right, y = forward. */
@@ -58,6 +60,7 @@ const FIXED: Record<string, Action> = {
   Period: 'brightUp',
   Comma: 'brightDown',
   KeyH: 'work',
+  F1: 'help',
   KeyY: 'peek',
   ArrowUp: 'forward',
   ArrowDown: 'back',
@@ -81,6 +84,8 @@ class KeyboardMouse implements Controller {
   private el: HTMLElement;
   private settings: Settings;
   locked = false;
+  /** Set by the app while a normal menu is open: Tab/Space/Enter keep their browser meaning. */
+  nativeKeys = false;
   /** Set by the app: when false, clicks don't grab the pointer (menus open). */
   wantLock = true;
   private readonly lockSupported: boolean;
@@ -111,7 +116,7 @@ class KeyboardMouse implements Controller {
         (e.target as HTMLElement)?.tagName === 'SELECT'
       )
         return;
-      e.preventDefault();
+      if (!this.nativeKeys || a === 'pause') e.preventDefault();
       if (e.repeat) return;
       if (a === 'paper' && e.shiftKey) this.pressed.add('plane');
       else this.pressed.add(a);
@@ -214,18 +219,36 @@ class KeyboardMouse implements Controller {
 }
 
 const TOUCH_CSS = `
-.tc{position:fixed;inset:0;pointer-events:none;z-index:15;user-select:none;-webkit-user-select:none;touch-action:none}
+.tc{position:fixed;inset:0;pointer-events:none;z-index:15;user-select:none;-webkit-user-select:none;touch-action:none;font:calc(13px*var(--ui,1))/1.15 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:#fff}
 .tc.hidden{display:none}
 .tc-left,.tc-right{position:absolute;top:0;bottom:0;pointer-events:auto;touch-action:none}
-.tc-left{left:0;width:45%}.tc-right{right:0;width:55%}
+.tc-left{left:0;width:42%}.tc-right{right:0;width:58%}
 .tc-base,.tc-knob{position:fixed;border-radius:50%;pointer-events:none;display:none;transform:translate(-50%,-50%)}
-.tc-base{width:120px;height:120px;border:2px solid rgba(255,255,255,.45);background:rgba(255,255,255,.08)}
-.tc-knob{width:52px;height:52px;background:rgba(255,255,255,.5)}
-.tc-btns{position:absolute;right:calc(env(safe-area-inset-right,0px) + 14px);bottom:calc(env(safe-area-inset-bottom,0px) + 14px);display:grid;grid-template-columns:repeat(4,58px);gap:10px;pointer-events:none}
-.tc-top{position:absolute;right:calc(env(safe-area-inset-right,0px) + 14px);top:calc(env(safe-area-inset-top,0px) + 56px);display:flex;gap:10px;pointer-events:none}
-.tc-b{pointer-events:auto;touch-action:none;width:58px;height:58px;border-radius:29px;border:1px solid rgba(255,255,255,.55);background:rgba(20,22,26,.55);color:#fff;font:600 11px/1.1 system-ui,sans-serif;display:flex;align-items:center;justify-content:center;text-align:center;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
-.tc-b.on{background:rgba(255,255,255,.45);color:#111}
+.tc-base{width:130px;height:130px;border:2px solid rgba(255,255,255,.5);background:rgba(255,255,255,.08)}
+.tc-knob{width:56px;height:56px;background:rgba(255,255,255,.55)}
+.tc-zone{position:absolute;bottom:34%;color:rgba(255,255,255,.65);font-size:.95em;text-align:center;text-shadow:0 1px 3px #000;pointer-events:none;transition:opacity .6s}
+.tc-zone.l{left:12%}.tc-zone.r{right:22%;top:46%;bottom:auto}
+.tc.used .tc-zone{opacity:0}
+.tc-dock{position:absolute;right:calc(env(safe-area-inset-right,0px) + 12px);bottom:calc(env(safe-area-inset-bottom,0px) + 12px);display:flex;flex-direction:column;align-items:flex-end;gap:10px;pointer-events:none;max-width:calc(100vw - 24px)}
+.tc-row{display:flex;gap:10px;align-items:flex-end;justify-content:flex-end;flex-wrap:wrap;pointer-events:none}
+.tc-tray{display:none;grid-template-columns:repeat(3,minmax(78px,1fr));gap:10px;padding:10px;border-radius:18px;background:rgba(14,16,20,.7);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);pointer-events:auto}
+.tc-tray.open{display:grid}
+.tc-top{position:absolute;right:calc(env(safe-area-inset-right,0px) + 12px);top:calc(env(safe-area-inset-top,0px) + 3.2em);display:flex;gap:8px;pointer-events:none}
+.tc-b{pointer-events:auto;touch-action:none;min-width:68px;min-height:56px;padding:6px 10px;border-radius:16px;border:1px solid rgba(255,255,255,.6);background:rgba(20,22,26,.68);color:#fff;font:700 1em/1.1 system-ui,-apple-system,sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);cursor:pointer}
+.tc-b small{display:block;font-weight:500;opacity:.8;font-size:.78em;margin-top:2px}
+.tc-b.top{min-height:46px;min-width:56px;flex-direction:row;gap:6px;border-radius:23px;padding:6px 14px}
+.tc-b.use{min-width:92px;min-height:92px;border-radius:46px;background:rgba(233,196,106,.92);color:#1d1a12;border-color:#fff;font-size:1.25em}
+.tc-b.danger{border-color:#ffb86b}
+.tc-b.on{background:rgba(255,255,255,.55);color:#111}
+.tc-b.hide{display:none}
 `;
+
+export interface TouchContext {
+  deviceOut: boolean;
+  holding: boolean;
+  moreVerbs: boolean;
+  sitting: boolean;
+}
 
 class Touch implements Controller {
   private root: HTMLDivElement;
@@ -239,6 +262,9 @@ class Touch implements Controller {
   private base: HTMLDivElement;
   private knob: HTMLDivElement;
   private btns = new Map<Action, HTMLButtonElement>();
+  private tray: HTMLDivElement;
+  private toolsBtn: HTMLButtonElement;
+  private sitLabel: HTMLElement | null = null;
 
   constructor() {
     const style = document.createElement('style');
@@ -254,22 +280,43 @@ class Touch implements Controller {
     this.base.className = 'tc-base';
     this.knob = document.createElement('div');
     this.knob.className = 'tc-knob';
-    this.root.append(left, right, this.base, this.knob);
-    const grid = document.createElement('div');
-    grid.className = 'tc-btns';
+    const zl = document.createElement('div');
+    zl.className = 'tc-zone l';
+    zl.textContent = 'Drag here to walk';
+    const zr = document.createElement('div');
+    zr.className = 'tc-zone r';
+    zr.textContent = 'Drag here to look';
+    this.root.append(left, right, this.base, this.knob, zl, zr);
+
+    const dock = document.createElement('div');
+    dock.className = 'tc-dock';
+    this.tray = document.createElement('div');
+    this.tray.className = 'tc-tray';
+    const ctxRow = document.createElement('div');
+    ctxRow.className = 'tc-row';
+    const mainRow = document.createElement('div');
+    mainRow.className = 'tc-row';
     const top = document.createElement('div');
     top.className = 'tc-top';
-    const mk = (parent: HTMLElement, a: Action, label: string, hold = false) => {
+
+    const mk = (
+      parent: HTMLElement,
+      a: Action,
+      label: string,
+      opts: { hold?: boolean; cls?: string; sub?: string } = {},
+    ) => {
       const b = document.createElement('button');
-      b.className = 'tc-b';
-      b.textContent = label;
+      b.type = 'button';
+      b.className = `tc-b ${opts.cls ?? ''}`;
+      b.innerHTML = `<span>${label}</span>${opts.sub ? `<small>${opts.sub}</small>` : opts.hold ? '<small>hold</small>' : ''}`;
+      b.setAttribute('aria-label', `${label.replace(/<[^>]+>/g, '')}${opts.hold ? ' (hold)' : ''}`);
       b.addEventListener('pointerdown', (e) => {
         e.preventDefault();
         e.stopPropagation();
         this.pressed.add(a);
         this.held.add(a);
         b.classList.add('on');
-        if (!hold) setTimeout(() => b.classList.remove('on'), 120);
+        if (!opts.hold) setTimeout(() => b.classList.remove('on'), 120);
       });
       const up = (e: Event) => {
         e.preventDefault();
@@ -281,24 +328,50 @@ class Touch implements Controller {
       b.addEventListener('pointerleave', up);
       parent.appendChild(b);
       this.btns.set(a, b);
+      return b;
     };
-    mk(top, 'pause', '☰ Menu');
-    mk(top, 'notebook', 'Note-\nbook');
-    mk(top, 'raiseHand', '✋');
-    mk(grid, 'note', 'Note');
-    mk(grid, 'paper', 'Paper');
-    mk(grid, 'throw', 'Throw\n(hold)', true);
-    mk(grid, 'crouch', 'Crouch');
-    mk(grid, 'phone', 'Phone');
-    mk(grid, 'switch', 'Switch');
-    mk(grid, 'work', 'Work\n(hold)', true);
-    mk(grid, 'sit', 'Sit/\nStand');
-    mk(grid, 'content', 'Game/\nVideo');
-    mk(grid, 'earbud', '🎧');
-    mk(grid, 'peek', 'Peek\n(hold)', true);
-    mk(grid, 'interact', 'Use');
-    this.root.append(grid, top);
+    mk(top, 'pause', '☰ Menu', { cls: 'top' });
+    mk(top, 'ideas', '💡 Ideas', { cls: 'top' });
+    mk(top, 'notebook', '📓 Notebook', { cls: 'top' });
+    mk(top, 'help', '? Help', { cls: 'top' });
+    // Tools tray (everything that is not needed every second).
+    mk(this.tray, 'phone', '📱 Phone');
+    mk(this.tray, 'laptop', '💻 Laptop');
+    mk(this.tray, 'earbud', '🎧 Earbud');
+    mk(this.tray, 'paper', 'Paper ball');
+    mk(this.tray, 'plane', 'Paper plane');
+    mk(this.tray, 'crouch', 'Crouch', { sub: 'quiet' });
+    mk(this.tray, 'peek', 'Peek', { hold: true });
+    mk(this.tray, 'cheat', 'Cheat sheet', { hold: true });
+    mk(this.tray, 'raiseHand', '✋ Hand', { sub: 'raise' });
+    // Context row: only when relevant.
+    mk(ctxRow, 'switch', 'Hide screen', { cls: 'danger', sub: 'decoy notes' });
+    mk(ctxRow, 'content', 'Game / Video');
+    mk(ctxRow, 'throw', 'Throw', { hold: true });
+    mk(ctxRow, 'nextVerb', 'Next', { sub: 'option' });
+    // Main row.
+    this.toolsBtn = document.createElement('button');
+    this.toolsBtn.type = 'button';
+    this.toolsBtn.className = 'tc-b';
+    this.toolsBtn.innerHTML = '<span>Tools ▴</span>';
+    this.toolsBtn.setAttribute('aria-expanded', 'false');
+    this.toolsBtn.addEventListener('pointerdown', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const open = this.tray.classList.toggle('open');
+      this.toolsBtn.setAttribute('aria-expanded', String(open));
+      this.toolsBtn.firstElementChild!.textContent = open ? 'Tools ▾' : 'Tools ▴';
+    });
+    mainRow.appendChild(this.toolsBtn);
+    mk(mainRow, 'work', 'Work', { hold: true });
+    const sit = mk(mainRow, 'sit', 'Sit', { sub: 'your seat' });
+    this.sitLabel = sit.firstElementChild as HTMLElement;
+    mk(mainRow, 'interact', 'Use', { cls: 'use' });
+    dock.append(this.tray, ctxRow, mainRow);
+    this.root.append(dock, top);
     document.body.appendChild(this.root);
+    for (const a of ['switch', 'content', 'throw', 'nextVerb'] as Action[])
+      this.btns.get(a)?.classList.add('hide');
 
     left.addEventListener('pointerdown', (e) => {
       if (this.joy) return;
@@ -307,6 +380,7 @@ class Touch implements Controller {
       this.base.style.display = this.knob.style.display = 'block';
       this.base.style.left = this.knob.style.left = `${e.clientX}px`;
       this.base.style.top = this.knob.style.top = `${e.clientY}px`;
+      this.root.classList.add('used');
     });
     left.addEventListener('pointermove', (e) => {
       if (!this.joy || e.pointerId !== this.joy.id) return;
@@ -334,6 +408,7 @@ class Touch implements Controller {
       if (this.look) return;
       right.setPointerCapture(e.pointerId);
       this.look = { id: e.pointerId, x: e.clientX, y: e.clientY };
+      this.root.classList.add('used');
     });
     right.addEventListener('pointermove', (e) => {
       if (!this.look || e.pointerId !== this.look.id) return;
@@ -351,6 +426,15 @@ class Touch implements Controller {
 
   setVisible(v: boolean): void {
     this.root.classList.toggle('hidden', !v);
+  }
+
+  setContext(c: TouchContext): void {
+    const show = (a: Action, on: boolean) => this.btns.get(a)?.classList.toggle('hide', !on);
+    show('switch', c.deviceOut);
+    show('content', c.deviceOut);
+    show('throw', c.holding);
+    show('nextVerb', c.moreVerbs);
+    if (this.sitLabel) this.sitLabel.textContent = c.sitting ? 'Stand' : 'Sit';
   }
 
   poll(f: InputFrame): void {
@@ -400,12 +484,20 @@ export class InputManager {
     this.touch?.setVisible(want);
   }
 
-  setTouchVisible(v: boolean): void {
-    this.touch?.setVisible(
-      v &&
-        (this.settings.touchControls === 'on' ||
-          (this.settings.touchControls === 'auto' && isTouchDevice())),
+  /** True when the on-screen touch controls are in use (drives device-specific copy). */
+  get touchActive(): boolean {
+    return (
+      this.settings.touchControls === 'on' ||
+      (this.settings.touchControls === 'auto' && isTouchDevice())
     );
+  }
+
+  setTouchContext(c: TouchContext): void {
+    this.touch?.setContext(c);
+  }
+
+  setTouchVisible(v: boolean): void {
+    this.touch?.setVisible(v && this.touchActive);
   }
 
   poll(): InputFrame {

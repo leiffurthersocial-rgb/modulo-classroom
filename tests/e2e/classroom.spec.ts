@@ -14,7 +14,7 @@ const SHOTS: [string, string][] = [
   ['seat', 'lesson=lecture&t=40&bot=angel'],
   ['overview', 'lesson=lecture&t=90&bot=prankster&debug=1'],
   ['seat', 'lesson=film&t=60&bot=sneaky&device=phone&hud=1'],
-  ['front', 'lesson=group&t=30&bot=postman'],
+  ['front', 'lesson=group&t=30&bot=sneaky'],
   ['top', 'lesson=lecture&t=120&bot=chaos&debug=1'],
 ];
 for (const [cam, extra] of SHOTS) {
@@ -53,9 +53,9 @@ test('classroom interactive: title → class → phone → decoy → stand/walk'
   test.skip(info.project.name === 'ipad-keyboard', 'covered by desktop + ipad-touch');
   const errors = collectErrors(page);
   await page.goto('/?test=1');
-  await page.waitForSelector('text=Enter class');
+  await page.waitForSelector('text=Start lesson');
   await page.screenshot({ path: `screenshots/latest/classroom-title-${info.project.name}.png` });
-  await page.click('text=Enter class');
+  await page.click('text=Start lesson');
   await page.waitForFunction(() => {
     const g = (window as unknown as { __game?: { world?: { tick: number } } }).__game;
     return !!g?.world && g.world.tick > 10;

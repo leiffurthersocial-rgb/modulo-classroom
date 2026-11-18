@@ -17,7 +17,7 @@ import { loadRecord, saveRecord, hasSave, clearSave } from './save/save';
 import { Bot, type BotStyle } from './sim/bots';
 import { SimClock, TICK_DT } from './sim/clock';
 import { CAST, CHALLENGES, LESSONS, NOTES, PLAYABLE_LESSON_TYPES, TEACHERS } from './sim/data';
-import { dist2, yawDir } from './sim/geom';
+import { dist2, wrapAngle, yawDir, yawTo } from './sim/geom';
 import { EYE_HEIGHT } from './sim/perception';
 import { interactables } from './sim/player';
 import {
@@ -32,7 +32,16 @@ import {
 import { hashString, parseSeed, Rng } from './sim/rng';
 import { idleCommand, type PlayerCommand, type SimEvent } from './sim/types';
 import { type Interactable, World } from './sim/world';
-import { esc, UI } from './ui/ui';
+import {
+  buildIdeas,
+  controlRows,
+  type Device,
+  ghostPranks,
+  makeKeyLabels,
+  type KeyLabels,
+} from './ui/content';
+import { NOTES_ENABLED, visibleChallenges } from './ui/flags';
+import { esc, type HudChip, UI } from './ui/ui';
 import {
   FrameWatch,
   loadSettings,
@@ -61,6 +70,8 @@ export interface ShotOptions {
 }
 
 type Mode = 'title' | 'play' | 'menu' | 'summary';
+/** Menus that the key which opened them also closes. */
+type QuickMenu = 'ideas' | 'help';
 
 const SOUND_FOR_NOISE: Record<string, SoundKind> = {
   chair: 'chair',
@@ -97,6 +108,9 @@ export class ClassroomApp {
   device = new DeviceView();
   private clock = new SimClock();
   private mode: Mode = 'title';
+  private quickMenu: QuickMenu | null = null;
+  private gazeLevel = 0;
+  private lastHudT = 0;
   private yaw = 0;
   private pitch = -0.08;
   private lean = 0;
@@ -116,6 +130,8 @@ export class ClassroomApp {
   private shot: ShotOptions | null;
   private shotFrames = 0;
   private bot: Bot | null = null;
+  /** ?lesson=&teacher=&seed= from a shared link; pre-fills the title screen once. */
+  private sharedLink: URLSearchParams | null = null;
   private lessonCfg = { lesson: 'random', teacher: 'random', seed: '1', cheatSheet: false };
   private hidden = false;
   private footCueT = 0;
@@ -138,6 +154,9 @@ export class ClassroomApp {
     this.shot = shot;
     this.bench = bench;
     this.settings = loadSettings();
+    const link = new URLSearchParams(location.search);
+    if (!shot && !bench && (link.has('seed') || link.has('lesson') || link.has('teacher')))
+      this.sharedLink = link;
     const presetOverride = shot?.preset ?? bench?.preset;
     if (presetOverride && presetOverride in PRESETS)
       this.settings.preset = presetOverride as Settings['preset'];
@@ -237,11 +256,25 @@ export class ClassroomApp {
         { lesson: 'lecture', teacher: 'strict', seed: '1', cheatSheet: false },
         true,
       );
+    const shared = this.sharedLink;
+    this.sharedLink = null;
     this.ui.title({
       record: this.record,
       hasSave: hasSave(),
       detention: this.record.detentionPending,
-      seed: String(parseSeed(this.lessonCfg.seed) + 1),
+      seed: shared?.has('seed')
+        ? String(shared.get('seed'))
+        : String(parseSeed(this.lessonCfg.seed) + 1),
+      prefill: shared
+        ? { lesson: shared.get('lesson') ?? undefined, teacher: shared.get('teacher') ?? undefined }
+        : undefined,
+      controls: controlRows(this.deviceKind(), this.keys()).slice(0, 7),
+      onControls: () =>
+        this.ui.controls(
+          () => this.showTitle(),
+          (d) => this.controlRows(d),
+          this.deviceKind(),
+        ),
       onStart: (cfg) => {
         void this.audio.unlock();
         this.record.wishlist.active = cfg.wishlist;
@@ -252,13 +285,26 @@ export class ClassroomApp {
         this.record = newRecord();
         this.showTitle();
       },
-      onSettings: () =>
-        this.ui.settings(
-          this.settings,
-          (s) => this.onSettings(s),
-          () => this.showTitle(),
-        ),
+      onSettings: () => this.openSettings(() => this.showTitle()),
       onCredits: () => this.ui.credits(() => this.showTitle()),
+    });
+  }
+
+  private deviceKind(): Device {
+    return this.input.touchActive ? 'touch' : 'keyboard';
+  }
+
+  private keys(): KeyLabels {
+    return makeKeyLabels(this.settings.bindings, this.deviceKind());
+  }
+
+  private controlRows(d: Device): [string, string][] {
+    return controlRows(d, makeKeyLabels(this.settings.bindings, d));
+  }
+
+  private openSettings(back: () => void): void {
+    this.ui.settings(this.settings, (s) => this.onSettings(s), back, {
+      onResetHints: () => this.ui.resetHints(),
     });
   }
 
@@ -357,7 +403,10 @@ export class ClassroomApp {
     this.camera.fov = this.settings.fov;
     this.camera.updateProjectionMatrix();
     this.ui.setScale(this.settings.uiScale);
+    this.ui.setReducedMotion(this.settings.reducedMotion);
     this.ui.subtitlesOn = this.settings.subtitles;
+    this.ui.hintsOn = this.settings.showHints && !this.shot && !this.bench;
+    this.ui.touch = this.input.touchActive;
     this.audio.setVolume(this.settings.volume);
     this.input.applySettings(this.settings);
     this.resize();
@@ -414,6 +463,7 @@ export class ClassroomApp {
       return;
     }
 
+    this.input.km.nativeKeys = this.ui.menuOpen && !this.quickMenu;
     const f = this.input.poll();
     this.handleGlobalInput(f.pressed);
     if (this.mode === 'play') {
@@ -531,9 +581,25 @@ export class ClassroomApp {
       if (this.mode === 'play') this.openPause();
       else if (this.mode === 'menu') this.resumePlay();
     }
+    // Ideas / Help: the same key opens and closes them.
+    for (const q of ['ideas', 'help'] as const) {
+      if (!pressed.has(q)) continue;
+      if (this.mode === 'play' && this.world) this.openQuickMenu(q);
+      else if (this.mode === 'menu' && this.quickMenu === q) this.resumePlay();
+    }
+  }
+
+  private openQuickMenu(q: QuickMenu): void {
+    this.openMenu();
+    this.quickMenu = q;
+    const close = () => this.resumePlay();
+    if (q === 'ideas')
+      this.ui.ideas(buildIdeas(this.world!, this.keys(), this.deviceKind()), close);
+    else this.ui.controls(close, (d) => this.controlRows(d), this.deviceKind());
   }
 
   private resumePlay(): void {
+    this.quickMenu = null;
     this.ui.closeMenu();
     this.mode = 'play';
     this.lastFrame = 0;
@@ -543,6 +609,7 @@ export class ClassroomApp {
 
   private openMenu(): void {
     this.mode = 'menu';
+    this.quickMenu = null;
     this.input.km.unlock();
     this.audio.suspend();
     this.input.setTouchVisible(false);
@@ -557,18 +624,22 @@ export class ClassroomApp {
     url.searchParams.set('teacher', w.profile.id);
     url.searchParams.set('seed', String(w.seed));
     const wl = this.wishlistHtml();
+    const left = Math.max(0, Math.ceil(w.lesson.totalMinutes - w.clockMinutes()));
     this.ui.pause({
+      summary: `${LESSONS.types[w.lessonType]!.label} with ${w.profile.name}${w.profile.name.toLowerCase().includes(w.profile.label.toLowerCase()) ? '' : ` (${w.profile.label})`} · ${left} min left. The lesson is paused.`,
       seedLink: url.toString(),
       wishlist: wl,
       onResume: () => this.resumePlay(),
+      onIdeas: () =>
+        this.ui.ideas(buildIdeas(w, this.keys(), this.deviceKind()), () => this.openPause()),
       onNotebook: () => this.ui.notebook(this.record, this.debug, () => this.openPause()),
-      onSettings: () =>
-        this.ui.settings(
-          this.settings,
-          (s) => this.onSettings(s),
+      onSettings: () => this.openSettings(() => this.openPause()),
+      onControls: () =>
+        this.ui.controls(
           () => this.openPause(),
+          (d) => this.controlRows(d),
+          this.deviceKind(),
         ),
-      onControls: () => this.ui.controls(() => this.openPause()),
       onCredits: () => this.ui.credits(() => this.openPause()),
       onEnd: () => {
         saveRecord(this.record);
@@ -579,11 +650,11 @@ export class ClassroomApp {
 
   private wishlistHtml(): string {
     const act = this.record.wishlist.active;
-    if (!act.length)
-      return '<p class="sub2">No wishes picked. (Choose some on the title screen.)</p>';
+    const shown = visibleChallenges();
+    if (!act.length) return '';
     return act
       .map((id) => {
-        const c = CHALLENGES.find((x) => x.id === id);
+        const c = shown.find((x) => x.id === id);
         if (!c) return '';
         const v = this.counter(c.counter);
         return `<div class="row"><span style="flex:1">${esc(c.text)}</span><b>${Math.min(v, c.goal).toFixed(0)}/${c.goal}${v >= c.goal ? ' ✓' : ''}</b></div>`;
@@ -661,7 +732,7 @@ export class ClassroomApp {
         this.throwCharge = null;
       }
     }
-    if (pr.has('note')) {
+    if (NOTES_ENABLED && pr.has('note')) {
       if (!p.sittingIn) this.ui.toast('Sit down to pass a note.');
       else {
         this.openMenu();
@@ -842,51 +913,130 @@ export class ClassroomApp {
   private updateHud(): void {
     const w = this.world!;
     const ps = w.ps;
+    const k = this.keys();
     const mins = 8 * 60 + w.clockMinutes();
     const clock = `${String(Math.floor(mins / 60)).padStart(2, '0')}:${String(Math.floor(mins % 60)).padStart(2, '0')}`;
-    const chips: string[] = [];
+    const chips: HudChip[] = [];
     const d = ps.device;
-    if (ps.phoneConfiscated) chips.push('📵 Phone confiscated');
-    if (d.kind)
-      chips.push(
-        `${d.kind === 'phone' ? '📱' : '💻'} ${d.mode === 'decoy' ? 'Notes (decoy)' : d.mode === 'game' ? `Block Drop · ${this.device.game.score}` : 'Video'}${d.earbud ? ' · 🎧' : ''} · ☀ ${Math.round(d.brightness * 100)}%`,
-      );
+    if (ps.phoneConfiscated) chips.push({ text: 'Your phone is on the teacher’s desk' });
+    if (d.kind) {
+      const what =
+        d.mode === 'decoy'
+          ? 'showing the decoy notes'
+          : d.mode === 'game'
+            ? `playing Block Drop (score ${this.device.game.score})`
+            : 'watching a video';
+      chips.push({
+        text: `${d.kind === 'phone' ? 'Phone' : 'Laptop'}: ${what}${d.earbud ? ', earbud in' : ''}, brightness ${Math.round(d.brightness * 100)}%`,
+      });
+    }
     const held = w.items.find((i) => i.id === w.player.holding);
     if (held)
-      chips.push(
-        `✋ ${held.kind === 'paper-ball' ? 'Paper ball' : held.kind === 'paper-plane' ? 'Paper plane' : held.kind} (hold T to throw)`,
-      );
+      chips.push({
+        text: `Holding a ${held.kind === 'paper-ball' ? 'paper ball' : held.kind === 'paper-plane' ? 'paper plane' : held.kind}. Hold ${k('throw')} to throw`,
+      });
     if (ps.cover && w.t < ps.cover.until)
-      chips.push(`🛈 Cover: ${ps.cover.reason} (${Math.ceil(ps.cover.until - w.t)} s)`);
+      chips.push({
+        text: `Good excuse: ${ps.cover.reason} (${Math.ceil(ps.cover.until - w.t)} s)`,
+      });
     if (ps.action)
-      chips.push(
-        `⏳ ${ps.action.kind === 'prank' ? 'Setting up prank' : ps.action.kind}… ${Math.round((ps.action.t / ps.action.dur) * 100)}%`,
-      );
-    if (ps.working) chips.push('✎ Working');
-    if (ps.peeking) chips.push(`👀 Peeking at ${w.agent(ps.peeking)?.name}`);
-    if (ps.handRaised) chips.push('✋ Hand raised');
-    if (!w.player.sittingIn && !w.rules().break && !w.rules().seatFree)
-      chips.push('⚠ Out of your seat');
-    if (w.player.sittingIn && w.player.sittingIn !== w.player.seat && w.player.seat === 's-front')
-      chips.push('⚠ Your seat is now the front seat');
-    const t = this.target;
-    let prompt = null;
-    if (t) {
-      const v = t.verbs[((this.verbIndex % t.verbs.length) + t.verbs.length) % t.verbs.length]!;
-      prompt = { label: v.label, risk: v.risk, more: t.verbs.length, key: 'E' };
-    }
+      chips.push({
+        text: ps.action.kind === 'prank' ? 'Setting up a prank…' : `${ps.action.kind}…`,
+        bar: ps.action.t / ps.action.dur,
+      });
+    if (ps.working) chips.push({ text: 'Working (lowers suspicion)' });
+    if (ps.peeking)
+      chips.push({ text: `Peeking at ${w.agent(ps.peeking)?.name}’s test`, warn: true });
+    if (ps.handRaised) chips.push({ text: 'Hand raised' });
     const r = w.rules();
+    if (!w.player.sittingIn && !r.break && !r.seatFree)
+      chips.push({ text: 'Out of your seat: suspicious without a reason', warn: true });
+    if (w.player.sittingIn && w.player.sittingIn !== w.player.seat && w.player.seat === 's-front')
+      chips.push({ text: 'Your seat is now the front seat' });
+    if (r.test) chips.push({ text: 'Test answered', bar: ps.test.progress });
+
+    const t = this.target;
+    let prompt: Parameters<UI['update']>[0]['prompt'] = null;
+    if (t) {
+      const n = t.verbs.length;
+      const v = t.verbs[((this.verbIndex % n) + n) % n]!;
+      prompt = {
+        key: this.isTouch() ? 'Use' : k('interact'),
+        label: v.label,
+        target: t.label,
+        risk: v.risk,
+        more: n,
+        nextKey: k('nextVerb'),
+        ghosts: ghostPranks(w, t).slice(0, 2),
+      };
+    }
+    const sitting = !!w.player.sittingIn;
+    this.input.setTouchContext({
+      deviceOut: !!d.kind,
+      holding: !!held,
+      moreVerbs: !!t && t.verbs.length > 1,
+      sitting,
+    });
+
+    // Teacher gaze: something you could see in the room, never a meter.
+    const T = w.teacher;
+    const b = w.brain;
+    const away = !T.present || b.state === 'away' || b.state === 'leave' || b.distracted;
+    const strong =
+      !away && (b.state === 'watch' || b.state === 'confront') && b.target === 'player';
+    const toPlayer = Math.abs(wrapAngle(yawTo(T.pos, w.player.pos) - T.headYaw));
+    const looking = !away && (strong || (toPlayer < 0.32 && dist2(T.pos, w.player.pos) < 10));
+    const now = performance.now();
+    const dtH = this.lastHudT ? Math.min(0.2, (now - this.lastHudT) / 1000) : 0.016;
+    this.lastHudT = now;
+    // Quick to appear, slow to fade, so it does not flicker.
+    this.gazeLevel = looking
+      ? Math.min(1, this.gazeLevel + dtH * 3)
+      : Math.max(0, this.gazeLevel - dtH * 0.9);
+
+    const left = w.lesson.totalMinutes - w.clockMinutes();
     this.ui.update({
       clock,
-      phase: w.phase().label,
       lesson: LESSONS.types[w.lessonType]!.label,
+      phase: w.phase().label,
+      minutesLeft: left,
+      progress: Math.max(0, Math.min(1, w.clockMinutes() / w.lesson.totalMinutes)),
       teacher: w.profile.name,
+      teacherLabel: w.profile.name.toLowerCase().includes(w.profile.label.toLowerCase())
+        ? ''
+        : w.profile.label,
       prompt,
       chips,
-      test: r.test ? ps.test.progress : null,
       charge: this.throwCharge,
       showCross: !this.shot,
+      gaze: { level: this.gazeLevel, strong, name: w.profile.name },
+      strikes: Math.min(3, this.record.strikes),
+      keyHints: this.isTouch()
+        ? ''
+        : `<kbd>${esc(k('ideas'))}</kbd> Ideas · <kbd>${esc(k('help'))}</kbd> Controls · <kbd>Esc</kbd> Menu`,
     });
+    if (!this.shot && this.mode === 'play') this.maybeHint(w, k, !!t, !!d.kind, strong);
+  }
+
+  private isTouch(): boolean {
+    return this.input.touchActive;
+  }
+
+  /** First-lesson tips, one at a time, each shown once ever. */
+  private maybeHint(
+    w: World,
+    k: KeyLabels,
+    hasPrompt: boolean,
+    deviceOut: boolean,
+    watched: boolean,
+  ): void {
+    const ui = this.ui;
+    if (this.gazeLevel > 0.6 && deviceOut && ui.tryHint('gaze', k)) return;
+    if (watched && ui.tryHint('gaze', k)) return;
+    if (deviceOut && ui.tryHint('device', k)) return;
+    if (w.t > 2 && ui.tryHint('look', k)) return;
+    if (hasPrompt && ui.tryHint('prompt', k)) return;
+    if (w.t > 40) ui.tryHint('ideas', k);
   }
 
   private updateAudio(): void {
@@ -985,27 +1135,28 @@ export class ClassroomApp {
         if (e.text) this.ui.toast(e.text);
         break;
       case 'cover':
-        this.ui.toast(`Cover: ${e.kind} (${e.value} s)`);
+        this.ui.toast(`Good excuse: ${e.kind} (${e.value} s)`);
         break;
       case 'note-sent':
-        if (e.who === 'player')
+        if (NOTES_ENABLED && e.who === 'player')
           this.ui.toast(`Note on its way to ${w.agent(e.target ?? '')?.name}…`);
         break;
       case 'note-delivered':
-        if (e.who === 'player')
+        if (NOTES_ENABLED && e.who === 'player')
           this.ui.toast(`✉ Note delivered to ${w.agent(e.target ?? '')?.name}.`);
         break;
       case 'note-lost':
-        this.ui.toast('A note got stuck somewhere along the chain.');
+        if (NOTES_ENABLED) this.ui.toast('A note got stuck somewhere along the chain.');
         break;
       case 'note-intercepted':
-        this.ui.toast(`The teacher took a note (${e.text}).`);
+        if (NOTES_ENABLED) this.ui.toast(`The teacher took a note (${e.text}).`);
         break;
       case 'note-received':
-        this.ui.toast(
-          `✉ From ${w.agent(e.who ?? '')?.name}: “${NOTES.find((n) => n.id === e.kind)?.text ?? ''}”`,
-          4500,
-        );
+        if (NOTES_ENABLED)
+          this.ui.toast(
+            `✉ From ${w.agent(e.who ?? '')?.name}: “${NOTES.find((n) => n.id === e.kind)?.text ?? ''}”`,
+            4500,
+          );
         break;
       case 'phase':
         this.ui.showBanner(e.text ?? '');
@@ -1108,8 +1259,8 @@ export class ClassroomApp {
         <span>Real work done</span><b>${Math.round(st.workSeconds)} s</b>
         <span>Block Drop best</span><b>${st.bestScore}</b>
         <span>Video watched</span><b>${Math.round(st.videoSeconds)} s</b>
-        <span>Notes delivered</span><b>${st.notesDelivered.length}</b>
-        <span>Pranks</span><b>${st.pranks.filter((p) => p.clean).length} clean / ${st.pranks.length}</b>
+        ${NOTES_ENABLED ? `<span>Notes delivered</span><b>${st.notesDelivered.length}</b>` : ''}
+        <span>Pranks pulled</span><b>${st.pranks.length} (${st.pranks.filter((p) => p.clean).length} unnoticed)</b>
         <span>Unnoticed time out of seat</span><b>${Math.round(st.sneakSeconds)} s</b>
         ${st.testScore !== null ? `<span>Test</span><b>${st.testScore}% (${letter(st.testScore)})${st.cheated ? ' · copied' : ''}</b>` : ''}
         <span>Strikes on record</span><b>${r.strikes}</b>
