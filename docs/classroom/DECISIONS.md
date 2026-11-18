@@ -176,3 +176,33 @@ Format: **what**, **why**, **alternatives rejected**. IDs use the prefix `C-` to
 
 - concrete Concrete034 · plaster Plaster002 · carpet Fabric029 (tinted warm brown, the closest to the dark needle felt) · ceiling Wood092 · table Plastic013A · plywood okoume_veneer (tinted) · metal Metal009 · tile Tiles139 (10 cm squares) · door Plastic007. Chosen from contact sheets and in-room screenshots against the reference photos.
 - Known cost: the Poly Haven book set stays at ~20k triangles after simplification (many tiny separate meshes). It is one prop; swap it in materials.json if the iPad bench shows it.
+
+### C-035: Original models made in headless Blender (furniture + characters)
+
+- **What**: `tools/blender/furniture.py` and `tools/blender/characters.py` generate every furniture item and every character procedurally (deterministic scripts, GLBs in `public/models/`). Furniture: one GLB, nodes per item, `pbr:<slot>` material names for the triplanar PBR swap, ~63k tris in the room after instancing; chairs/tables are InstancedMeshes. Characters: one shared 19-bone rig, 12 bodies (students + adult teachers), 9 hair meshes, glasses, 21 clips (seated write/type/phone/yawn/cough/look/whisper/raise hand, teacher board/point/type/hands-on-hips, walk, talk …), ≤10k tris each, recoloured per character. Boxes/capsules remain the fallback (`?models=0`, `?chars=0`).
+- **Why**: You asked for real 3D models, made ourselves where nothing usable is found. Poly Haven has no matching school furniture/radiator/backpacks; Quaternius/Kenney need manual browser downloads; our own models match the reference proportions and the sim's occluders exactly, and need no licence entries.
+- **Rejected**: generic Poly Haven chairs/desks (wrong style), Quaternius characters (no scripted download; would also need retargeting to our clips).
+- **Notes**: Blender's bundled Python here lacks numpy, so the character script writes the GLB itself and the furniture script documents a `PYTHONPATH` numpy workaround. Seated characters slide up to 0.15 m toward their table when a seat is farther than the clips assume.
+
+### C-036: Lighting moods, procedural window view, post per preset
+
+- **What**: `render/lighting.ts` moods overcast / noon / dim (film + presentation lessons → dim; others by seed; `?mood=` overrides), presentation-only. `render/windows.ts` draws the outdoors (sky, clouds, tree line, skyline, lawn with parallax) so the windows never depend on the HDRI. `render/atmosphere.ts` sun shafts (noon, High/Ultra) and dust motes. `render/post.ts`: High/Ultra GTAO + bloom + SMAA, Medium SMAA, Low/Battery plain render (tone mapping only, as the brief asks). `render/posters.ts`: four original canvas posters.
+- **Rejected**: n8ao/postprocessing packages (Places needed a patch for three 0.187; three's own passes suffice).
+
+### C-037: Note passing switched off behind a data flag
+
+- **What**: `data/features.json` `{ "notes": false }`; the sim ignores note commands and classmates never start/pass notes; the UI reads the same flag (`ui/flags.ts`) and hides keys, buttons, hints and the note goal. The code and its tests stay (tests enable the flag).
+- **Why**: Your request ("remove notes for now"). **Rejected**: deleting the code.
+
+### C-038: Eleven more harmless pranks; snitching and the ladder retuned
+
+- **What**: rubber duck under the doc camera, dried-out marker, "out of order" sign, sticky-note mosaic, chairs facing the back (break), remote hidden in the plant, birdsong alarm in the bin, paper-cup pyramid, clock on holiday time, posters upside down, ghost smiley on the board. Each is data-driven (setup evidence, risk window, delayed effect, teacher task = cover, witness opinions, combos with film/presentation days, patience fallback so every prank surfaces). Snitch chance scales with trait, affinity, distance and prank opinion (friends and fans never tell); reports now survive the ≥1 s telegraph (fairness fix: they used to be lost). Ladder: at most 2 strikes per lesson, call home resets to 1, two calm lessons heal a strike.
+- **Result** (500 lessons): prankster clean pranks 67% → 83%, call homes per 6 lessons 2.9 → 0.1; "Balance flags: none". Part of the gain is a bot fix (the prankster bot used to wedge into seated classmates).
+
+### C-039: UI that explains itself
+
+- **What**: title with how-to-play + device-matched controls + one-line lesson/teacher blurbs; HUD with time left, phase, teacher and strike pips; a gaze cue ("X is looking your way", edge tint) from the teacher's visible head direction only (never suspicion numbers; ~18°/10 m, slow fade); prompts with verb, target, risk and "not now: only during break"; Ideas panel (Tab, pranks read from data), controls overlay (?/F1), once-only tips, grouped settings, labelled ≥56 px touch buttons. H stays "work", so help is ?/F1. Ideas/help pause the game.
+
+### C-040: GitHub Pages deploy
+
+- **What**: `.github/workflows/pages.yml` builds with `BASE_PATH=/modulo-classroom/` and deploys on every push; all runtime asset URLs resolve against `import.meta.env.BASE_URL`. GitHub refuses to _enable_ Pages from a workflow token ("Resource not accessible by integration"), so it needs one setting from you (Settings → Pages → Source: GitHub Actions). Vercel remains possible (import the repo in Vercel).

@@ -3,11 +3,13 @@
 Status (2026-11-18): **you said "continue, finish as far as you can"**, so I used the recommended defaults for the open questions (same repo, photos stay local, English UI with data-driven strings, 10 fictional classmates, ~10-minute lessons).
 
 **Done:** Phase 1 (greybox vertical slice), Phase 2 (greybox depth), Phase 3 (quality presets, Battery Saver, benchmark; **not measured on real devices yet**). Classroom moved to its own repo (C-027).
-**Phase 4 (in progress):** done: asset pipeline (fetch/process, KTX2 512/1k/2k + ORM), `/lab` with 101 verified CC0 candidates, default picks wired into the greybox as triplanar PBR (C-028…C-034), overcast HDRI reflections, decor models, licence gate + in-game credits. Open: audio/video and Sketchfab (need your API keys), Kenney/Quaternius (manual download, see docs/classroom/ASSETS.md), lighting moods, decals/posters, dust motes, baked AO/light probes.
-**Not started:** Phase 5 (characters), Phase 6 (tutorial lesson, polish).
+**Phase 4 (mostly done):** PBR materials + /lab, HDRI, licence gate (C-028…C-034); original Blender furniture (C-035); lighting moods, window view, post per preset, posters (C-036). Open: audio/video and Sketchfab (API keys), Kenney/Quaternius (manual), baked AO/light probes, decals.
+**Phase 5 (first pass done):** original rigged characters with 21 clips (C-035). Open: fingers/faces, more clip variety, your fixed classmates.
+**Gameplay/UI pass:** notes off (C-037), 11 new pranks + retune (C-038), UI overhaul (C-039). Deploy: GitHub Pages workflow (C-040).
+**Not started:** Phase 6 tutorial lesson.
 See §9 for the delivered feature list and §10 for next steps.
 
-Docs: `ENVIRONMENT.md`, `SETUP.md`, `RESEARCH.md` (sources + recommended architecture + risks) and `DECISIONS.md` (C-001…C-034), all in `docs/classroom/`.
+Docs: `ENVIRONMENT.md`, `SETUP.md`, `RESEARCH.md` (sources + recommended architecture + risks) and `DECISIONS.md` (C-001…C-040), all in `docs/classroom/`.
 
 ---
 

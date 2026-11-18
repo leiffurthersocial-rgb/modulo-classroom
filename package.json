@@ -18,7 +18,9 @@
     "balance": "tsx scripts/classroom-balance.ts",
     "postinstall": "node scripts/copy-vendor.mjs",
     "assets:fetch": "NODE_USE_ENV_PROXY=1 NODE_NO_WARNINGS=1 tsx scripts/fetch-assets.ts",
-    "assets:process": "NODE_USE_ENV_PROXY=1 NODE_NO_WARNINGS=1 tsx scripts/process-assets.ts"
+    "assets:process": "NODE_USE_ENV_PROXY=1 NODE_NO_WARNINGS=1 tsx scripts/process-assets.ts",
+    "models:furniture": "blender -b --factory-startup -P tools/blender/furniture.py -- --out public/models/furniture",
+    "models:characters": "blender -b --factory-startup -P tools/blender/characters.py -- --out public/models/characters"
   },
   "dependencies": {
     "three": "^0.187.0"
