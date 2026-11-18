@@ -167,7 +167,8 @@ export class RoomView {
       new THREE.PlaneGeometry(3.2, 1.8),
       new THREE.MeshBasicMaterial({ map: this.screenTex, toneMapped: false }),
     );
-    this.screen.position.set(4.5, 1.55, 0.08);
+    const bx = layout.fixtures.find((f) => f.kind === 'whiteboard')?.center[0] ?? W / 2;
+    this.screen.position.set(bx, 1.55, 0.08);
     this.screen.visible = false;
     const beamGeo = new THREE.ConeGeometry(1.0, 3.1, 4, 1, true);
     beamGeo.rotateX(Math.PI / 2);
@@ -183,8 +184,8 @@ export class RoomView {
         side: THREE.DoubleSide,
       }),
     );
-    this.beam.position.set(4.5, 2.0, 1.6);
-    this.beam.lookAt(4.5, 1.5, 0.1);
+    this.beam.position.set(bx, 2.0, 1.6);
+    this.beam.lookAt(bx, 1.5, 0.1);
     this.beam.rotateX(Math.PI);
     this.beam.visible = false;
     this.scene.add(this.screen, this.beam);

@@ -222,6 +222,7 @@ export function buildGreybox(layout: RoomLayout, furniture?: FurnitureLib | null
   const ceil = new THREE.Mesh(new THREE.PlaneGeometry(W, D), mat(C.ceilingGap));
   ceil.rotation.x = Math.PI / 2;
   ceil.position.set(W / 2, H + 0.04, D / 2);
+  ceil.name = 'ceiling';
   root.add(ceil);
   const slatPitch = 0.1;
   const slatCount = Math.floor(D / slatPitch);
@@ -234,6 +235,7 @@ export function buildGreybox(layout: RoomLayout, furniture?: FurnitureLib | null
   for (let i = 0; i < slatCount; i++) {
     slats.setMatrixAt(i, m4.makeTranslation(W / 2, H + 0.01, slatPitch * (i + 0.5)));
   }
+  slats.name = 'ceiling-slats';
   root.add(slats);
   // Exposed concrete beam across the ceiling (as in the reference).
   const beam = box(W, 0.35, 0.4, concreteMat);
@@ -566,10 +568,17 @@ export function buildGreybox(layout: RoomLayout, furniture?: FurnitureLib | null
       o.name = `decor-${name}`;
       root.add(o);
     };
-    place('drawers', W, 5.8, rotWindow);
-    place('storagebox', W - 0.24, 4.45, Math.PI / 2);
-    place('fan', W - 0.42, 5.2, Math.PI / 2);
-    place('cabinet', 7.6, 0, 0);
+    // Positions are derived from the layout so a resized room keeps the dressing in the right
+    // bays: drawers and the storage box sit under window-b, the fan in the front-right corner
+    // (kept out of the aisle behind the right row), the cabinet right of the board.
+    const bay = layout.openings.find((o) => o.id === 'window-b');
+    const bayC = bay ? bay.offset + bay.width / 2 : layout.room.size[2] * 0.6;
+    const board = layout.fixtures.find((f) => f.kind === 'whiteboard');
+    const cabX = board ? board.center[0] + board.size[0] / 2 + 0.9 : W * 0.75;
+    place('drawers', W, bayC + 0.55, rotWindow);
+    place('storagebox', W - 0.2, bayC - 0.8, Math.PI / 2);
+    place('fan', W - 0.5, 1.0, Math.PI / 2);
+    place('cabinet', cabX, 0, 0);
   }
 
   // Original backpacks beside every second seat (the CC0 decor pack fills the others, see decor.ts).

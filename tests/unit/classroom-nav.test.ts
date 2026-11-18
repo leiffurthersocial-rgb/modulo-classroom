@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import type { Box, V2 } from '../../src/classroom/sim/geom';
+import { type Box, resolveCircleBox, type V2 } from '../../src/classroom/sim/geom';
+import { PLAYER_RADIUS } from '../../src/classroom/sim/player';
 import { World } from '../../src/classroom/sim/world';
 
 const w = new World({ seed: 1, lessonType: 'lecture', teacher: 'strict' });
@@ -42,8 +43,8 @@ describe('NavGrid on the real classroom', () => {
     }
   });
   it('tables are blocked, open floor is walkable', () => {
-    expect(nav.walkable({ x: 4.55, z: 5.65 })).toBe(false);
-    expect(nav.walkable({ x: 4.5, z: 3.6 })).toBe(true);
+    expect(nav.walkable({ x: 5.425, z: 6.925 })).toBe(false); // table t-b4
+    expect(nav.walkable({ x: 5.5, z: 4.2 })).toBe(true);
     expect(nav.walkable({ x: -1, z: 3 })).toBe(false);
   });
 });
@@ -102,5 +103,67 @@ describe('NavGrid dynamic obstacles', () => {
     expect(len(g.findPath(a, b))).toBeGreaterThan(base + 0.5);
     g.setDynamic('block', null);
     expect(len(g.findPath(a, b))).toBeCloseTo(base, 3);
+  });
+});
+
+describe('aisle behind the right row', () => {
+  const L = w.layout;
+  const [W, , D] = L.room.size;
+  const LEDGE_DEPTH = 0.28; // sill ledge (tools/blender/furniture.py make_radiator)
+  const CHAIR_BACK = 0.25; // chair centre -> backrest, pushed out
+  const rightSeats = L.seats.filter((s) => s.id.startsWith('s-r'));
+
+  it('the room is the bigger classroom with 16 student seats plus the player and the hot seat', () => {
+    expect(W).toBeGreaterThanOrEqual(10.5);
+    expect(D).toBeGreaterThanOrEqual(8);
+    const normal = L.seats.filter((s) => !s.hot);
+    expect(normal.length).toBe(17); // 16 classmates + the player's seat
+    expect(L.seats.filter((s) => s.hot).length).toBe(1);
+    expect(rightSeats.length).toBe(5);
+  });
+
+  it('keeps at least 0.9 m between the right-row chair backs and the sill ledge', () => {
+    for (const s of rightSeats) {
+      const gap = W - LEDGE_DEPTH - (s.pos[0] + CHAIR_BACK);
+      expect(gap, s.id).toBeGreaterThanOrEqual(0.9);
+    }
+    // Nothing else sticks out of the window wall into the aisle further than the ledge.
+    for (const c of L.columns)
+      expect(W - (c.center[0] - c.size[0] / 2)).toBeLessThanOrEqual(0.3 + 1e-9);
+  });
+
+  it('has a nav path along the aisle from the front-right to the back-right corner', () => {
+    const a = { x: L.spots!.aisleFront![0], z: L.spots!.aisleFront![1] };
+    const b = { x: L.spots!.aisleBack![0], z: L.spots!.aisleBack![1] };
+    expect(b.z).toBeGreaterThan(rightSeats.at(-1)!.pos[1] + 1.5);
+    const path = nav.findPath(a, b);
+    expect(path).not.toBeNull();
+    // The whole route stays behind the right row (past the chair backs) and in the corridor.
+    const minX = Math.min(...rightSeats.map((s) => s.pos[0])) + CHAIR_BACK;
+    let prev = a;
+    for (const q of path!) {
+      const n = Math.ceil(Math.hypot(q.x - prev.x, q.z - prev.z) / 0.05);
+      for (let i = 0; i <= n; i++) {
+        const t = n ? i / n : 1;
+        const x = prev.x + (q.x - prev.x) * t;
+        const z = prev.z + (q.z - prev.z) * t;
+        expect(nav.walkable({ x, z })).toBe(true);
+        if (z > rightSeats[0]!.pos[1] && z < rightSeats.at(-1)!.pos[1])
+          expect(x).toBeGreaterThan(minX);
+      }
+      prev = q;
+    }
+  });
+
+  it('the player collision circle fits along the whole aisle without being pushed', () => {
+    for (let z = 0.9; z <= D - 0.6; z += 0.05) {
+      const p = { x: 9.95, z };
+      for (const bx of w.geo.colliders) {
+        const r = resolveCircleBox(p, PLAYER_RADIUS, bx);
+        expect(Math.hypot(r.x - p.x, r.z - p.z), `${bx.id} at z=${z.toFixed(2)}`).toBeLessThan(
+          1e-6,
+        );
+      }
+    }
   });
 });

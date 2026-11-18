@@ -1,11 +1,15 @@
 {
   "$comment": "Fictional classmates. Traits 0..1. affinity = starting relationship to the player (-100..100). knowledge = test skill 0..1. Colours are greybox capsule colours.",
-  "player": { "id": "player", "name": "You", "seat": "s-b3" },
+  "player": {
+    "id": "player",
+    "name": "You",
+    "seat": "s-b4"
+  },
   "students": [
     {
       "id": "mara",
       "name": "Mara",
-      "seat": "s-b2",
+      "seat": "s-b3",
       "color": "#d9734e",
       "affinity": 35,
       "knowledge": 0.8,
@@ -21,7 +25,7 @@
     {
       "id": "jonas",
       "name": "Jonas",
-      "seat": "s-b4",
+      "seat": "s-b5",
       "color": "#4e8ad9",
       "affinity": 20,
       "knowledge": 0.45,
@@ -69,7 +73,7 @@
     {
       "id": "noor",
       "name": "Noor",
-      "seat": "s-b1",
+      "seat": "s-b2",
       "color": "#e0b84a",
       "affinity": 15,
       "knowledge": 0.7,
@@ -117,7 +121,7 @@
     {
       "id": "kofi",
       "name": "Kofi",
-      "seat": "s-b5",
+      "seat": "s-b6",
       "color": "#8a6d4e",
       "affinity": 25,
       "knowledge": 0.55,
@@ -160,6 +164,102 @@
         "rebellious": 0.3,
         "goody": 0.3,
         "snitch": 0.1
+      }
+    },
+    {
+      "id": "wren",
+      "name": "Wren",
+      "seat": "s-b1",
+      "color": "#c0392b",
+      "affinity": 15,
+      "knowledge": 0.4,
+      "traits": {
+        "helpful": 0.3,
+        "nosy": 0.5,
+        "anxious": 0.1,
+        "rebellious": 0.7,
+        "goody": 0.15,
+        "snitch": 0.05
+      }
+    },
+    {
+      "id": "emeka",
+      "name": "Emeka",
+      "seat": "s-l4",
+      "color": "#2e7d5b",
+      "affinity": 5,
+      "knowledge": 0.85,
+      "traits": {
+        "helpful": 0.6,
+        "nosy": 0.1,
+        "anxious": 0.5,
+        "rebellious": 0.1,
+        "goody": 0.7,
+        "snitch": 0.2
+      }
+    },
+    {
+      "id": "dara",
+      "name": "Dara",
+      "seat": "s-l5",
+      "color": "#ff9e3d",
+      "affinity": -5,
+      "knowledge": 0.5,
+      "traits": {
+        "helpful": 0.4,
+        "nosy": 0.9,
+        "anxious": 0.3,
+        "rebellious": 0.4,
+        "goody": 0.3,
+        "snitch": 0.35
+      }
+    },
+    {
+      "id": "mateo",
+      "name": "Mateo",
+      "seat": "s-r4",
+      "color": "#3b3f8f",
+      "affinity": 25,
+      "knowledge": 0.35,
+      "traits": {
+        "helpful": 0.5,
+        "nosy": 0.2,
+        "anxious": 0.15,
+        "rebellious": 0.5,
+        "goody": 0.2,
+        "snitch": 0.05
+      }
+    },
+    {
+      "id": "hana",
+      "name": "Hana",
+      "seat": "s-r5",
+      "color": "#f4a6c0",
+      "affinity": -15,
+      "knowledge": 0.8,
+      "traits": {
+        "helpful": 0.4,
+        "nosy": 0.5,
+        "anxious": 0.5,
+        "rebellious": 0.05,
+        "goody": 0.9,
+        "snitch": 0.5
+      }
+    },
+    {
+      "id": "sasha",
+      "name": "Sasha",
+      "seat": "s-b7",
+      "color": "#78d8a0",
+      "affinity": 20,
+      "knowledge": 0.6,
+      "traits": {
+        "helpful": 0.6,
+        "nosy": 0.3,
+        "anxious": 0.3,
+        "rebellious": 0.35,
+        "goody": 0.4,
+        "snitch": 0.05
       }
     }
   ]

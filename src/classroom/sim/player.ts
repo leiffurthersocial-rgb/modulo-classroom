@@ -742,7 +742,14 @@ export function interactables(w: World): Interactable[] {
     clockVerbs.push({ verb: 'prank:clock-offset', label: 'Set it 5 min fast', risk: 'risky' });
   clockVerbs.push(...prankVerbsFor(w, 'clock'));
   if (clockVerbs.length)
-    add('clock', 'clock', 'Wall clock', { x: 0.85, z: 6.65, y: 2.4 }, clockVerbs, 1.0);
+    add(
+      'clock',
+      'clock',
+      'Wall clock',
+      { x: 0.85, z: L.room.size[2] - 0.35, y: 2.4 },
+      clockVerbs,
+      1.0,
+    );
   const posterVerbs: Interactable['verbs'] = [];
   if (w.objects.posterOrder[0] === 0 && prankOffered(w, pd('reorder-posters')))
     posterVerbs.push({
@@ -752,7 +759,18 @@ export function interactables(w: World): Interactable[] {
     });
   posterVerbs.push(...prankVerbsFor(w, 'poster-1'));
   if (posterVerbs.length)
-    add('poster-1', 'poster', 'Posters', { x: 5.1, z: 6.7, y: 1.65 }, posterVerbs, 1.0);
+    add(
+      'poster-1',
+      'poster',
+      'Posters',
+      {
+        x: (L.fixtures.find((f) => f.id === 'poster-1')?.center[0] ?? 5.1) - 0.5,
+        z: L.room.size[2] - 0.3,
+        y: 1.65,
+      },
+      posterVerbs,
+      1.0,
+    );
   const plantVerbs = prankVerbsFor(w, 'plant');
   if (plantVerbs.length) {
     const pl = spot('plant', [8.3, 6.3]);
