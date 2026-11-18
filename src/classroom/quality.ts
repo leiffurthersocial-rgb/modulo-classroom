@@ -82,6 +82,8 @@ export interface Settings {
   invertY: boolean;
   subtitles: boolean;
   reducedMotion: boolean;
+  /** One-time first-lesson tips. */
+  showHints: boolean;
   uiScale: number;
   touchControls: 'auto' | 'on' | 'off';
   watchdog: boolean;
@@ -113,6 +115,8 @@ export const DEFAULT_BINDINGS: Record<string, string> = {
   raiseHand: 'KeyR',
   cheat: 'KeyK',
   notebook: 'KeyM',
+  ideas: 'Tab',
+  help: 'Slash',
 };
 
 const KEY = 'modulo-classroom:settings:v1';
@@ -131,6 +135,16 @@ export function isLikelyIPad(): boolean {
   );
 }
 
+function prefersReducedMotion(): boolean {
+  try {
+    return (
+      typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches
+    );
+  } catch {
+    return false;
+  }
+}
+
 export function defaultSettings(): Settings {
   const tablet = isLikelyIPad() || isTouchDevice();
   return {
@@ -141,7 +155,8 @@ export function defaultSettings(): Settings {
     sensitivity: 1,
     invertY: false,
     subtitles: true,
-    reducedMotion: false,
+    reducedMotion: prefersReducedMotion(),
+    showHints: true,
     uiScale: 1,
     touchControls: 'auto',
     watchdog: false,
