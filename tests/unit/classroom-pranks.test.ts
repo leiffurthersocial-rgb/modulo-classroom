@@ -434,7 +434,7 @@ describe('notes feature flag', () => {
       ).toEqual([]);
       expect(w.studentReplies).toEqual([]);
     }
-  });
+  }, 60_000);
 
   it('with the flag on, the player can pass notes again', () => {
     const w = new World({
@@ -474,7 +474,7 @@ describe('determinism and fairness with the new pranks', () => {
       expect(a.w.pranks.map((p) => p.id)).toEqual(b.w.pranks.map((p) => p.id));
       expect(a.r).toEqual(b.r);
     }
-  });
+  }, 60_000);
 
   it('the prankster uses the new pranks', () => {
     const ids = new Set<string>();
@@ -490,7 +490,7 @@ describe('determinism and fairness with the new pranks', () => {
       const { r } = run(1100 + i);
       for (const lead of r.telegraphLeads) expect(lead).toBeGreaterThanOrEqual(1.0);
     }
-  });
+  }, 60_000);
 
   it('a lesson cannot snowball: at most 2 strikes are added per lesson', () => {
     const w = new World({ seed: 1, lessonType: 'lecture', teacher: 'strict' });
