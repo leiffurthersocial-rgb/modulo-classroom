@@ -41,6 +41,8 @@ import {
   saveSettings,
   type Settings,
 } from './quality';
+import { PbrLibrary } from './assets/pbr';
+import { placeDecor } from './render/decor';
 
 export interface ShotOptions {
   frames: number;
@@ -78,6 +80,8 @@ const SOUND_FOR_NOISE: Record<string, SoundKind> = {
 
 export class ClassroomApp {
   readonly renderer: THREE.WebGLRenderer;
+  /** Real PBR materials/HDRI/models over the greybox (?pbr=0 disables, ?lab=1 uses /lab picks). */
+  readonly pbr: PbrLibrary;
   readonly camera = new THREE.PerspectiveCamera(72, 1, 0.03, 60);
   readonly settings: Settings;
   readonly input: InputManager;
@@ -142,6 +146,8 @@ export class ClassroomApp {
     this.renderer.toneMapping = THREE.AgXToneMapping;
     this.renderer.toneMappingExposure = 1.1;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    const qp = new URLSearchParams(location.search);
+    this.pbr = new PbrLibrary(this.renderer, qp.get('pbr') !== '0', qp.get('lab') === '1');
     host.appendChild(this.renderer.domElement);
     this.renderer.domElement.addEventListener('webglcontextlost', (e) => {
       e.preventDefault();
@@ -278,6 +284,9 @@ export class ClassroomApp {
     w.ps.hasCheatSheet = cfg.cheatSheet;
     this.world = w;
     this.view = new RoomView(w);
+    this.pbr.attach(this.view.room.root, this.view.scene, (root) =>
+      placeDecor(root, w.layout, this.pbr),
+    );
     this.view.applyQuality(resolveQuality(this.settings));
     this.view.debug = this.debug;
     this.view.scene.add(this.camera);
@@ -306,6 +315,7 @@ export class ClassroomApp {
   private disposeLesson(): void {
     if (this.view) {
       this.view.scene.remove(this.camera);
+      this.pbr.detach(this.view.room.root, this.view.scene);
       this.view.dispose();
     }
     this.view = null;
@@ -337,6 +347,7 @@ export class ClassroomApp {
     const q = resolveQuality(this.settings);
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, q.pixelRatio));
     this.renderer.shadowMap.enabled = q.shadows;
+    void this.pbr.setTier(q.textureTier);
     this.view?.applyQuality(q);
     this.camera.fov = this.settings.fov;
     this.camera.updateProjectionMatrix();
@@ -385,6 +396,7 @@ export class ClassroomApp {
     }
 
     if (this.shot) {
+      if (!this.pbr.settled) return; // screenshot mode waits for the PBR materials
       if (this.shotFrames >= this.shot.frames) return;
       this.tickSim(this.bot ? this.bot.command(w) : idleCommand(this.yaw, this.pitch), false);
       this.renderWorld(TICK_DT, 1);
@@ -418,7 +430,7 @@ export class ClassroomApp {
   /** Benchmark frame: real rAF timing (FPS cap already applied), bot-driven sim, scripted camera. */
   private benchFrame(now: number, realDt: number, w: World): void {
     const b = this.bench!;
-    if (this.benchDone) return;
+    if (this.benchDone || !this.pbr.settled) return;
     if (this.benchStart < 0) this.benchStart = now;
     else this.benchTimes.push(now - this.benchLast);
     this.benchLast = now;
@@ -1274,6 +1286,9 @@ export class ClassroomApp {
       triangles: this.renderer.info.render.triangles,
       textures: this.renderer.info.memory.textures,
       geometries: this.renderer.info.memory.geometries,
+      pbr: [...this.pbr.loaded].sort(),
+      pbrTier: resolveQuality(this.settings).textureTier,
+      pbrMB: Math.round((this.pbr.bytes / 1048576) * 10) / 10,
     };
   }
 

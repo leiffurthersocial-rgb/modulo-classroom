@@ -1,0 +1,1021 @@
+{
+  "$comment": "Candidates verified against the Poly Haven and ambientCG APIs on 2026-11-18. Edit picks in /lab.",
+  "materials": {
+    "concrete": {
+      "label": "Concrete (column, beam)",
+      "use": "column, ceiling beam, window wall",
+      "scale": 1.1,
+      "candidates": [
+        {
+          "source": "ambientcg",
+          "id": "Concrete034",
+          "name": "Concrete 034",
+          "why": "API tags: 34, concrete, grey, light, plaster, smooth; ~110 cm repeat."
+        },
+        {
+          "source": "ambientcg",
+          "id": "Concrete046",
+          "name": "Concrete 046",
+          "why": "API tags: 46, concrete, gray, grey, plain, smooth, wall; ~240 cm repeat."
+        },
+        {
+          "source": "ambientcg",
+          "id": "Concrete030",
+          "name": "Concrete 030",
+          "why": "API tags: 30, concrete, gray, plain, smooth."
+        },
+        {
+          "source": "ambientcg",
+          "id": "Concrete014",
+          "name": "Concrete 014",
+          "why": "API tags: 14, clean, concrete, light, smooth."
+        },
+        {
+          "source": "ambientcg",
+          "id": "Concrete016",
+          "name": "Concrete 016",
+          "why": "API tags: 16, clean, concrete, light, smooth."
+        },
+        {
+          "source": "ambientcg",
+          "id": "Concrete025",
+          "name": "Concrete 025",
+          "why": "API tags: 25, concrete, gray, light."
+        },
+        {
+          "source": "ambientcg",
+          "id": "Concrete027",
+          "name": "Concrete 027",
+          "why": "API tags: 27, bunker, cast, concrete, gray."
+        },
+        {
+          "source": "ambientcg",
+          "id": "Concrete028",
+          "name": "Concrete 028",
+          "why": "API tags: 28, bunker, cast, concrete, gray."
+        },
+        {
+          "source": "ambientcg",
+          "id": "Concrete029",
+          "name": "Concrete 029",
+          "why": "API tags: 29, bunker, cast, concrete, gray."
+        },
+        {
+          "source": "polyhaven",
+          "id": "concrete_slab_wall_02",
+          "name": "Concrete Slab Wall 02",
+          "why": "API tags: rough, weathered, wall, concrete, precast, concrete panel, exterior [Board-Form & Panels]; ~2102 mm repeat."
+        },
+        {
+          "source": "polyhaven",
+          "id": "concrete_wall_009",
+          "name": "Concrete Wall 009",
+          "why": "API tags: rough, old, concrete, wall, exterior, discolored, damaged [Bare Cast]; ~1805 mm repeat."
+        },
+        {
+          "source": "polyhaven",
+          "id": "concrete_wall_007",
+          "name": "Concrete Wall 007",
+          "why": "API tags: rough, old, weathered, wall, worn, damaged, chipped [Bare Cast]; ~2160 mm repeat."
+        },
+        {
+          "source": "ambientcg",
+          "id": "Concrete042A",
+          "name": "Concrete 042 A",
+          "why": "API tags: 42, concrete, smooth."
+        },
+        {
+          "source": "polyhaven",
+          "id": "concrete",
+          "name": "Concrete",
+          "why": "API tags: bare, old, weathered, panels [Board-Form & Panels]; ~4000 mm repeat."
+        },
+        {
+          "source": "ambientcg",
+          "id": "Concrete006",
+          "name": "Concrete 006",
+          "why": "API tags: 6, clean, concrete, flat, smooth."
+        }
+      ]
+    },
+    "plaster": {
+      "label": "Painted walls",
+      "use": "walls",
+      "scale": 2.0,
+      "candidates": [
+        {
+          "source": "polyhaven",
+          "id": "painted_plaster_wall",
+          "name": "Painted Plaster Wall",
+          "why": "API tags: rough, weathered, worn, wall, discolored, plaster, plastered [Painted Plaster]; ~2000 mm repeat."
+        },
+        {
+          "source": "ambientcg",
+          "id": "PaintedPlaster017",
+          "name": "Painted Plaster 017",
+          "why": "API tags: 17, paint, painted, plaster, white."
+        },
+        {
+          "source": "ambientcg",
+          "id": "Plaster004",
+          "name": "Plaster 004",
+          "why": "API tags: 4, plaster, wall, white."
+        },
+        {
+          "source": "ambientcg",
+          "id": "Plaster005",
+          "name": "Plaster 005",
+          "why": "API tags: 5, plaster, wall, white."
+        },
+        {
+          "source": "ambientcg",
+          "id": "Plaster006",
+          "name": "Plaster 006",
+          "why": "API tags: 6, plaster, wall, white."
+        },
+        {
+          "source": "polyhaven",
+          "id": "white_plaster_02",
+          "name": "White Plaster 02",
+          "why": "API tags: smooth, flat, even [Bare Plaster]; ~1000 mm repeat."
+        },
+        {
+          "source": "ambientcg",
+          "id": "Plaster002",
+          "name": "Plaster 002",
+          "why": "API tags: 2, clean, plaster, rough, wall, white."
+        },
+        {
+          "source": "ambientcg",
+          "id": "Plaster003",
+          "name": "Plaster 003",
+          "why": "API tags: 3, clean, plaster, rough, wall, white."
+        },
+        {
+          "source": "polyhaven",
+          "id": "beige_wall_001",
+          "name": "Beige Wall 001",
+          "why": "API tags: beige, painted, smooth, suburb, house, home [Painted Plaster]; ~3000 mm repeat."
+        },
+        {
+          "source": "polyhaven",
+          "id": "beige_wall_002",
+          "name": "Beige Wall 002",
+          "why": "API tags: beige, painted, suburb, house, spikey, textured, home [Painted Plaster]; ~3000 mm repeat."
+        },
+        {
+          "source": "polyhaven",
+          "id": "concrete_wall_004",
+          "name": "Concrete Wall 004",
+          "why": "API tags: worn, painted, dry, flat, wall, stained, dirty [Painted Plaster]; ~2000 mm repeat."
+        },
+        {
+          "source": "ambientcg",
+          "id": "PaintedPlaster004",
+          "name": "Painted Plaster 004",
+          "why": "API tags: 4, clean, paint, painted, plaster, yellow."
+        }
+      ]
+    },
+    "carpet": {
+      "label": "Carpet floor",
+      "use": "floor",
+      "scale": 0.8,
+      "candidates": [
+        {
+          "source": "ambientcg",
+          "id": "Fabric029",
+          "name": "Fabric 029",
+          "why": "API tags: 29, black, brown, carpet, cloth, dark, dirty."
+        },
+        {
+          "source": "ambientcg",
+          "id": "Carpet004",
+          "name": "Carpet 004",
+          "why": "API tags: 4, carpet, dark, fabric, floor, grey, mat."
+        },
+        {
+          "source": "ambientcg",
+          "id": "Carpet012",
+          "name": "Carpet 012",
+          "why": "API tags: 12, blue, carpet, dark, plain."
+        },
+        {
+          "source": "ambientcg",
+          "id": "Fabric025",
+          "name": "Fabric 025",
+          "why": "API tags: 25, beige, brown, carpet, cloth, fabric, floor."
+        },
+        {
+          "source": "ambientcg",
+          "id": "Carpet001",
+          "name": "Carpet 001",
+          "why": "API tags: 1, carpet, fabric, floor, grey, mat, rug."
+        },
+        {
+          "source": "ambientcg",
+          "id": "Carpet003",
+          "name": "Carpet 003",
+          "why": "API tags: 3, carpet, fabric, floor, grey, mat, rug."
+        },
+        {
+          "source": "ambientcg",
+          "id": "Fabric022",
+          "name": "Fabric 022",
+          "why": "API tags: 22, blue, carpet, cloth, dark, fabric, floor."
+        },
+        {
+          "source": "ambientcg",
+          "id": "Fabric023",
+          "name": "Fabric 023",
+          "why": "API tags: 23, blue, carpet, cloth, dark, fabric, floor."
+        },
+        {
+          "source": "ambientcg",
+          "id": "Fabric028",
+          "name": "Fabric 028",
+          "why": "API tags: 28, beige, carpet, cloth, dirty, fabric, floor."
+        },
+        {
+          "source": "polyhaven",
+          "id": "dirty_carpet",
+          "name": "Dirty Carpet",
+          "why": "API tags: carpet, dirty, floor, textile , rug, discolored, faded [Carpet]; ~600 mm repeat."
+        }
+      ]
+    },
+    "ceiling": {
+      "label": "Ceiling slats (wood)",
+      "use": "ceiling slats",
+      "scale": 0.8,
+      "candidates": [
+        {
+          "source": "ambientcg",
+          "id": "Wood092",
+          "name": "Wood 092",
+          "why": "API tags: 92, brown, clean, fine, orange, smooth, wood; ~80 cm repeat."
+        },
+        {
+          "source": "ambientcg",
+          "id": "Wood030",
+          "name": "Wood 030",
+          "why": "API tags: 30, brown, clean, fine, orange, smooth, wood."
+        },
+        {
+          "source": "ambientcg",
+          "id": "Wood052",
+          "name": "Wood 052",
+          "why": "API tags: 52, orange, plain, smooth, wood; ~80 cm repeat."
+        },
+        {
+          "source": "ambientcg",
+          "id": "Wood068",
+          "name": "Wood 068",
+          "why": "API tags: 68, beige, brown, light, smooth, wood; ~40 cm repeat."
+        },
+        {
+          "source": "ambientcg",
+          "id": "Wood048",
+          "name": "Wood 048",
+          "why": "API tags: 48, light, plain, smooth, wood; ~80 cm repeat."
+        },
+        {
+          "source": "polyhaven",
+          "id": "okoume_veneer",
+          "name": "Okoume Veneer",
+          "why": "API tags: natural grain, natural wood grain, grain, wood grain, light, blonde, veneer [Light Hardwood Veneer]; ~1000 mm repeat."
+        },
+        {
+          "source": "polyhaven",
+          "id": "ash_veneer",
+          "name": "Ash Veneer",
+          "why": "API tags: ash wood, ash, wood, hardwood, veneer, veneer wood, natural grain [Light Hardwood Veneer]; ~1000 mm repeat."
+        },
+        {
+          "source": "polyhaven",
+          "id": "oak_veneer_02",
+          "name": "Oak Veneer 02",
+          "why": "API tags: oak, raw wood, veneer, veneer wood, natural grain, grain, natural wood grain [Oak Veneer]; ~1000 mm repeat."
+        },
+        {
+          "source": "polyhaven",
+          "id": "white_maple_veneer",
+          "name": "White Maple Veneer",
+          "why": "API tags: natural grain, grain, natural wood grain, wood grain, white, natural wood, wood [Light Hardwood Veneer]; ~1000 mm repeat."
+        },
+        {
+          "source": "ambientcg",
+          "id": "Wood095",
+          "name": "Wood 095",
+          "why": "API tags: 095, 95, beige, clean, indoor, light, minimalist."
+        },
+        {
+          "source": "ambientcg",
+          "id": "Wood096",
+          "name": "Wood 096",
+          "why": "API tags: 096, 96, beige, grain, knots, light, natural; ~50 cm repeat."
+        }
+      ]
+    },
+    "table": {
+      "label": "White table top",
+      "use": "tables, teacher desk top",
+      "scale": 1.0,
+      "candidates": [
+        {
+          "source": "ambientcg",
+          "id": "Plastic010",
+          "name": "Plastic 010",
+          "why": "API tags: 10, plastic, smooth, white."
+        },
+        {
+          "source": "ambientcg",
+          "id": "Plastic013A",
+          "name": "Plastic 013 A",
+          "why": "API tags: 13, plastic, white."
+        },
+        {
+          "source": "ambientcg",
+          "id": "Plastic013B",
+          "name": "Plastic 013 B",
+          "why": "API tags: 13, plastic, scratched, white."
+        },
+        {
+          "source": "ambientcg",
+          "id": "PaintedPlaster017",
+          "name": "Painted Plaster 017",
+          "why": "API tags: 17, paint, painted, plaster, white."
+        },
+        {
+          "source": "ambientcg",
+          "id": "Plaster004",
+          "name": "Plaster 004",
+          "why": "API tags: 4, plaster, wall, white."
+        },
+        {
+          "source": "ambientcg",
+          "id": "Plaster005",
+          "name": "Plaster 005",
+          "why": "API tags: 5, plaster, wall, white."
+        },
+        {
+          "source": "ambientcg",
+          "id": "Paint004",
+          "name": "Paint 004",
+          "why": "API tags: 4, cracks, light, paint, reflective, shiny, white."
+        },
+        {
+          "source": "polyhaven",
+          "id": "white_plaster_02",
+          "name": "White Plaster 02",
+          "why": "API tags: smooth, flat, even [Bare Plaster]; ~1000 mm repeat."
+        },
+        {
+          "source": "ambientcg",
+          "id": "Metal016",
+          "name": "Metal 016",
+          "why": "API tags: 16, light, metal, painted, rough, scratched, steel."
+        },
+        {
+          "source": "ambientcg",
+          "id": "Plaster006",
+          "name": "Plaster 006",
+          "why": "API tags: 6, plaster, wall, white."
+        },
+        {
+          "source": "polyhaven",
+          "id": "white_planks_clean",
+          "name": "White Planks Clean",
+          "why": "API tags: painted, painted wood, wood, wood wall, wooden, wooden planks, white [Painted Planks]; ~1800 mm repeat."
+        }
+      ]
+    },
+    "plywood": {
+      "label": "Plywood chair shells",
+      "use": "chair seats and backs",
+      "scale": 0.5,
+      "candidates": [
+        {
+          "source": "polyhaven",
+          "id": "plywood",
+          "name": "Plywood",
+          "why": "API tags: clean, even, smooth, flat, continuous, consistent [Plywood]; ~500 mm repeat."
+        },
+        {
+          "source": "ambientcg",
+          "id": "Wood087",
+          "name": "Wood 087",
+          "why": "API tags: 87, plywood, side, wood."
+        },
+        {
+          "source": "ambientcg",
+          "id": "Wood088",
+          "name": "Wood 088",
+          "why": "API tags: 88, plywood, side, wood."
+        },
+        {
+          "source": "ambientcg",
+          "id": "Wood089",
+          "name": "Wood 089",
+          "why": "API tags: 89, plywood, side, wood."
+        },
+        {
+          "source": "polyhaven",
+          "id": "okoume_veneer",
+          "name": "Okoume Veneer",
+          "why": "API tags: natural grain, natural wood grain, grain, wood grain, light, blonde, veneer [Light Hardwood Veneer]; ~1000 mm repeat."
+        },
+        {
+          "source": "polyhaven",
+          "id": "ash_veneer",
+          "name": "Ash Veneer",
+          "why": "API tags: ash wood, ash, wood, hardwood, veneer, veneer wood, natural grain [Light Hardwood Veneer]; ~1000 mm repeat."
+        },
+        {
+          "source": "polyhaven",
+          "id": "white_maple_veneer",
+          "name": "White Maple Veneer",
+          "why": "API tags: natural grain, grain, natural wood grain, wood grain, white, natural wood, wood [Light Hardwood Veneer]; ~1000 mm repeat."
+        },
+        {
+          "source": "ambientcg",
+          "id": "Wood096",
+          "name": "Wood 096",
+          "why": "API tags: 096, 96, beige, grain, knots, light, natural; ~50 cm repeat."
+        },
+        {
+          "source": "ambientcg",
+          "id": "Wood048",
+          "name": "Wood 048",
+          "why": "API tags: 48, light, plain, smooth, wood; ~80 cm repeat."
+        },
+        {
+          "source": "polyhaven",
+          "id": "angli_veneer",
+          "name": "Angli Veneer",
+          "why": "API tags: veneer, veneer wood, natural grain, grain, wood, natural wood grain, wood grain [Light Hardwood Veneer]; ~1000 mm repeat."
+        }
+      ]
+    },
+    "metal": {
+      "label": "Brushed metal",
+      "use": "table/chair legs, radiator, board frame",
+      "scale": 0.5,
+      "candidates": [
+        {
+          "source": "ambientcg",
+          "id": "Metal012",
+          "name": "Metal 012",
+          "why": "API tags: 12, brushed, bumpy, metal, scratches, silver, steel."
+        },
+        {
+          "source": "ambientcg",
+          "id": "Metal009",
+          "name": "Metal 009",
+          "why": "API tags: 9, brushed, bumpy, metal, scratches, silver, steel."
+        },
+        {
+          "source": "ambientcg",
+          "id": "Metal010",
+          "name": "Metal 010",
+          "why": "API tags: 10, brushed, bumpy, metal, scratches, silver, steel."
+        },
+        {
+          "source": "ambientcg",
+          "id": "Metal011",
+          "name": "Metal 011",
+          "why": "API tags: 11, brushed, bumpy, metal, scratches, silver, steel."
+        },
+        {
+          "source": "ambientcg",
+          "id": "Metal050A",
+          "name": "Metal 050 A",
+          "why": "API tags: 50, aluminum, clean, metal, smooth."
+        },
+        {
+          "source": "ambientcg",
+          "id": "Metal049A",
+          "name": "Metal 049 A",
+          "why": "API tags: 49, clean, metal, silver, smooth."
+        },
+        {
+          "source": "ambientcg",
+          "id": "Metal030",
+          "name": "Metal 030",
+          "why": "API tags: 30, grey, metal, smooth."
+        },
+        {
+          "source": "ambientcg",
+          "id": "Metal014",
+          "name": "Metal 014",
+          "why": "API tags: 14, clean, grey, light, metal, reflection, rough."
+        },
+        {
+          "source": "ambientcg",
+          "id": "Metal032",
+          "name": "Metal 032",
+          "why": "API tags: 32, grey, metal, smooth."
+        },
+        {
+          "source": "ambientcg",
+          "id": "Metal036",
+          "name": "Metal 036",
+          "why": "API tags: 36, grey, metal, smooth."
+        },
+        {
+          "source": "ambientcg",
+          "id": "Metal051A",
+          "name": "Metal 051 A",
+          "why": "API tags: 51, aluminum, brushed, circular, metal."
+        }
+      ]
+    },
+    "tile": {
+      "label": "Mosaic tile splashback",
+      "use": "sink splashback",
+      "scale": 2.0,
+      "candidates": [
+        {
+          "source": "ambientcg",
+          "id": "Tiles139",
+          "name": "Tiles 139",
+          "why": "API tags: 139, bathroom, beige, checkered, classic, cream, floor; ~200 cm repeat."
+        },
+        {
+          "source": "ambientcg",
+          "id": "Tiles142",
+          "name": "Tiles 142",
+          "why": "API tags: 142, aged, bathroom, beige, cream, floor, grid; ~200 cm repeat."
+        },
+        {
+          "source": "ambientcg",
+          "id": "Tiles141",
+          "name": "Tiles 141",
+          "why": "API tags: 141, bathroom, beige, dirty, floor, grid, kitchen; ~200 cm repeat."
+        },
+        {
+          "source": "ambientcg",
+          "id": "Tiles143",
+          "name": "Tiles 143",
+          "why": "API tags: 143, beige, flooring, grid, limestone, rectangular, rough; ~200 cm repeat."
+        },
+        {
+          "source": "ambientcg",
+          "id": "Tiles144",
+          "name": "Tiles 144",
+          "why": "API tags: 144, aged, beige, flooring, golden, grid, rectangular; ~200 cm repeat."
+        },
+        {
+          "source": "polyhaven",
+          "id": "marble_mosaic_tiles",
+          "name": "Marble Mosaic Tiles",
+          "why": "API tags: tiles, floor, ceramic, mosaic, marble, decorative, square [Mosaic]; ~2000 mm repeat."
+        },
+        {
+          "source": "ambientcg",
+          "id": "Tiles131",
+          "name": "Tiles 131",
+          "why": "API tags: 131, detailed, floor, intricate, mosaic, stone, tiled; ~150 cm repeat."
+        },
+        {
+          "source": "ambientcg",
+          "id": "Tiles071",
+          "name": "Tiles 071",
+          "why": "API tags: 71, bathroom, hexagon, mosaic, tiled, tiles, white; ~45 cm repeat."
+        },
+        {
+          "source": "ambientcg",
+          "id": "Tiles019",
+          "name": "Tiles 019",
+          "why": "API tags: 19, blue, cyan, mosaic, small, tiles, tiny."
+        },
+        {
+          "source": "ambientcg",
+          "id": "Tiles066",
+          "name": "Tiles 066",
+          "why": "API tags: 66, brown, hexagon, mosaic, orange, tiled, tiles; ~45 cm repeat."
+        },
+        {
+          "source": "polyhaven",
+          "id": "floor_tiles_08",
+          "name": "Floor Tiles 08",
+          "why": "API tags: tiles, square, ceramic, regular, grid, beige [Quarry & Unglazed]; ~1500 mm repeat."
+        }
+      ]
+    },
+    "door": {
+      "label": "Painted door",
+      "use": "door leaf",
+      "scale": 1.0,
+      "candidates": [
+        {
+          "source": "ambientcg",
+          "id": "PaintedPlaster001",
+          "name": "Painted Plaster 001",
+          "why": "API tags: 1, paint, painted, plaster, red, wall."
+        },
+        {
+          "source": "ambientcg",
+          "id": "PaintedPlaster005",
+          "name": "Painted Plaster 005",
+          "why": "API tags: 5, bumps, clean, cracks, orange, paint, painted."
+        },
+        {
+          "source": "ambientcg",
+          "id": "Plastic014A",
+          "name": "Plastic 014 A",
+          "why": "API tags: 14, orange, plastic, red."
+        },
+        {
+          "source": "ambientcg",
+          "id": "Plastic007",
+          "name": "Plastic 007",
+          "why": "API tags: 7, plastic, red, smooth."
+        },
+        {
+          "source": "ambientcg",
+          "id": "PaintedWood009C",
+          "name": "Painted Wood 009 C",
+          "why": "API tags: 9, beige, clean, light, old, painted, wood."
+        },
+        {
+          "source": "ambientcg",
+          "id": "PaintedWood008C",
+          "name": "Painted Wood 008 C",
+          "why": "API tags: 8, dark, painted, wood."
+        },
+        {
+          "source": "ambientcg",
+          "id": "Metal027",
+          "name": "Metal 027",
+          "why": "API tags: 27, black, covered, metal, painted, powder, steel."
+        },
+        {
+          "source": "ambientcg",
+          "id": "Metal028",
+          "name": "Metal 028",
+          "why": "API tags: 28, black, covered, metal, painted, powder, steel."
+        },
+        {
+          "source": "ambientcg",
+          "id": "PaintedPlaster004",
+          "name": "Painted Plaster 004",
+          "why": "API tags: 4, clean, paint, painted, plaster, yellow."
+        },
+        {
+          "source": "polyhaven",
+          "id": "blue_metal_plate",
+          "name": "Blue Metal Plate",
+          "why": "API tags: scratched, metal sheet, metal, painted, industrial, scratches, scuffed [Flat Sheet]; ~2500 mm repeat."
+        }
+      ]
+    }
+  },
+  "models": {
+    "chair": [
+      {
+        "source": "polyhaven",
+        "id": "SchoolChair_01",
+        "name": "School Chair 01",
+        "why": "Furniture/Seating/Chairs; tags: prop, furniture, metal, plastic, chair; ~566x675x1006 mm; gltf 1k/2k."
+      },
+      {
+        "source": "polyhaven",
+        "id": "plastic_monobloc_chair_01",
+        "name": "Plastic Monobloc Chair 01",
+        "why": "Furniture/Seating/Chairs; tags: plastic, dirty, old, monobloc, outdoor; ~642x628x880 mm; gltf 1k/2k."
+      },
+      {
+        "source": "polyhaven",
+        "id": "dining_chair_02",
+        "name": "Dining Chair 02",
+        "why": "Furniture/Seating/Chairs; tags: modern, chair, seat, dining, fancy; ~434x576x973 mm; gltf 1k/2k."
+      },
+      {
+        "source": "polyhaven",
+        "id": "painted_wooden_chair_01",
+        "name": "Painted Wooden Chair 01",
+        "why": "Furniture/Seating/Chairs; tags: chair, wood, painted, farmhouse, dining; ~432x540x956 mm; gltf 1k/2k."
+      },
+      {
+        "source": "polyhaven",
+        "id": "metal_stool_02",
+        "name": "Metal Stool 02",
+        "why": "Furniture/Seating/Stools & Bar Seating; tags: wooden, metal frame, industrial, small, workshop; ~448x473x458 mm; gltf 1k/2k."
+      },
+      {
+        "source": "polyhaven",
+        "id": "WoodenChair_01",
+        "name": "Wooden Chair 01",
+        "why": "Furniture/Seating/Chairs; tags: wood, prop, vintage, furniture, chair; ~688x658x2274 mm; gltf 1k/2k."
+      }
+    ],
+    "desk": [
+      {
+        "source": "polyhaven",
+        "id": "SchoolDesk_01",
+        "name": "School Desk 01",
+        "why": "Furniture/Tables/Desks; tags: table, school, desk, wood, metal; ~712x546x883 mm; gltf 1k/2k."
+      },
+      {
+        "source": "polyhaven",
+        "id": "metal_office_desk",
+        "name": "Metal Office Desk",
+        "why": "Furniture/Tables/Desks; tags: old, vintage, metal, dirty, scratched; ~2000x947x788 mm; gltf 1k/2k."
+      },
+      {
+        "source": "polyhaven",
+        "id": "side_table_01",
+        "name": "Side Table 01",
+        "why": "Furniture/Tables/Side & End Tables; tags: table, wood, minimalist, modern, decor; ~550x450x551 mm; gltf 1k/2k."
+      },
+      {
+        "source": "polyhaven",
+        "id": "small_wooden_table_01",
+        "name": "Small Wooden Table 01",
+        "why": "Furniture/Tables/Side & End Tables; tags: vintage, wood, small, table, wooden; ~916x440x533 mm; gltf 1k/2k."
+      },
+      {
+        "source": "polyhaven",
+        "id": "wooden_table_02",
+        "name": "Wooden Table 02",
+        "why": "Furniture/Tables/Dining Tables; tags: wooden, worn, village, rural, natural; ~1134x706x800 mm; gltf 1k/2k."
+      },
+      {
+        "source": "polyhaven",
+        "id": "painted_wooden_table",
+        "name": "Painted Wooden Table",
+        "why": "Furniture/Tables/Dining Tables; tags: old, wooden, vintage, farmhouse, aged; ~2406x1137x959 mm; gltf 1k/2k."
+      }
+    ],
+    "radiator": [],
+    "clock": [
+      {
+        "source": "polyhaven",
+        "id": "wall_clock",
+        "name": "Wall Clock",
+        "why": "Decor & Art/Wall Decor/Wall Clocks; tags: time, timepiece, watch, watchface, wall clock; ~320x47x320 mm; gltf 1k/2k."
+      },
+      {
+        "source": "polyhaven",
+        "id": "vintage_telephone_wall_clock",
+        "name": "Vintage Telephone Wall Clock",
+        "why": "Decor & Art/Wall Decor/Wall Clocks; tags: old, vintage, antique, rotary phone, ornate; ~343x193x501 mm; gltf 1k/2k."
+      },
+      {
+        "source": "polyhaven",
+        "id": "alarm_clock_01",
+        "name": "Alarm Clock 01",
+        "why": "Electronics & Appliances/Clocks & Timepieces/Alarm Clocks; tags: clock, time, alarm, bedside, old; ~228x168x174 mm; gltf 1k/2k."
+      },
+      {
+        "source": "polyhaven",
+        "id": "mantel_clock_01",
+        "name": "Mantel Clock 01",
+        "why": "Electronics & Appliances/Clocks & Timepieces/Mantel Clocks; tags: vintage, antique, old, clock, time; ~484x251x161 mm; gltf 1k/2k."
+      }
+    ],
+    "bin": [
+      {
+        "source": "polyhaven",
+        "id": "metal_trash_can",
+        "name": "Metal Trash Can",
+        "why": "Containers & Storage/Cans, Tins & Bottles/Trash Cans; tags: bin, rubbish, garbage, disposal, litter; ~1847x556x906 mm; gltf 1k/2k."
+      },
+      {
+        "source": "polyhaven",
+        "id": "plastic_container",
+        "name": "Plastic Container",
+        "why": "Containers & Storage/Boxes & Crates/Bins; tags: storage bin, rectangular bin, storage, box, crate; ~895x626x430 mm; gltf 1k/2k."
+      },
+      {
+        "source": "polyhaven",
+        "id": "industrial_pastic_container",
+        "name": "Industrial Plastic Container",
+        "why": "Containers & Storage/Boxes & Crates/Bins; tags: worn, storage, rectangular, dirty; ~476x631x423 mm; gltf 1k/2k."
+      },
+      {
+        "source": "polyhaven",
+        "id": "trashbag",
+        "name": "Trashbag",
+        "why": "Containers & Storage/Bags/Waste Bags; tags: garbage bag, refuse, street waste, trash, street; ~528x463x575 mm; gltf 1k/2k."
+      },
+      {
+        "source": "polyhaven",
+        "id": "wicker_basket_01",
+        "name": "Wicker Basket 01",
+        "why": "Containers & Storage/Baskets & Buckets/Baskets; tags: wood, wicker, twine, basket, picnic; ~383x295x117 mm; gltf 1k/2k."
+      },
+      {
+        "source": "polyhaven",
+        "id": "wooden_bucket_01",
+        "name": "Wooden Bucket 01",
+        "why": "Containers & Storage/Baskets & Buckets/Buckets; tags: wooden, bucket, old, worn, wood; ~367x342x550 mm; gltf 1k/2k."
+      }
+    ],
+    "plant": [
+      {
+        "source": "polyhaven",
+        "id": "potted_plant_01",
+        "name": "Potted Plant 01",
+        "why": "Nature/Plants/Potted Plants; tags: potplant, plant, terracotta, pot, vase; ~589x637x1351 mm; gltf 1k/2k."
+      },
+      {
+        "source": "polyhaven",
+        "id": "potted_plant_02",
+        "name": "Potted Plant 02",
+        "why": "Nature/Plants/Potted Plants; tags: potplant, plant, pot, vase, medium; ~701x657x841 mm; gltf 1k/2k."
+      },
+      {
+        "source": "polyhaven",
+        "id": "potted_plant_04",
+        "name": "Potted Plant 04",
+        "why": "Nature/Plants/Potted Plants; tags: cactus, aloe, succulent, potplant, small; ~170x186x268 mm; gltf 1k/2k."
+      },
+      {
+        "source": "polyhaven",
+        "id": "planter_pot_clay",
+        "name": "Planter Pot Clay",
+        "why": "Decor & Art/Vases & Vessels/Terracotta Pots; tags: outdoor, mossy, dirty, used, worn; ~266x263x222 mm; gltf 1k/2k."
+      },
+      {
+        "source": "polyhaven",
+        "id": "shrub_sorrel_01",
+        "name": "Shrub Sorrel 01",
+        "why": "Nature/Plants/Shrubs & Bushes; tags: nature, sorrel, potplant, bush, shrub; ~352x146x58 mm; gltf 1k/2k."
+      },
+      {
+        "source": "polyhaven",
+        "id": "calathea_orbifolia_01",
+        "name": "Calathea Orbifolia 01",
+        "why": "Nature/Plants/Tropical Plants; tags: nature, bush, leaf, shrub, green; ~2492x1194x424 mm; gltf 1k/2k."
+      }
+    ],
+    "books": [
+      {
+        "source": "polyhaven",
+        "id": "book_encyclopedia_set_01",
+        "name": "Book Encyclopedia Set 01",
+        "why": "Office & Stationery/Books & Documents/Books; tags: bookshelf, books, library, reading, encyclopedia; ~551x163x237 mm; gltf 1k/2k."
+      },
+      {
+        "source": "polyhaven",
+        "id": "binder_notebook",
+        "name": "Binder Notebook",
+        "why": "Office & Stationery/Stationery & Supplies/Notebooks & Pads; tags: old, leather, vintage, worn, paper; ~584x200x25 mm; gltf 1k/2k."
+      },
+      {
+        "source": "polyhaven",
+        "id": "office_notepads",
+        "name": "Office Notepads",
+        "why": "Office & Stationery/Stationery & Supplies/Notebooks & Pads; tags: stationery, notepad, lined paper, blank paper, art supplies; ~1103x660x22 mm; gltf 1k/2k."
+      },
+      {
+        "source": "polyhaven",
+        "id": "postcard_set_01",
+        "name": "Postcard Set 01",
+        "why": "Office & Stationery/Books & Documents/Cards & Postcards; tags: scatter, paper, cards, notes, travel; ~677x0x545 mm; gltf 1k/2k."
+      }
+    ],
+    "backpack": [
+      {
+        "source": "polyhaven",
+        "id": "vintage_suitcase",
+        "name": "Vintage Suitcase",
+        "why": "Apparel & Personal Items/Bags & Luggage; tags: vintage, old, hand made, stickers, travel; ~1608x239x568 mm; gltf 1k/2k."
+      }
+    ],
+    "other": [
+      {
+        "source": "polyhaven",
+        "id": "stationery_supplies",
+        "name": "Stationery Supplies",
+        "why": "Office & Stationery/Stationery & Supplies/Writing Instruments; tags: pen, pencil, eraser, stationery, art supplies; ~302x84x164 mm; gltf 1k/2k."
+      },
+      {
+        "source": "polyhaven",
+        "id": "clipboard",
+        "name": "Clipboard",
+        "why": "Office & Stationery/Stationery & Supplies/Clipboards & Boards; tags: writing, desk, stationery, metal, scratched; ~229x337x42 mm; gltf 1k/2k."
+      },
+      {
+        "source": "polyhaven",
+        "id": "cardboard_box_01",
+        "name": "Cardboard Box 01",
+        "why": "Containers & Storage/Boxes & Crates/Cardboard Boxes; tags: warehouse, shed, storage, box, paper; ~387x516x342 mm; gltf 1k/2k."
+      },
+      {
+        "source": "polyhaven",
+        "id": "standing_chalkboard_01",
+        "name": "Standing Chalkboard 01",
+        "why": "Office & Stationery/Stationery & Supplies/Clipboards & Boards; tags: resturant, sign, signage, chalk, board; ~920x759x1509 mm; gltf 1k/2k."
+      },
+      {
+        "source": "polyhaven",
+        "id": "steel_frame_shelves_01",
+        "name": "Steel Frame Shelves 01",
+        "why": "Furniture/Storage Furniture/Shelving & Bookcases; tags: commercial, modern, shelf, bookshelf, metal; ~1097x502x2141 mm; gltf 1k/2k."
+      },
+      {
+        "source": "polyhaven",
+        "id": "korean_fire_extinguisher_01",
+        "name": "Korean Fire Extinguisher 01",
+        "why": "Industrial & Infrastructure/Traffic & Safety/Hydrants & Fire Safety; tags: fire, saftey, fireman, extinguisher, emergency; ~280x367x659 mm; gltf 1k/2k."
+      }
+    ]
+  },
+  "hdris": {
+    "overcast": [
+      {
+        "source": "polyhaven",
+        "id": "kloofendal_overcast",
+        "name": "Kloofendal Overcast",
+        "why": "weather=overcast, contrast=low, afternoon, open; tags: grass, rock, view, hilltop; 1k+2k hdr."
+      },
+      {
+        "source": "polyhaven",
+        "id": "overcast_soil",
+        "name": "Overcast Soil",
+        "why": "weather=overcast, contrast=low, afternoon, open; tags: soil, dirt, farm, field; 1k+2k hdr."
+      },
+      {
+        "source": "polyhaven",
+        "id": "overcast_soil_2",
+        "name": "Overcast Soil 2",
+        "why": "weather=overcast, contrast=low, afternoon, open; tags: soil, dirt, farm, field; 1k+2k hdr."
+      },
+      {
+        "source": "polyhaven",
+        "id": "farmland_overcast",
+        "name": "Farmland Overcast",
+        "why": "weather=overcast, contrast=low, afternoon, open; tags: field, farm, crop, path; 1k+2k hdr."
+      },
+      {
+        "source": "polyhaven",
+        "id": "cloudy_cliffside_road",
+        "name": "Cloudy Cliffside Road",
+        "why": "weather=overcast, contrast=low, midday, open; tags: hill, road, autumn, europe; 1k+2k hdr."
+      },
+      {
+        "source": "polyhaven",
+        "id": "mud_road",
+        "name": "Mud Road",
+        "why": "weather=overcast, contrast=low, midday, open; tags: road, path, field, farm; 1k+2k hdr."
+      },
+      {
+        "source": "polyhaven",
+        "id": "belfast_open_field",
+        "name": "Belfast Open Field",
+        "why": "weather=overcast, contrast=low, afternoon, open; tags: tree, grass, field, hill; 1k+2k hdr."
+      },
+      {
+        "source": "polyhaven",
+        "id": "rogland_overcast",
+        "name": "Rogland Overcast",
+        "why": "weather=overcast, contrast=low, morning, open; tags: rocky, arid, desert, cloud; 1k+2k hdr."
+      },
+      {
+        "source": "polyhaven",
+        "id": "fouriesburg_mountain_cloudy",
+        "name": "Fouriesburg Mountain Cloudy",
+        "why": "weather=overcast, contrast=low, afternoon, open; tags: hilltop, hill, view, rock; 1k+2k hdr."
+      },
+      {
+        "source": "polyhaven",
+        "id": "red_hill_cloudy",
+        "name": "Red Hill Cloudy",
+        "why": "weather=overcast, contrast=low, midday, open; tags: road, hill, ocean, town; 1k+2k hdr."
+      },
+      {
+        "source": "polyhaven",
+        "id": "hanger_exterior_cloudy",
+        "name": "Hanger Exterior Cloudy",
+        "why": "weather=overcast, contrast=low, midday, open; tags: road, asphalt, plane, hangar; 1k+2k hdr."
+      },
+      {
+        "source": "polyhaven",
+        "id": "overcast_industrial_courtyard",
+        "name": "Overcast Industrial Courtyard",
+        "why": "weather=overcast, contrast=low, afternoon, obstructed; tags: bare, concrete, industrial, dull; 1k+2k hdr."
+      },
+      {
+        "source": "polyhaven",
+        "id": "kloetzle_blei",
+        "name": "Kloetzle Blei",
+        "why": "weather=overcast, contrast=low, afternoon, open; tags: tree, view, town, park; 1k+2k hdr."
+      },
+      {
+        "source": "polyhaven",
+        "id": "kloofendal_overcast_puresky",
+        "name": "Kloofendal Overcast (Pure Sky)",
+        "why": "weather=overcast, contrast=low, afternoon, open; tags: pure skies; 1k+2k hdr."
+      },
+      {
+        "source": "polyhaven",
+        "id": "overcast_soil_puresky",
+        "name": "Overcast Soil (Pure Sky)",
+        "why": "weather=overcast, contrast=low, afternoon, open; tags: pure skies; 1k+2k hdr."
+      }
+    ]
+  }
+}

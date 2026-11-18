@@ -1,0 +1,1783 @@
+{
+ "generatedAt": "2026-11-18T09:33:06.308Z",
+ "materials": {
+  "concrete": {
+   "label": "Concrete (column, beam)",
+   "use": "column, ceiling beam, window wall",
+   "scale": 1.1,
+   "candidates": [
+    {
+     "source": "ambientcg",
+     "id": "Concrete034",
+     "name": "Concrete 034",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=Concrete034",
+     "why": "API tags: 34, concrete, grey, light, plaster, smooth; ~110 cm repeat.",
+     "maps": {
+      "color": "/lab/acg/Concrete034/color.webp",
+      "normal": "/lab/acg/Concrete034/normal.webp",
+      "arm": "/lab/acg/Concrete034/arm.webp"
+     },
+     "previewBytes": 75490
+    },
+    {
+     "source": "ambientcg",
+     "id": "Concrete046",
+     "name": "Concrete 046",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=Concrete046",
+     "why": "API tags: 46, concrete, gray, grey, plain, smooth, wall; ~240 cm repeat.",
+     "maps": {
+      "color": "/lab/acg/Concrete046/color.webp",
+      "normal": "/lab/acg/Concrete046/normal.webp",
+      "arm": "/lab/acg/Concrete046/arm.webp"
+     },
+     "previewBytes": 48420
+    },
+    {
+     "source": "ambientcg",
+     "id": "Concrete030",
+     "name": "Concrete 030",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=Concrete030",
+     "why": "API tags: 30, concrete, gray, plain, smooth.",
+     "maps": {
+      "color": "/lab/acg/Concrete030/color.webp",
+      "normal": "/lab/acg/Concrete030/normal.webp",
+      "arm": "/lab/acg/Concrete030/arm.webp"
+     },
+     "previewBytes": 69520
+    },
+    {
+     "source": "ambientcg",
+     "id": "Concrete014",
+     "name": "Concrete 014",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=Concrete014",
+     "why": "API tags: 14, clean, concrete, light, smooth.",
+     "maps": {
+      "color": "/lab/acg/Concrete014/color.webp",
+      "normal": "/lab/acg/Concrete014/normal.webp",
+      "arm": "/lab/acg/Concrete014/arm.webp"
+     },
+     "previewBytes": 115890
+    },
+    {
+     "source": "ambientcg",
+     "id": "Concrete016",
+     "name": "Concrete 016",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=Concrete016",
+     "why": "API tags: 16, clean, concrete, light, smooth.",
+     "maps": {
+      "color": "/lab/acg/Concrete016/color.webp",
+      "normal": "/lab/acg/Concrete016/normal.webp",
+      "arm": "/lab/acg/Concrete016/arm.webp"
+     },
+     "previewBytes": 85922
+    },
+    {
+     "source": "ambientcg",
+     "id": "Concrete025",
+     "name": "Concrete 025",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=Concrete025",
+     "why": "API tags: 25, concrete, gray, light.",
+     "maps": {
+      "color": "/lab/acg/Concrete025/color.webp",
+      "normal": "/lab/acg/Concrete025/normal.webp",
+      "arm": "/lab/acg/Concrete025/arm.webp"
+     },
+     "previewBytes": 270516
+    },
+    {
+     "source": "ambientcg",
+     "id": "Concrete027",
+     "name": "Concrete 027",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=Concrete027",
+     "why": "API tags: 27, bunker, cast, concrete, gray.",
+     "maps": {
+      "color": "/lab/acg/Concrete027/color.webp",
+      "normal": "/lab/acg/Concrete027/normal.webp",
+      "arm": "/lab/acg/Concrete027/arm.webp"
+     },
+     "previewBytes": 84020
+    },
+    {
+     "source": "ambientcg",
+     "id": "Concrete028",
+     "name": "Concrete 028",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=Concrete028",
+     "why": "API tags: 28, bunker, cast, concrete, gray.",
+     "maps": {
+      "color": "/lab/acg/Concrete028/color.webp",
+      "normal": "/lab/acg/Concrete028/normal.webp",
+      "arm": "/lab/acg/Concrete028/arm.webp"
+     },
+     "previewBytes": 82284
+    },
+    {
+     "source": "ambientcg",
+     "id": "Concrete029",
+     "name": "Concrete 029",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=Concrete029",
+     "why": "API tags: 29, bunker, cast, concrete, gray.",
+     "maps": {
+      "color": "/lab/acg/Concrete029/color.webp",
+      "normal": "/lab/acg/Concrete029/normal.webp",
+      "arm": "/lab/acg/Concrete029/arm.webp"
+     },
+     "previewBytes": 76138
+    },
+    {
+     "source": "polyhaven",
+     "id": "concrete_slab_wall_02",
+     "name": "Concrete Slab Wall 02",
+     "authors": [
+      "Amal Kumar"
+     ],
+     "url": "https://polyhaven.com/a/concrete_slab_wall_02",
+     "why": "API tags: rough, weathered, wall, concrete, precast, concrete panel, exterior [Board-Form & Panels]; ~2102 mm repeat.",
+     "maps": {
+      "color": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/concrete_slab_wall_02/concrete_slab_wall_02_diff_1k.jpg",
+      "normal": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/concrete_slab_wall_02/concrete_slab_wall_02_nor_gl_1k.jpg",
+      "arm": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/concrete_slab_wall_02/concrete_slab_wall_02_arm_1k.jpg"
+     },
+     "previewBytes": 0
+    },
+    {
+     "source": "polyhaven",
+     "id": "concrete_wall_009",
+     "name": "Concrete Wall 009",
+     "authors": [
+      "Charlotte Baglioni"
+     ],
+     "url": "https://polyhaven.com/a/concrete_wall_009",
+     "why": "API tags: rough, old, concrete, wall, exterior, discolored, damaged [Bare Cast]; ~1805 mm repeat.",
+     "maps": {
+      "color": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/concrete_wall_009/concrete_wall_009_diff_1k.jpg",
+      "normal": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/concrete_wall_009/concrete_wall_009_nor_gl_1k.jpg",
+      "arm": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/concrete_wall_009/concrete_wall_009_arm_1k.jpg"
+     },
+     "previewBytes": 0
+    },
+    {
+     "source": "polyhaven",
+     "id": "concrete_wall_007",
+     "name": "Concrete Wall 007",
+     "authors": [
+      "Dario Barresi",
+      "Rico Cilliers",
+      "Charlotte Baglioni"
+     ],
+     "url": "https://polyhaven.com/a/concrete_wall_007",
+     "why": "API tags: rough, old, weathered, wall, worn, damaged, chipped [Bare Cast]; ~2160 mm repeat.",
+     "maps": {
+      "color": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/concrete_wall_007/concrete_wall_007_diff_1k.jpg",
+      "normal": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/concrete_wall_007/concrete_wall_007_nor_gl_1k.jpg",
+      "arm": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/concrete_wall_007/concrete_wall_007_arm_1k.jpg"
+     },
+     "previewBytes": 0
+    },
+    {
+     "source": "ambientcg",
+     "id": "Concrete042A",
+     "name": "Concrete 042 A",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=Concrete042A",
+     "why": "API tags: 42, concrete, smooth.",
+     "maps": {
+      "color": "/lab/acg/Concrete042A/color.webp",
+      "normal": "/lab/acg/Concrete042A/normal.webp",
+      "arm": "/lab/acg/Concrete042A/arm.webp"
+     },
+     "previewBytes": 67652
+    },
+    {
+     "source": "polyhaven",
+     "id": "concrete",
+     "name": "Concrete",
+     "authors": [
+      "Rob Tuytel"
+     ],
+     "url": "https://polyhaven.com/a/concrete",
+     "why": "API tags: bare, old, weathered, panels [Board-Form & Panels]; ~4000 mm repeat.",
+     "maps": {
+      "color": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/concrete/concrete_diff_1k.jpg",
+      "normal": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/concrete/concrete_nor_gl_1k.jpg",
+      "arm": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/concrete/concrete_arm_1k.jpg"
+     },
+     "previewBytes": 0
+    },
+    {
+     "source": "ambientcg",
+     "id": "Concrete006",
+     "name": "Concrete 006",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=Concrete006",
+     "why": "API tags: 6, clean, concrete, flat, smooth.",
+     "maps": {
+      "color": "/lab/acg/Concrete006/color.webp",
+      "normal": "/lab/acg/Concrete006/normal.webp",
+      "arm": "/lab/acg/Concrete006/arm.webp"
+     },
+     "previewBytes": 155368
+    }
+   ]
+  },
+  "plaster": {
+   "label": "Painted walls",
+   "use": "walls",
+   "scale": 2,
+   "candidates": [
+    {
+     "source": "polyhaven",
+     "id": "painted_plaster_wall",
+     "name": "Painted Plaster Wall",
+     "authors": [
+      "Amal Kumar"
+     ],
+     "url": "https://polyhaven.com/a/painted_plaster_wall",
+     "why": "API tags: rough, weathered, worn, wall, discolored, plaster, plastered [Painted Plaster]; ~2000 mm repeat.",
+     "maps": {
+      "color": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/painted_plaster_wall/painted_plaster_wall_diff_1k.jpg",
+      "normal": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/painted_plaster_wall/painted_plaster_wall_nor_gl_1k.jpg",
+      "arm": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/painted_plaster_wall/painted_plaster_wall_arm_1k.jpg"
+     },
+     "previewBytes": 0
+    },
+    {
+     "source": "ambientcg",
+     "id": "PaintedPlaster017",
+     "name": "Painted Plaster 017",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=PaintedPlaster017",
+     "why": "API tags: 17, paint, painted, plaster, white.",
+     "maps": {
+      "color": "/lab/acg/PaintedPlaster017/color.webp",
+      "normal": "/lab/acg/PaintedPlaster017/normal.webp",
+      "arm": "/lab/acg/PaintedPlaster017/arm.webp"
+     },
+     "previewBytes": 127630
+    },
+    {
+     "source": "ambientcg",
+     "id": "Plaster004",
+     "name": "Plaster 004",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=Plaster004",
+     "why": "API tags: 4, plaster, wall, white.",
+     "maps": {
+      "color": "/lab/acg/Plaster004/color.webp",
+      "normal": "/lab/acg/Plaster004/normal.webp",
+      "arm": "/lab/acg/Plaster004/arm.webp"
+     },
+     "previewBytes": 150092
+    },
+    {
+     "source": "ambientcg",
+     "id": "Plaster005",
+     "name": "Plaster 005",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=Plaster005",
+     "why": "API tags: 5, plaster, wall, white.",
+     "maps": {
+      "color": "/lab/acg/Plaster005/color.webp",
+      "normal": "/lab/acg/Plaster005/normal.webp",
+      "arm": "/lab/acg/Plaster005/arm.webp"
+     },
+     "previewBytes": 117814
+    },
+    {
+     "source": "ambientcg",
+     "id": "Plaster006",
+     "name": "Plaster 006",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=Plaster006",
+     "why": "API tags: 6, plaster, wall, white.",
+     "maps": {
+      "color": "/lab/acg/Plaster006/color.webp",
+      "normal": "/lab/acg/Plaster006/normal.webp",
+      "arm": "/lab/acg/Plaster006/arm.webp"
+     },
+     "previewBytes": 126138
+    },
+    {
+     "source": "polyhaven",
+     "id": "white_plaster_02",
+     "name": "White Plaster 02",
+     "authors": [
+      "Rob Tuytel"
+     ],
+     "url": "https://polyhaven.com/a/white_plaster_02",
+     "why": "API tags: smooth, flat, even [Bare Plaster]; ~1000 mm repeat.",
+     "maps": {
+      "color": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/white_plaster_02/white_plaster_02_diff_1k.jpg",
+      "normal": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/white_plaster_02/white_plaster_02_nor_gl_1k.jpg",
+      "arm": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/white_plaster_02/white_plaster_02_arm_1k.jpg"
+     },
+     "previewBytes": 0
+    },
+    {
+     "source": "ambientcg",
+     "id": "Plaster002",
+     "name": "Plaster 002",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=Plaster002",
+     "why": "API tags: 2, clean, plaster, rough, wall, white.",
+     "maps": {
+      "color": "/lab/acg/Plaster002/color.webp",
+      "normal": "/lab/acg/Plaster002/normal.webp",
+      "arm": "/lab/acg/Plaster002/arm.webp"
+     },
+     "previewBytes": 119734
+    },
+    {
+     "source": "ambientcg",
+     "id": "Plaster003",
+     "name": "Plaster 003",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=Plaster003",
+     "why": "API tags: 3, clean, plaster, rough, wall, white.",
+     "maps": {
+      "color": "/lab/acg/Plaster003/color.webp",
+      "normal": "/lab/acg/Plaster003/normal.webp",
+      "arm": "/lab/acg/Plaster003/arm.webp"
+     },
+     "previewBytes": 149904
+    },
+    {
+     "source": "polyhaven",
+     "id": "beige_wall_001",
+     "name": "Beige Wall 001",
+     "authors": [
+      "Dimitrios Savva",
+      "Rico Cilliers"
+     ],
+     "url": "https://polyhaven.com/a/beige_wall_001",
+     "why": "API tags: beige, painted, smooth, suburb, house, home [Painted Plaster]; ~3000 mm repeat.",
+     "maps": {
+      "color": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/beige_wall_001/beige_wall_001_diff_1k.jpg",
+      "normal": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/beige_wall_001/beige_wall_001_nor_gl_1k.jpg",
+      "arm": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/beige_wall_001/beige_wall_001_arm_1k.jpg"
+     },
+     "previewBytes": 0
+    },
+    {
+     "source": "polyhaven",
+     "id": "beige_wall_002",
+     "name": "Beige Wall 002",
+     "authors": [
+      "Dimitrios Savva",
+      "Rico Cilliers"
+     ],
+     "url": "https://polyhaven.com/a/beige_wall_002",
+     "why": "API tags: beige, painted, suburb, house, spikey, textured, home [Painted Plaster]; ~3000 mm repeat.",
+     "maps": {
+      "color": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/beige_wall_002/beige_wall_002_diff_1k.jpg",
+      "normal": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/beige_wall_002/beige_wall_002_nor_gl_1k.jpg",
+      "arm": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/beige_wall_002/beige_wall_002_arm_1k.jpg"
+     },
+     "previewBytes": 0
+    },
+    {
+     "source": "polyhaven",
+     "id": "concrete_wall_004",
+     "name": "Concrete Wall 004",
+     "authors": [
+      "Dario Barresi",
+      "Charlotte Baglioni"
+     ],
+     "url": "https://polyhaven.com/a/concrete_wall_004",
+     "why": "API tags: worn, painted, dry, flat, wall, stained, dirty [Painted Plaster]; ~2000 mm repeat.",
+     "maps": {
+      "color": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/concrete_wall_004/concrete_wall_004_diff_1k.jpg",
+      "normal": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/concrete_wall_004/concrete_wall_004_nor_gl_1k.jpg",
+      "arm": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/concrete_wall_004/concrete_wall_004_arm_1k.jpg"
+     },
+     "previewBytes": 0
+    },
+    {
+     "source": "ambientcg",
+     "id": "PaintedPlaster004",
+     "name": "Painted Plaster 004",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=PaintedPlaster004",
+     "why": "API tags: 4, clean, paint, painted, plaster, yellow.",
+     "maps": {
+      "color": "/lab/acg/PaintedPlaster004/color.webp",
+      "normal": "/lab/acg/PaintedPlaster004/normal.webp",
+      "arm": "/lab/acg/PaintedPlaster004/arm.webp"
+     },
+     "previewBytes": 60106
+    }
+   ]
+  },
+  "carpet": {
+   "label": "Carpet floor",
+   "use": "floor",
+   "scale": 0.8,
+   "candidates": [
+    {
+     "source": "ambientcg",
+     "id": "Fabric029",
+     "name": "Fabric 029",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=Fabric029",
+     "why": "API tags: 29, black, brown, carpet, cloth, dark, dirty.",
+     "maps": {
+      "color": "/lab/acg/Fabric029/color.webp",
+      "normal": "/lab/acg/Fabric029/normal.webp",
+      "arm": "/lab/acg/Fabric029/arm.webp"
+     },
+     "previewBytes": 129324
+    },
+    {
+     "source": "ambientcg",
+     "id": "Carpet004",
+     "name": "Carpet 004",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=Carpet004",
+     "why": "API tags: 4, carpet, dark, fabric, floor, grey, mat.",
+     "maps": {
+      "color": "/lab/acg/Carpet004/color.webp",
+      "normal": "/lab/acg/Carpet004/normal.webp",
+      "arm": "/lab/acg/Carpet004/arm.webp"
+     },
+     "previewBytes": 262086
+    },
+    {
+     "source": "ambientcg",
+     "id": "Carpet012",
+     "name": "Carpet 012",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=Carpet012",
+     "why": "API tags: 12, blue, carpet, dark, plain.",
+     "maps": {
+      "color": "/lab/acg/Carpet012/color.webp",
+      "normal": "/lab/acg/Carpet012/normal.webp",
+      "arm": "/lab/acg/Carpet012/arm.webp"
+     },
+     "previewBytes": 348168
+    },
+    {
+     "source": "ambientcg",
+     "id": "Fabric025",
+     "name": "Fabric 025",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=Fabric025",
+     "why": "API tags: 25, beige, brown, carpet, cloth, fabric, floor.",
+     "maps": {
+      "color": "/lab/acg/Fabric025/color.webp",
+      "normal": "/lab/acg/Fabric025/normal.webp",
+      "arm": "/lab/acg/Fabric025/arm.webp"
+     },
+     "previewBytes": 148890
+    },
+    {
+     "source": "ambientcg",
+     "id": "Carpet001",
+     "name": "Carpet 001",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=Carpet001",
+     "why": "API tags: 1, carpet, fabric, floor, grey, mat, rug.",
+     "maps": {
+      "color": "/lab/acg/Carpet001/color.webp",
+      "normal": "/lab/acg/Carpet001/normal.webp",
+      "arm": "/lab/acg/Carpet001/arm.webp"
+     },
+     "previewBytes": 206706
+    },
+    {
+     "source": "ambientcg",
+     "id": "Carpet003",
+     "name": "Carpet 003",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=Carpet003",
+     "why": "API tags: 3, carpet, fabric, floor, grey, mat, rug.",
+     "maps": {
+      "color": "/lab/acg/Carpet003/color.webp",
+      "normal": "/lab/acg/Carpet003/normal.webp",
+      "arm": "/lab/acg/Carpet003/arm.webp"
+     },
+     "previewBytes": 223006
+    },
+    {
+     "source": "ambientcg",
+     "id": "Fabric022",
+     "name": "Fabric 022",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=Fabric022",
+     "why": "API tags: 22, blue, carpet, cloth, dark, fabric, floor.",
+     "maps": {
+      "color": "/lab/acg/Fabric022/color.webp",
+      "normal": "/lab/acg/Fabric022/normal.webp",
+      "arm": "/lab/acg/Fabric022/arm.webp"
+     },
+     "previewBytes": 126568
+    },
+    {
+     "source": "ambientcg",
+     "id": "Fabric023",
+     "name": "Fabric 023",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=Fabric023",
+     "why": "API tags: 23, blue, carpet, cloth, dark, fabric, floor.",
+     "maps": {
+      "color": "/lab/acg/Fabric023/color.webp",
+      "normal": "/lab/acg/Fabric023/normal.webp",
+      "arm": "/lab/acg/Fabric023/arm.webp"
+     },
+     "previewBytes": 79790
+    },
+    {
+     "source": "ambientcg",
+     "id": "Fabric028",
+     "name": "Fabric 028",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=Fabric028",
+     "why": "API tags: 28, beige, carpet, cloth, dirty, fabric, floor.",
+     "maps": {
+      "color": "/lab/acg/Fabric028/color.webp",
+      "normal": "/lab/acg/Fabric028/normal.webp",
+      "arm": "/lab/acg/Fabric028/arm.webp"
+     },
+     "previewBytes": 163668
+    },
+    {
+     "source": "polyhaven",
+     "id": "dirty_carpet",
+     "name": "Dirty Carpet",
+     "authors": [
+      "Rohit Seervi"
+     ],
+     "url": "https://polyhaven.com/a/dirty_carpet",
+     "why": "API tags: carpet, dirty, floor, textile , rug, discolored, faded [Carpet]; ~600 mm repeat.",
+     "maps": {
+      "color": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/dirty_carpet/dirty_carpet_diff_1k.jpg",
+      "normal": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/dirty_carpet/dirty_carpet_nor_gl_1k.jpg",
+      "arm": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/dirty_carpet/dirty_carpet_arm_1k.jpg"
+     },
+     "previewBytes": 0
+    }
+   ]
+  },
+  "ceiling": {
+   "label": "Ceiling slats (wood)",
+   "use": "ceiling slats",
+   "scale": 0.8,
+   "candidates": [
+    {
+     "source": "ambientcg",
+     "id": "Wood092",
+     "name": "Wood 092",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=Wood092",
+     "why": "API tags: 92, brown, clean, fine, orange, smooth, wood; ~80 cm repeat.",
+     "maps": {
+      "color": "/lab/acg/Wood092/color.webp",
+      "normal": "/lab/acg/Wood092/normal.webp",
+      "arm": "/lab/acg/Wood092/arm.webp"
+     },
+     "previewBytes": 18530
+    },
+    {
+     "source": "ambientcg",
+     "id": "Wood030",
+     "name": "Wood 030",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=Wood030",
+     "why": "API tags: 30, brown, clean, fine, orange, smooth, wood.",
+     "maps": {
+      "color": "/lab/acg/Wood030/color.webp",
+      "normal": "/lab/acg/Wood030/normal.webp",
+      "arm": "/lab/acg/Wood030/arm.webp"
+     },
+     "previewBytes": 55666
+    },
+    {
+     "source": "ambientcg",
+     "id": "Wood052",
+     "name": "Wood 052",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=Wood052",
+     "why": "API tags: 52, orange, plain, smooth, wood; ~80 cm repeat.",
+     "maps": {
+      "color": "/lab/acg/Wood052/color.webp",
+      "normal": "/lab/acg/Wood052/normal.webp",
+      "arm": "/lab/acg/Wood052/arm.webp"
+     },
+     "previewBytes": 90762
+    },
+    {
+     "source": "ambientcg",
+     "id": "Wood068",
+     "name": "Wood 068",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=Wood068",
+     "why": "API tags: 68, beige, brown, light, smooth, wood; ~40 cm repeat.",
+     "maps": {
+      "color": "/lab/acg/Wood068/color.webp",
+      "normal": "/lab/acg/Wood068/normal.webp",
+      "arm": "/lab/acg/Wood068/arm.webp"
+     },
+     "previewBytes": 26476
+    },
+    {
+     "source": "ambientcg",
+     "id": "Wood048",
+     "name": "Wood 048",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=Wood048",
+     "why": "API tags: 48, light, plain, smooth, wood; ~80 cm repeat.",
+     "maps": {
+      "color": "/lab/acg/Wood048/color.webp",
+      "normal": "/lab/acg/Wood048/normal.webp",
+      "arm": "/lab/acg/Wood048/arm.webp"
+     },
+     "previewBytes": 98042
+    },
+    {
+     "source": "polyhaven",
+     "id": "okoume_veneer",
+     "name": "Okoume Veneer",
+     "authors": [
+      "Jenelle van Heerden"
+     ],
+     "url": "https://polyhaven.com/a/okoume_veneer",
+     "why": "API tags: natural grain, natural wood grain, grain, wood grain, light, blonde, veneer [Light Hardwood Veneer]; ~1000 mm repeat.",
+     "maps": {
+      "color": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/okoume_veneer/okoume_veneer_diff_1k.jpg",
+      "normal": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/okoume_veneer/okoume_veneer_nor_gl_1k.jpg",
+      "arm": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/okoume_veneer/okoume_veneer_arm_1k.jpg"
+     },
+     "previewBytes": 0
+    },
+    {
+     "source": "polyhaven",
+     "id": "ash_veneer",
+     "name": "Ash Veneer",
+     "authors": [
+      "Jenelle van Heerden"
+     ],
+     "url": "https://polyhaven.com/a/ash_veneer",
+     "why": "API tags: ash wood, ash, wood, hardwood, veneer, veneer wood, natural grain [Light Hardwood Veneer]; ~1000 mm repeat.",
+     "maps": {
+      "color": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/ash_veneer/ash_veneer_diff_1k.jpg",
+      "normal": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/ash_veneer/ash_veneer_nor_gl_1k.jpg",
+      "arm": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/ash_veneer/ash_veneer_arm_1k.jpg"
+     },
+     "previewBytes": 0
+    },
+    {
+     "source": "polyhaven",
+     "id": "oak_veneer_02",
+     "name": "Oak Veneer 02",
+     "authors": [
+      "Jenelle van Heerden"
+     ],
+     "url": "https://polyhaven.com/a/oak_veneer_02",
+     "why": "API tags: oak, raw wood, veneer, veneer wood, natural grain, grain, natural wood grain [Oak Veneer]; ~1000 mm repeat.",
+     "maps": {
+      "color": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/oak_veneer_02/oak_veneer_02_diff_1k.jpg",
+      "normal": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/oak_veneer_02/oak_veneer_02_nor_gl_1k.jpg",
+      "arm": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/oak_veneer_02/oak_veneer_02_arm_1k.jpg"
+     },
+     "previewBytes": 0
+    },
+    {
+     "source": "polyhaven",
+     "id": "white_maple_veneer",
+     "name": "White Maple Veneer",
+     "authors": [
+      "Jenelle van Heerden"
+     ],
+     "url": "https://polyhaven.com/a/white_maple_veneer",
+     "why": "API tags: natural grain, grain, natural wood grain, wood grain, white, natural wood, wood [Light Hardwood Veneer]; ~1000 mm repeat.",
+     "maps": {
+      "color": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/white_maple_veneer/white_maple_veneer_diff_1k.jpg",
+      "normal": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/white_maple_veneer/white_maple_veneer_nor_gl_1k.jpg",
+      "arm": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/white_maple_veneer/white_maple_veneer_arm_1k.jpg"
+     },
+     "previewBytes": 0
+    },
+    {
+     "source": "ambientcg",
+     "id": "Wood095",
+     "name": "Wood 095",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=Wood095",
+     "why": "API tags: 095, 95, beige, clean, indoor, light, minimalist.",
+     "maps": {
+      "color": "/lab/acg/Wood095/color.webp",
+      "normal": "/lab/acg/Wood095/normal.webp",
+      "arm": "/lab/acg/Wood095/arm.webp"
+     },
+     "previewBytes": 55040
+    },
+    {
+     "source": "ambientcg",
+     "id": "Wood096",
+     "name": "Wood 096",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=Wood096",
+     "why": "API tags: 096, 96, beige, grain, knots, light, natural; ~50 cm repeat.",
+     "maps": {
+      "color": "/lab/acg/Wood096/color.webp",
+      "normal": "/lab/acg/Wood096/normal.webp",
+      "arm": "/lab/acg/Wood096/arm.webp"
+     },
+     "previewBytes": 23578
+    }
+   ]
+  },
+  "table": {
+   "label": "White table top",
+   "use": "tables, teacher desk top",
+   "scale": 1,
+   "candidates": [
+    {
+     "source": "ambientcg",
+     "id": "Plastic010",
+     "name": "Plastic 010",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=Plastic010",
+     "why": "API tags: 10, plastic, smooth, white.",
+     "maps": {
+      "color": "/lab/acg/Plastic010/color.webp",
+      "normal": "/lab/acg/Plastic010/normal.webp",
+      "arm": "/lab/acg/Plastic010/arm.webp"
+     },
+     "previewBytes": 12312
+    },
+    {
+     "source": "ambientcg",
+     "id": "Plastic013A",
+     "name": "Plastic 013 A",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=Plastic013A",
+     "why": "API tags: 13, plastic, white.",
+     "maps": {
+      "color": "/lab/acg/Plastic013A/color.webp",
+      "normal": "/lab/acg/Plastic013A/normal.webp",
+      "arm": "/lab/acg/Plastic013A/arm.webp"
+     },
+     "previewBytes": 5066
+    },
+    {
+     "source": "ambientcg",
+     "id": "Plastic013B",
+     "name": "Plastic 013 B",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=Plastic013B",
+     "why": "API tags: 13, plastic, scratched, white.",
+     "maps": {
+      "color": "/lab/acg/Plastic013B/color.webp",
+      "normal": "/lab/acg/Plastic013B/normal.webp",
+      "arm": "/lab/acg/Plastic013B/arm.webp"
+     },
+     "previewBytes": 32814
+    },
+    {
+     "source": "ambientcg",
+     "id": "PaintedPlaster017",
+     "name": "Painted Plaster 017",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=PaintedPlaster017",
+     "why": "API tags: 17, paint, painted, plaster, white.",
+     "maps": {
+      "color": "/lab/acg/PaintedPlaster017/color.webp",
+      "normal": "/lab/acg/PaintedPlaster017/normal.webp",
+      "arm": "/lab/acg/PaintedPlaster017/arm.webp"
+     },
+     "previewBytes": 127630
+    },
+    {
+     "source": "ambientcg",
+     "id": "Plaster004",
+     "name": "Plaster 004",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=Plaster004",
+     "why": "API tags: 4, plaster, wall, white.",
+     "maps": {
+      "color": "/lab/acg/Plaster004/color.webp",
+      "normal": "/lab/acg/Plaster004/normal.webp",
+      "arm": "/lab/acg/Plaster004/arm.webp"
+     },
+     "previewBytes": 150092
+    },
+    {
+     "source": "ambientcg",
+     "id": "Plaster005",
+     "name": "Plaster 005",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=Plaster005",
+     "why": "API tags: 5, plaster, wall, white.",
+     "maps": {
+      "color": "/lab/acg/Plaster005/color.webp",
+      "normal": "/lab/acg/Plaster005/normal.webp",
+      "arm": "/lab/acg/Plaster005/arm.webp"
+     },
+     "previewBytes": 117814
+    },
+    {
+     "source": "ambientcg",
+     "id": "Paint004",
+     "name": "Paint 004",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=Paint004",
+     "why": "API tags: 4, cracks, light, paint, reflective, shiny, white.",
+     "maps": {
+      "color": "/lab/acg/Paint004/color.webp",
+      "normal": "/lab/acg/Paint004/normal.webp",
+      "arm": "/lab/acg/Paint004/arm.webp"
+     },
+     "previewBytes": 96028
+    },
+    {
+     "source": "polyhaven",
+     "id": "white_plaster_02",
+     "name": "White Plaster 02",
+     "authors": [
+      "Rob Tuytel"
+     ],
+     "url": "https://polyhaven.com/a/white_plaster_02",
+     "why": "API tags: smooth, flat, even [Bare Plaster]; ~1000 mm repeat.",
+     "maps": {
+      "color": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/white_plaster_02/white_plaster_02_diff_1k.jpg",
+      "normal": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/white_plaster_02/white_plaster_02_nor_gl_1k.jpg",
+      "arm": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/white_plaster_02/white_plaster_02_arm_1k.jpg"
+     },
+     "previewBytes": 0
+    },
+    {
+     "source": "ambientcg",
+     "id": "Metal016",
+     "name": "Metal 016",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=Metal016",
+     "why": "API tags: 16, light, metal, painted, rough, scratched, steel.",
+     "maps": {
+      "color": "/lab/acg/Metal016/color.webp",
+      "normal": "/lab/acg/Metal016/normal.webp",
+      "arm": "/lab/acg/Metal016/arm.webp"
+     },
+     "previewBytes": 130876
+    },
+    {
+     "source": "ambientcg",
+     "id": "Plaster006",
+     "name": "Plaster 006",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=Plaster006",
+     "why": "API tags: 6, plaster, wall, white.",
+     "maps": {
+      "color": "/lab/acg/Plaster006/color.webp",
+      "normal": "/lab/acg/Plaster006/normal.webp",
+      "arm": "/lab/acg/Plaster006/arm.webp"
+     },
+     "previewBytes": 126138
+    },
+    {
+     "source": "polyhaven",
+     "id": "white_planks_clean",
+     "name": "White Planks Clean",
+     "authors": [
+      "Rob Tuytel"
+     ],
+     "url": "https://polyhaven.com/a/white_planks_clean",
+     "why": "API tags: painted, painted wood, wood, wood wall, wooden, wooden planks, white [Painted Planks]; ~1800 mm repeat.",
+     "maps": {
+      "color": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/white_planks_clean/white_planks_clean_diff_1k.jpg",
+      "normal": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/white_planks_clean/white_planks_clean_nor_gl_1k.jpg",
+      "arm": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/white_planks_clean/white_planks_clean_arm_1k.jpg"
+     },
+     "previewBytes": 0
+    }
+   ]
+  },
+  "plywood": {
+   "label": "Plywood chair shells",
+   "use": "chair seats and backs",
+   "scale": 0.5,
+   "candidates": [
+    {
+     "source": "polyhaven",
+     "id": "plywood",
+     "name": "Plywood",
+     "authors": [
+      "Rob Tuytel"
+     ],
+     "url": "https://polyhaven.com/a/plywood",
+     "why": "API tags: clean, even, smooth, flat, continuous, consistent [Plywood]; ~500 mm repeat.",
+     "maps": {
+      "color": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/plywood/plywood_diff_1k.jpg",
+      "normal": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/plywood/plywood_nor_gl_1k.jpg",
+      "arm": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/plywood/plywood_arm_1k.jpg"
+     },
+     "previewBytes": 0
+    },
+    {
+     "source": "ambientcg",
+     "id": "Wood087",
+     "name": "Wood 087",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=Wood087",
+     "why": "API tags: 87, plywood, side, wood.",
+     "maps": {
+      "color": "/lab/acg/Wood087/color.webp",
+      "normal": "/lab/acg/Wood087/normal.webp",
+      "arm": "/lab/acg/Wood087/arm.webp"
+     },
+     "previewBytes": 87282
+    },
+    {
+     "source": "ambientcg",
+     "id": "Wood088",
+     "name": "Wood 088",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=Wood088",
+     "why": "API tags: 88, plywood, side, wood.",
+     "maps": {
+      "color": "/lab/acg/Wood088/color.webp",
+      "normal": "/lab/acg/Wood088/normal.webp",
+      "arm": "/lab/acg/Wood088/arm.webp"
+     },
+     "previewBytes": 82720
+    },
+    {
+     "source": "ambientcg",
+     "id": "Wood089",
+     "name": "Wood 089",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=Wood089",
+     "why": "API tags: 89, plywood, side, wood.",
+     "maps": {
+      "color": "/lab/acg/Wood089/color.webp",
+      "normal": "/lab/acg/Wood089/normal.webp",
+      "arm": "/lab/acg/Wood089/arm.webp"
+     },
+     "previewBytes": 81198
+    },
+    {
+     "source": "polyhaven",
+     "id": "okoume_veneer",
+     "name": "Okoume Veneer",
+     "authors": [
+      "Jenelle van Heerden"
+     ],
+     "url": "https://polyhaven.com/a/okoume_veneer",
+     "why": "API tags: natural grain, natural wood grain, grain, wood grain, light, blonde, veneer [Light Hardwood Veneer]; ~1000 mm repeat.",
+     "maps": {
+      "color": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/okoume_veneer/okoume_veneer_diff_1k.jpg",
+      "normal": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/okoume_veneer/okoume_veneer_nor_gl_1k.jpg",
+      "arm": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/okoume_veneer/okoume_veneer_arm_1k.jpg"
+     },
+     "previewBytes": 0
+    },
+    {
+     "source": "polyhaven",
+     "id": "ash_veneer",
+     "name": "Ash Veneer",
+     "authors": [
+      "Jenelle van Heerden"
+     ],
+     "url": "https://polyhaven.com/a/ash_veneer",
+     "why": "API tags: ash wood, ash, wood, hardwood, veneer, veneer wood, natural grain [Light Hardwood Veneer]; ~1000 mm repeat.",
+     "maps": {
+      "color": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/ash_veneer/ash_veneer_diff_1k.jpg",
+      "normal": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/ash_veneer/ash_veneer_nor_gl_1k.jpg",
+      "arm": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/ash_veneer/ash_veneer_arm_1k.jpg"
+     },
+     "previewBytes": 0
+    },
+    {
+     "source": "polyhaven",
+     "id": "white_maple_veneer",
+     "name": "White Maple Veneer",
+     "authors": [
+      "Jenelle van Heerden"
+     ],
+     "url": "https://polyhaven.com/a/white_maple_veneer",
+     "why": "API tags: natural grain, grain, natural wood grain, wood grain, white, natural wood, wood [Light Hardwood Veneer]; ~1000 mm repeat.",
+     "maps": {
+      "color": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/white_maple_veneer/white_maple_veneer_diff_1k.jpg",
+      "normal": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/white_maple_veneer/white_maple_veneer_nor_gl_1k.jpg",
+      "arm": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/white_maple_veneer/white_maple_veneer_arm_1k.jpg"
+     },
+     "previewBytes": 0
+    },
+    {
+     "source": "ambientcg",
+     "id": "Wood096",
+     "name": "Wood 096",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=Wood096",
+     "why": "API tags: 096, 96, beige, grain, knots, light, natural; ~50 cm repeat.",
+     "maps": {
+      "color": "/lab/acg/Wood096/color.webp",
+      "normal": "/lab/acg/Wood096/normal.webp",
+      "arm": "/lab/acg/Wood096/arm.webp"
+     },
+     "previewBytes": 23578
+    },
+    {
+     "source": "ambientcg",
+     "id": "Wood048",
+     "name": "Wood 048",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=Wood048",
+     "why": "API tags: 48, light, plain, smooth, wood; ~80 cm repeat.",
+     "maps": {
+      "color": "/lab/acg/Wood048/color.webp",
+      "normal": "/lab/acg/Wood048/normal.webp",
+      "arm": "/lab/acg/Wood048/arm.webp"
+     },
+     "previewBytes": 98042
+    },
+    {
+     "source": "polyhaven",
+     "id": "angli_veneer",
+     "name": "Angli Veneer",
+     "authors": [
+      "Jenelle van Heerden"
+     ],
+     "url": "https://polyhaven.com/a/angli_veneer",
+     "why": "API tags: veneer, veneer wood, natural grain, grain, wood, natural wood grain, wood grain [Light Hardwood Veneer]; ~1000 mm repeat.",
+     "maps": {
+      "color": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/angli_veneer/angli_veneer_diff_1k.jpg",
+      "normal": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/angli_veneer/angli_veneer_nor_gl_1k.jpg",
+      "arm": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/angli_veneer/angli_veneer_arm_1k.jpg"
+     },
+     "previewBytes": 0
+    }
+   ]
+  },
+  "metal": {
+   "label": "Brushed metal",
+   "use": "table/chair legs, radiator, board frame",
+   "scale": 0.5,
+   "candidates": [
+    {
+     "source": "ambientcg",
+     "id": "Metal012",
+     "name": "Metal 012",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=Metal012",
+     "why": "API tags: 12, brushed, bumpy, metal, scratches, silver, steel.",
+     "maps": {
+      "color": "/lab/acg/Metal012/color.webp",
+      "normal": "/lab/acg/Metal012/normal.webp",
+      "arm": "/lab/acg/Metal012/arm.webp"
+     },
+     "previewBytes": 13944
+    },
+    {
+     "source": "ambientcg",
+     "id": "Metal009",
+     "name": "Metal 009",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=Metal009",
+     "why": "API tags: 9, brushed, bumpy, metal, scratches, silver, steel.",
+     "maps": {
+      "color": "/lab/acg/Metal009/color.webp",
+      "normal": "/lab/acg/Metal009/normal.webp",
+      "arm": "/lab/acg/Metal009/arm.webp"
+     },
+     "previewBytes": 33694
+    },
+    {
+     "source": "ambientcg",
+     "id": "Metal010",
+     "name": "Metal 010",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=Metal010",
+     "why": "API tags: 10, brushed, bumpy, metal, scratches, silver, steel.",
+     "maps": {
+      "color": "/lab/acg/Metal010/color.webp",
+      "normal": "/lab/acg/Metal010/normal.webp",
+      "arm": "/lab/acg/Metal010/arm.webp"
+     },
+     "previewBytes": 48396
+    },
+    {
+     "source": "ambientcg",
+     "id": "Metal011",
+     "name": "Metal 011",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=Metal011",
+     "why": "API tags: 11, brushed, bumpy, metal, scratches, silver, steel.",
+     "maps": {
+      "color": "/lab/acg/Metal011/color.webp",
+      "normal": "/lab/acg/Metal011/normal.webp",
+      "arm": "/lab/acg/Metal011/arm.webp"
+     },
+     "previewBytes": 14848
+    },
+    {
+     "source": "ambientcg",
+     "id": "Metal050A",
+     "name": "Metal 050 A",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=Metal050A",
+     "why": "API tags: 50, aluminum, clean, metal, smooth.",
+     "maps": {
+      "color": "/lab/acg/Metal050A/color.webp",
+      "normal": "/lab/acg/Metal050A/normal.webp",
+      "arm": "/lab/acg/Metal050A/arm.webp"
+     },
+     "previewBytes": 2710
+    },
+    {
+     "source": "ambientcg",
+     "id": "Metal049A",
+     "name": "Metal 049 A",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=Metal049A",
+     "why": "API tags: 49, clean, metal, silver, smooth.",
+     "maps": {
+      "color": "/lab/acg/Metal049A/color.webp",
+      "normal": "/lab/acg/Metal049A/normal.webp",
+      "arm": "/lab/acg/Metal049A/arm.webp"
+     },
+     "previewBytes": 2932
+    },
+    {
+     "source": "ambientcg",
+     "id": "Metal030",
+     "name": "Metal 030",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=Metal030",
+     "why": "API tags: 30, grey, metal, smooth.",
+     "maps": {
+      "color": "/lab/acg/Metal030/color.webp",
+      "normal": "/lab/acg/Metal030/normal.webp",
+      "arm": "/lab/acg/Metal030/arm.webp"
+     },
+     "previewBytes": 2448
+    },
+    {
+     "source": "ambientcg",
+     "id": "Metal014",
+     "name": "Metal 014",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=Metal014",
+     "why": "API tags: 14, clean, grey, light, metal, reflection, rough.",
+     "maps": {
+      "color": "/lab/acg/Metal014/color.webp",
+      "normal": "/lab/acg/Metal014/normal.webp",
+      "arm": "/lab/acg/Metal014/arm.webp"
+     },
+     "previewBytes": 72534
+    },
+    {
+     "source": "ambientcg",
+     "id": "Metal032",
+     "name": "Metal 032",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=Metal032",
+     "why": "API tags: 32, grey, metal, smooth.",
+     "maps": {
+      "color": "/lab/acg/Metal032/color.webp",
+      "normal": "/lab/acg/Metal032/normal.webp",
+      "arm": "/lab/acg/Metal032/arm.webp"
+     },
+     "previewBytes": 3304
+    },
+    {
+     "source": "ambientcg",
+     "id": "Metal036",
+     "name": "Metal 036",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=Metal036",
+     "why": "API tags: 36, grey, metal, smooth.",
+     "maps": {
+      "color": "/lab/acg/Metal036/color.webp",
+      "normal": "/lab/acg/Metal036/normal.webp",
+      "arm": "/lab/acg/Metal036/arm.webp"
+     },
+     "previewBytes": 4690
+    },
+    {
+     "source": "ambientcg",
+     "id": "Metal051A",
+     "name": "Metal 051 A",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=Metal051A",
+     "why": "API tags: 51, aluminum, brushed, circular, metal.",
+     "maps": {
+      "color": "/lab/acg/Metal051A/color.webp",
+      "normal": "/lab/acg/Metal051A/normal.webp",
+      "arm": "/lab/acg/Metal051A/arm.webp"
+     },
+     "previewBytes": 9734
+    }
+   ]
+  },
+  "tile": {
+   "label": "Mosaic tile splashback",
+   "use": "sink splashback",
+   "scale": 2,
+   "candidates": [
+    {
+     "source": "ambientcg",
+     "id": "Tiles139",
+     "name": "Tiles 139",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=Tiles139",
+     "why": "API tags: 139, bathroom, beige, checkered, classic, cream, floor; ~200 cm repeat.",
+     "maps": {
+      "color": "/lab/acg/Tiles139/color.webp",
+      "normal": "/lab/acg/Tiles139/normal.webp",
+      "arm": "/lab/acg/Tiles139/arm.webp"
+     },
+     "previewBytes": 41470
+    },
+    {
+     "source": "ambientcg",
+     "id": "Tiles142",
+     "name": "Tiles 142",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=Tiles142",
+     "why": "API tags: 142, aged, bathroom, beige, cream, floor, grid; ~200 cm repeat.",
+     "maps": {
+      "color": "/lab/acg/Tiles142/color.webp",
+      "normal": "/lab/acg/Tiles142/normal.webp",
+      "arm": "/lab/acg/Tiles142/arm.webp"
+     },
+     "previewBytes": 42844
+    },
+    {
+     "source": "ambientcg",
+     "id": "Tiles141",
+     "name": "Tiles 141",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=Tiles141",
+     "why": "API tags: 141, bathroom, beige, dirty, floor, grid, kitchen; ~200 cm repeat.",
+     "maps": {
+      "color": "/lab/acg/Tiles141/color.webp",
+      "normal": "/lab/acg/Tiles141/normal.webp",
+      "arm": "/lab/acg/Tiles141/arm.webp"
+     },
+     "previewBytes": 52272
+    },
+    {
+     "source": "ambientcg",
+     "id": "Tiles143",
+     "name": "Tiles 143",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=Tiles143",
+     "why": "API tags: 143, beige, flooring, grid, limestone, rectangular, rough; ~200 cm repeat.",
+     "maps": {
+      "color": "/lab/acg/Tiles143/color.webp",
+      "normal": "/lab/acg/Tiles143/normal.webp",
+      "arm": "/lab/acg/Tiles143/arm.webp"
+     },
+     "previewBytes": 43050
+    },
+    {
+     "source": "ambientcg",
+     "id": "Tiles144",
+     "name": "Tiles 144",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=Tiles144",
+     "why": "API tags: 144, aged, beige, flooring, golden, grid, rectangular; ~200 cm repeat.",
+     "maps": {
+      "color": "/lab/acg/Tiles144/color.webp",
+      "normal": "/lab/acg/Tiles144/normal.webp",
+      "arm": "/lab/acg/Tiles144/arm.webp"
+     },
+     "previewBytes": 38692
+    },
+    {
+     "source": "polyhaven",
+     "id": "marble_mosaic_tiles",
+     "name": "Marble Mosaic Tiles",
+     "authors": [
+      "Amal Kumar"
+     ],
+     "url": "https://polyhaven.com/a/marble_mosaic_tiles",
+     "why": "API tags: tiles, floor, ceramic, mosaic, marble, decorative, square [Mosaic]; ~2000 mm repeat.",
+     "maps": {
+      "color": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/marble_mosaic_tiles/marble_mosaic_tiles_diff_1k.jpg",
+      "normal": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/marble_mosaic_tiles/marble_mosaic_tiles_nor_gl_1k.jpg",
+      "arm": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/marble_mosaic_tiles/marble_mosaic_tiles_arm_1k.jpg"
+     },
+     "previewBytes": 0
+    },
+    {
+     "source": "ambientcg",
+     "id": "Tiles131",
+     "name": "Tiles 131",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=Tiles131",
+     "why": "API tags: 131, detailed, floor, intricate, mosaic, stone, tiled; ~150 cm repeat.",
+     "maps": {
+      "color": "/lab/acg/Tiles131/color.webp",
+      "normal": "/lab/acg/Tiles131/normal.webp",
+      "arm": "/lab/acg/Tiles131/arm.webp"
+     },
+     "previewBytes": 166750
+    },
+    {
+     "source": "ambientcg",
+     "id": "Tiles071",
+     "name": "Tiles 071",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=Tiles071",
+     "why": "API tags: 71, bathroom, hexagon, mosaic, tiled, tiles, white; ~45 cm repeat.",
+     "maps": {
+      "color": "/lab/acg/Tiles071/color.webp",
+      "normal": "/lab/acg/Tiles071/normal.webp",
+      "arm": "/lab/acg/Tiles071/arm.webp"
+     },
+     "previewBytes": 129426
+    },
+    {
+     "source": "ambientcg",
+     "id": "Tiles019",
+     "name": "Tiles 019",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=Tiles019",
+     "why": "API tags: 19, blue, cyan, mosaic, small, tiles, tiny.",
+     "maps": {
+      "color": "/lab/acg/Tiles019/color.webp",
+      "normal": "/lab/acg/Tiles019/normal.webp",
+      "arm": "/lab/acg/Tiles019/arm.webp"
+     },
+     "previewBytes": 216768
+    },
+    {
+     "source": "ambientcg",
+     "id": "Tiles066",
+     "name": "Tiles 066",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=Tiles066",
+     "why": "API tags: 66, brown, hexagon, mosaic, orange, tiled, tiles; ~45 cm repeat.",
+     "maps": {
+      "color": "/lab/acg/Tiles066/color.webp",
+      "normal": "/lab/acg/Tiles066/normal.webp",
+      "arm": "/lab/acg/Tiles066/arm.webp"
+     },
+     "previewBytes": 210204
+    },
+    {
+     "source": "polyhaven",
+     "id": "floor_tiles_08",
+     "name": "Floor Tiles 08",
+     "authors": [
+      "Rob Tuytel"
+     ],
+     "url": "https://polyhaven.com/a/floor_tiles_08",
+     "why": "API tags: tiles, square, ceramic, regular, grid, beige [Quarry & Unglazed]; ~1500 mm repeat.",
+     "maps": {
+      "color": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/floor_tiles_08/floor_tiles_08_diff_1k.jpg",
+      "normal": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/floor_tiles_08/floor_tiles_08_nor_gl_1k.jpg",
+      "arm": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/floor_tiles_08/floor_tiles_08_arm_1k.jpg"
+     },
+     "previewBytes": 0
+    }
+   ]
+  },
+  "door": {
+   "label": "Painted door",
+   "use": "door leaf",
+   "scale": 1,
+   "candidates": [
+    {
+     "source": "ambientcg",
+     "id": "PaintedPlaster001",
+     "name": "Painted Plaster 001",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=PaintedPlaster001",
+     "why": "API tags: 1, paint, painted, plaster, red, wall.",
+     "maps": {
+      "color": "/lab/acg/PaintedPlaster001/color.webp",
+      "normal": "/lab/acg/PaintedPlaster001/normal.webp",
+      "arm": "/lab/acg/PaintedPlaster001/arm.webp"
+     },
+     "previewBytes": 74746
+    },
+    {
+     "source": "ambientcg",
+     "id": "PaintedPlaster005",
+     "name": "Painted Plaster 005",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=PaintedPlaster005",
+     "why": "API tags: 5, bumps, clean, cracks, orange, paint, painted.",
+     "maps": {
+      "color": "/lab/acg/PaintedPlaster005/color.webp",
+      "normal": "/lab/acg/PaintedPlaster005/normal.webp",
+      "arm": "/lab/acg/PaintedPlaster005/arm.webp"
+     },
+     "previewBytes": 62480
+    },
+    {
+     "source": "ambientcg",
+     "id": "Plastic014A",
+     "name": "Plastic 014 A",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=Plastic014A",
+     "why": "API tags: 14, orange, plastic, red.",
+     "maps": {
+      "color": "/lab/acg/Plastic014A/color.webp",
+      "normal": "/lab/acg/Plastic014A/normal.webp",
+      "arm": "/lab/acg/Plastic014A/arm.webp"
+     },
+     "previewBytes": 6356
+    },
+    {
+     "source": "ambientcg",
+     "id": "Plastic007",
+     "name": "Plastic 007",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=Plastic007",
+     "why": "API tags: 7, plastic, red, smooth.",
+     "maps": {
+      "color": "/lab/acg/Plastic007/color.webp",
+      "normal": "/lab/acg/Plastic007/normal.webp",
+      "arm": "/lab/acg/Plastic007/arm.webp"
+     },
+     "previewBytes": 14152
+    },
+    {
+     "source": "ambientcg",
+     "id": "PaintedWood009C",
+     "name": "Painted Wood 009 C",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=PaintedWood009C",
+     "why": "API tags: 9, beige, clean, light, old, painted, wood.",
+     "maps": {
+      "color": "/lab/acg/PaintedWood009C/color.webp",
+      "normal": "/lab/acg/PaintedWood009C/normal.webp",
+      "arm": "/lab/acg/PaintedWood009C/arm.webp"
+     },
+     "previewBytes": 83582
+    },
+    {
+     "source": "ambientcg",
+     "id": "PaintedWood008C",
+     "name": "Painted Wood 008 C",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=PaintedWood008C",
+     "why": "API tags: 8, dark, painted, wood.",
+     "maps": {
+      "color": "/lab/acg/PaintedWood008C/color.webp",
+      "normal": "/lab/acg/PaintedWood008C/normal.webp",
+      "arm": "/lab/acg/PaintedWood008C/arm.webp"
+     },
+     "previewBytes": 80724
+    },
+    {
+     "source": "ambientcg",
+     "id": "Metal027",
+     "name": "Metal 027",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=Metal027",
+     "why": "API tags: 27, black, covered, metal, painted, powder, steel.",
+     "maps": {
+      "color": "/lab/acg/Metal027/color.webp",
+      "normal": "/lab/acg/Metal027/normal.webp",
+      "arm": "/lab/acg/Metal027/arm.webp"
+     },
+     "previewBytes": 5866
+    },
+    {
+     "source": "ambientcg",
+     "id": "Metal028",
+     "name": "Metal 028",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=Metal028",
+     "why": "API tags: 28, black, covered, metal, painted, powder, steel.",
+     "maps": {
+      "color": "/lab/acg/Metal028/color.webp",
+      "normal": "/lab/acg/Metal028/normal.webp",
+      "arm": "/lab/acg/Metal028/arm.webp"
+     },
+     "previewBytes": 45710
+    },
+    {
+     "source": "ambientcg",
+     "id": "PaintedPlaster004",
+     "name": "Painted Plaster 004",
+     "authors": [
+      "ambientCG (Lennart Demes)"
+     ],
+     "url": "https://ambientcg.com/view?id=PaintedPlaster004",
+     "why": "API tags: 4, clean, paint, painted, plaster, yellow.",
+     "maps": {
+      "color": "/lab/acg/PaintedPlaster004/color.webp",
+      "normal": "/lab/acg/PaintedPlaster004/normal.webp",
+      "arm": "/lab/acg/PaintedPlaster004/arm.webp"
+     },
+     "previewBytes": 60106
+    },
+    {
+     "source": "polyhaven",
+     "id": "blue_metal_plate",
+     "name": "Blue Metal Plate",
+     "authors": [
+      "Rob Tuytel"
+     ],
+     "url": "https://polyhaven.com/a/blue_metal_plate",
+     "why": "API tags: scratched, metal sheet, metal, painted, industrial, scratches, scuffed [Flat Sheet]; ~2500 mm repeat.",
+     "maps": {
+      "color": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/blue_metal_plate/blue_metal_plate_diff_1k.jpg",
+      "normal": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/blue_metal_plate/blue_metal_plate_nor_gl_1k.jpg",
+      "arm": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/blue_metal_plate/blue_metal_plate_arm_1k.jpg"
+     },
+     "previewBytes": 0
+    }
+   ]
+  }
+ },
+ "hdris": {
+  "overcast": [
+   {
+    "id": "kloofendal_overcast",
+    "name": "Kloofendal Overcast",
+    "url": "https://polyhaven.com/a/kloofendal_overcast",
+    "preview": "https://cdn.polyhaven.com/asset_img/thumbs/kloofendal_overcast.png?width=256"
+   },
+   {
+    "id": "overcast_soil",
+    "name": "Overcast Soil",
+    "url": "https://polyhaven.com/a/overcast_soil",
+    "preview": "https://cdn.polyhaven.com/asset_img/thumbs/overcast_soil.png?width=256"
+   },
+   {
+    "id": "overcast_soil_2",
+    "name": "Overcast Soil 2",
+    "url": "https://polyhaven.com/a/overcast_soil_2",
+    "preview": "https://cdn.polyhaven.com/asset_img/thumbs/overcast_soil_2.png?width=256"
+   },
+   {
+    "id": "farmland_overcast",
+    "name": "Farmland Overcast",
+    "url": "https://polyhaven.com/a/farmland_overcast",
+    "preview": "https://cdn.polyhaven.com/asset_img/thumbs/farmland_overcast.png?width=256"
+   },
+   {
+    "id": "cloudy_cliffside_road",
+    "name": "Cloudy Cliffside Road",
+    "url": "https://polyhaven.com/a/cloudy_cliffside_road",
+    "preview": "https://cdn.polyhaven.com/asset_img/thumbs/cloudy_cliffside_road.png?width=256"
+   },
+   {
+    "id": "mud_road",
+    "name": "Mud Road",
+    "url": "https://polyhaven.com/a/mud_road",
+    "preview": "https://cdn.polyhaven.com/asset_img/thumbs/mud_road.png?width=256"
+   },
+   {
+    "id": "belfast_open_field",
+    "name": "Belfast Open Field",
+    "url": "https://polyhaven.com/a/belfast_open_field",
+    "preview": "https://cdn.polyhaven.com/asset_img/thumbs/belfast_open_field.png?width=256"
+   },
+   {
+    "id": "rogland_overcast",
+    "name": "Rogland Overcast",
+    "url": "https://polyhaven.com/a/rogland_overcast",
+    "preview": "https://cdn.polyhaven.com/asset_img/thumbs/rogland_overcast.png?width=256"
+   },
+   {
+    "id": "fouriesburg_mountain_cloudy",
+    "name": "Fouriesburg Mountain Cloudy",
+    "url": "https://polyhaven.com/a/fouriesburg_mountain_cloudy",
+    "preview": "https://cdn.polyhaven.com/asset_img/thumbs/fouriesburg_mountain_cloudy.png?width=256"
+   },
+   {
+    "id": "red_hill_cloudy",
+    "name": "Red Hill Cloudy",
+    "url": "https://polyhaven.com/a/red_hill_cloudy",
+    "preview": "https://cdn.polyhaven.com/asset_img/thumbs/red_hill_cloudy.png?width=256"
+   },
+   {
+    "id": "hanger_exterior_cloudy",
+    "name": "Hanger Exterior Cloudy",
+    "url": "https://polyhaven.com/a/hanger_exterior_cloudy",
+    "preview": "https://cdn.polyhaven.com/asset_img/thumbs/hanger_exterior_cloudy.png?width=256"
+   },
+   {
+    "id": "overcast_industrial_courtyard",
+    "name": "Overcast Industrial Courtyard",
+    "url": "https://polyhaven.com/a/overcast_industrial_courtyard",
+    "preview": "https://cdn.polyhaven.com/asset_img/thumbs/overcast_industrial_courtyard.png?width=256"
+   },
+   {
+    "id": "kloetzle_blei",
+    "name": "Kloetzle Blei",
+    "url": "https://polyhaven.com/a/kloetzle_blei",
+    "preview": "https://cdn.polyhaven.com/asset_img/thumbs/kloetzle_blei.png?width=256"
+   },
+   {
+    "id": "kloofendal_overcast_puresky",
+    "name": "Kloofendal Overcast (Pure Sky)",
+    "url": "https://polyhaven.com/a/kloofendal_overcast_puresky",
+    "preview": "https://cdn.polyhaven.com/asset_img/thumbs/kloofendal_overcast_puresky.png?width=256"
+   },
+   {
+    "id": "overcast_soil_puresky",
+    "name": "Overcast Soil (Pure Sky)",
+    "url": "https://polyhaven.com/a/overcast_soil_puresky",
+    "preview": "https://cdn.polyhaven.com/asset_img/thumbs/overcast_soil_puresky.png?width=256"
+   }
+  ]
+ }
+}

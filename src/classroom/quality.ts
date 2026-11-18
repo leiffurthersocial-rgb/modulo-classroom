@@ -11,6 +11,8 @@ export interface QualitySettings {
   /** NPC visual update rate divider (1 = every frame). */
   npcAnimEvery: number;
   audioVoices: number;
+  /** PBR texture tier (px): Battery Saver 512, Low/Medium 1k, High/Ultra 2k. */
+  textureTier: 512 | 1024 | 2048;
 }
 
 export const PRESETS: Record<Exclude<PresetId, 'custom'>, QualitySettings> = {
@@ -23,6 +25,7 @@ export const PRESETS: Record<Exclude<PresetId, 'custom'>, QualitySettings> = {
     labels: true,
     npcAnimEvery: 1,
     audioVoices: 32,
+    textureTier: 2048,
   },
   high: {
     pixelRatio: 1.5,
@@ -33,6 +36,7 @@ export const PRESETS: Record<Exclude<PresetId, 'custom'>, QualitySettings> = {
     labels: true,
     npcAnimEvery: 1,
     audioVoices: 32,
+    textureTier: 2048,
   },
   medium: {
     pixelRatio: 1.25,
@@ -43,6 +47,7 @@ export const PRESETS: Record<Exclude<PresetId, 'custom'>, QualitySettings> = {
     labels: true,
     npcAnimEvery: 1,
     audioVoices: 24,
+    textureTier: 1024,
   },
   low: {
     pixelRatio: 1,
@@ -53,6 +58,7 @@ export const PRESETS: Record<Exclude<PresetId, 'custom'>, QualitySettings> = {
     labels: true,
     npcAnimEvery: 2,
     audioVoices: 16,
+    textureTier: 1024,
   },
   battery: {
     pixelRatio: 0.85,
@@ -63,6 +69,7 @@ export const PRESETS: Record<Exclude<PresetId, 'custom'>, QualitySettings> = {
     labels: true,
     npcAnimEvery: 2,
     audioVoices: 12,
+    textureTier: 512,
   },
 };
 

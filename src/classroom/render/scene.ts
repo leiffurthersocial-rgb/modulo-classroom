@@ -51,6 +51,32 @@ function labelSprite(text: string, sub?: string): THREE.Sprite {
   return s;
 }
 
+/** The room's light rig (shared with /lab so materials are judged under game lighting). */
+export function createRoomLights(layout: World['layout']): {
+  hemi: THREE.HemisphereLight;
+  sun: THREE.DirectionalLight;
+  fill: THREE.PointLight;
+} {
+  const [W, H, D] = layout.room.size;
+  const hemi = new THREE.HemisphereLight(0xe3ebf2, 0x3a2e24, 1.15);
+  const sun = new THREE.DirectionalLight(0xfff1dc, 2.3);
+  sun.position.set(W + 6, 5.5, D * 0.35);
+  sun.target.position.set(W * 0.4, 0, D * 0.5);
+  sun.castShadow = true;
+  const sc = sun.shadow.camera;
+  sc.left = -6;
+  sc.right = 6;
+  sc.top = 6;
+  sc.bottom = -6;
+  sc.near = 1;
+  sc.far = 20;
+  sun.shadow.bias = -0.0005;
+  sun.shadow.normalBias = 0.02;
+  const fill = new THREE.PointLight(0xfff6ea, 7, 13, 2);
+  fill.position.set(W / 2, H - 0.3, D / 2);
+  return { hemi, sun, fill };
+}
+
 export class RoomView {
   readonly scene = new THREE.Scene();
   readonly room: GreyboxRoom;
@@ -81,24 +107,12 @@ export class RoomView {
     this.scene.background = new THREE.Color(0x1a1d21);
     this.room = buildGreybox(layout);
     this.scene.add(this.room.root);
-    const [W, H, D] = layout.room.size;
+    const [W] = layout.room.size;
 
-    this.hemi = new THREE.HemisphereLight(0xe3ebf2, 0x3a2e24, 1.15);
-    this.sun = new THREE.DirectionalLight(0xfff1dc, 2.3);
-    this.sun.position.set(W + 6, 5.5, D * 0.35);
-    this.sun.target.position.set(W * 0.4, 0, D * 0.5);
-    this.sun.castShadow = true;
-    const sc = this.sun.shadow.camera;
-    sc.left = -6;
-    sc.right = 6;
-    sc.top = 6;
-    sc.bottom = -6;
-    sc.near = 1;
-    sc.far = 20;
-    this.sun.shadow.bias = -0.0005;
-    this.sun.shadow.normalBias = 0.02;
-    this.fill = new THREE.PointLight(0xfff6ea, 7, 13, 2);
-    this.fill.position.set(W / 2, H - 0.3, D / 2);
+    const lights = createRoomLights(layout);
+    this.hemi = lights.hemi;
+    this.sun = lights.sun;
+    this.fill = lights.fill;
     this.glow = new THREE.PointLight(0x9ec4ff, 0, 1.6, 2);
     this.scene.add(this.hemi, this.sun, this.sun.target, this.fill, this.glow);
 

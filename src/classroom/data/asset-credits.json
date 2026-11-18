@@ -1,0 +1,122 @@
+[
+  {
+    "key": "ambientcg:Concrete034",
+    "name": "Concrete 034",
+    "by": "ambientCG (Lennart Demes) · ambientCG",
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=Concrete034",
+    "use": "concrete material"
+  },
+  {
+    "key": "ambientcg:Fabric029",
+    "name": "Fabric 029",
+    "by": "ambientCG (Lennart Demes) · ambientCG",
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=Fabric029",
+    "use": "carpet material"
+  },
+  {
+    "key": "ambientcg:Metal009",
+    "name": "Metal 009",
+    "by": "ambientCG (Lennart Demes) · ambientCG",
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=Metal009",
+    "use": "metal material"
+  },
+  {
+    "key": "ambientcg:Plaster002",
+    "name": "Plaster 002",
+    "by": "ambientCG (Lennart Demes) · ambientCG",
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=Plaster002",
+    "use": "plaster material"
+  },
+  {
+    "key": "ambientcg:Plastic007",
+    "name": "Plastic 007",
+    "by": "ambientCG (Lennart Demes) · ambientCG",
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=Plastic007",
+    "use": "door material"
+  },
+  {
+    "key": "ambientcg:Plastic013A",
+    "name": "Plastic 013 A",
+    "by": "ambientCG (Lennart Demes) · ambientCG",
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=Plastic013A",
+    "use": "table material"
+  },
+  {
+    "key": "ambientcg:Tiles139",
+    "name": "Tiles 139",
+    "by": "ambientCG (Lennart Demes) · ambientCG",
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=Tiles139",
+    "use": "tile material"
+  },
+  {
+    "key": "ambientcg:Wood092",
+    "name": "Wood 092",
+    "by": "ambientCG (Lennart Demes) · ambientCG",
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=Wood092",
+    "use": "ceiling material"
+  },
+  {
+    "key": "polyhaven:binder_notebook",
+    "name": "Binder Notebook",
+    "by": "DaDrood · Poly Haven",
+    "license": "CC0-1.0",
+    "url": "https://polyhaven.com/a/binder_notebook",
+    "use": "notebook model"
+  },
+  {
+    "key": "polyhaven:book_encyclopedia_set_01",
+    "name": "Book Encyclopedia Set 01",
+    "by": "John Malcolm · Poly Haven",
+    "license": "CC0-1.0",
+    "url": "https://polyhaven.com/a/book_encyclopedia_set_01",
+    "use": "books model"
+  },
+  {
+    "key": "polyhaven:kloofendal_overcast",
+    "name": "Kloofendal Overcast",
+    "by": "Greg Zaal · Poly Haven",
+    "license": "CC0-1.0",
+    "url": "https://polyhaven.com/a/kloofendal_overcast",
+    "use": "overcast sky reflections"
+  },
+  {
+    "key": "polyhaven:metal_trash_can",
+    "name": "Metal Trash Can",
+    "by": "GurJas Studios · Poly Haven",
+    "license": "CC0-1.0",
+    "url": "https://polyhaven.com/a/metal_trash_can",
+    "use": "bin model"
+  },
+  {
+    "key": "polyhaven:okoume_veneer",
+    "name": "Okoume Veneer",
+    "by": "Jenelle van Heerden · Poly Haven",
+    "license": "CC0-1.0",
+    "url": "https://polyhaven.com/a/okoume_veneer",
+    "use": "plywood material"
+  },
+  {
+    "key": "polyhaven:potted_plant_01",
+    "name": "Potted Plant 01",
+    "by": "Rico Cilliers · Poly Haven",
+    "license": "CC0-1.0",
+    "url": "https://polyhaven.com/a/potted_plant_01",
+    "use": "plant model"
+  },
+  {
+    "key": "polyhaven:stationery_supplies",
+    "name": "Stationery Supplies",
+    "by": "Mateusz Sadek · Poly Haven",
+    "license": "CC0-1.0",
+    "url": "https://polyhaven.com/a/stationery_supplies",
+    "use": "stationery model"
+  }
+]

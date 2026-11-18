@@ -6,6 +6,7 @@ import { facingDir, type RoomLayout, type Vec2, wallFrame } from '../sim/layout'
 export const GREYBOX_COLORS = {
   carpet: 0x4a3a2e,
   concrete: 0xa9a6a0,
+  plaster: 0xd9d6cf,
   ceiling: 0xb48a5a,
   ceilingGap: 0x2b2622,
   table: 0xe9e7e2,
@@ -23,8 +24,18 @@ export const GREYBOX_COLORS = {
   tile: 0xd9c9a3,
 } as const;
 
-function mat(color: number, extra: Partial<THREE.MeshStandardMaterialParameters> = {}) {
-  return new THREE.MeshStandardMaterial({ color, roughness: 0.85, metalness: 0, ...extra });
+/** PBR slots (src/config/materials.json). A tagged material is swapped for a triplanar PBR one. */
+export type PbrSlot =
+  'concrete' | 'plaster' | 'carpet' | 'ceiling' | 'table' | 'plywood' | 'metal' | 'tile' | 'door';
+
+function mat(
+  color: number,
+  extra: Partial<THREE.MeshStandardMaterialParameters> = {},
+  pbr?: PbrSlot,
+) {
+  const m = new THREE.MeshStandardMaterial({ color, roughness: 0.85, metalness: 0, ...extra });
+  if (pbr) m.userData.pbr = pbr;
+  return m;
 }
 
 function box(w: number, h: number, d: number, m: THREE.Material): THREE.Mesh {
@@ -64,13 +75,19 @@ export function buildGreybox(layout: RoomLayout): GreyboxRoom {
   const C = GREYBOX_COLORS;
 
   // --- Shell -------------------------------------------------------------------------------
-  const floor = new THREE.Mesh(new THREE.PlaneGeometry(W, D), mat(C.carpet, { roughness: 1 }));
+  const floor = new THREE.Mesh(
+    new THREE.PlaneGeometry(W, D),
+    mat(C.carpet, { roughness: 1 }, 'carpet'),
+  );
   floor.rotation.x = -Math.PI / 2;
   floor.position.set(W / 2, 0, D / 2);
   floor.receiveShadow = true;
   root.add(floor);
 
-  const wallMat = mat(C.concrete, { roughness: 0.95 });
+  // Painted walls (white plaster in the reference photos); exposed concrete only on the column,
+  // the ceiling beam and the window wall with its deep reveals.
+  const wallMat = mat(C.plaster, { roughness: 0.95 }, 'plaster');
+  const concreteMat = mat(C.concrete, { roughness: 0.95 }, 'concrete');
   const T = 0.2; // wall thickness (outside the room volume)
   // Front, back, left: solid. Right (window) wall: built around the window openings.
   const front = box(W + 2 * T, H, T, wallMat);
@@ -88,7 +105,7 @@ export function buildGreybox(layout: RoomLayout): GreyboxRoom {
   const rightX = W + T / 2;
   const addRight = (z0: number, z1: number, y0: number, y1: number) => {
     if (z1 - z0 < 1e-3 || y1 - y0 < 1e-3) return;
-    const m = box(T, y1 - y0, z1 - z0, wallMat);
+    const m = box(T, y1 - y0, z1 - z0, concreteMat);
     m.position.set(rightX, (y0 + y1) / 2, (z0 + z1) / 2);
     root.add(m);
     occluders.push(m);
@@ -116,7 +133,7 @@ export function buildGreybox(layout: RoomLayout): GreyboxRoom {
   const slatCount = Math.floor(D / slatPitch);
   const slats = new THREE.InstancedMesh(
     new THREE.BoxGeometry(W, 0.03, 0.07),
-    mat(C.ceiling),
+    mat(C.ceiling, {}, 'ceiling'),
     slatCount,
   );
   const m4 = new THREE.Matrix4();
@@ -125,13 +142,13 @@ export function buildGreybox(layout: RoomLayout): GreyboxRoom {
   }
   root.add(slats);
   // Exposed concrete beam across the ceiling (as in the reference).
-  const beam = box(W, 0.35, 0.4, wallMat);
+  const beam = box(W, 0.35, 0.4, concreteMat);
   beam.position.set(W / 2, H - 0.175, D * 0.42);
   root.add(beam);
 
   // --- Columns -----------------------------------------------------------------------------
   for (const c of layout.columns) {
-    const col = box(c.size[0], H, c.size[1], wallMat);
+    const col = box(c.size[0], H, c.size[1], concreteMat);
     col.position.set(c.center[0], H / 2, c.center[1]);
     root.add(col);
     occluders.push(col);
@@ -144,9 +161,14 @@ export function buildGreybox(layout: RoomLayout): GreyboxRoom {
     const pivot = new THREE.Group();
     pivot.position.copy(p.pos);
     pivot.rotation.y = p.rotY;
-    const door = box(o.width, o.height, 0.05, mat(C.door, { roughness: 0.6 }));
+    const door = box(o.width, o.height, 0.05, mat(C.door, { roughness: 0.6 }, 'door'));
     door.position.x = o.width / 2;
-    const handle = box(0.12, 0.03, 0.06, mat(C.chrome, { metalness: 0.9, roughness: 0.3 }));
+    const handle = box(
+      0.12,
+      0.03,
+      0.06,
+      mat(C.chrome, { metalness: 0.9, roughness: 0.3 }, 'metal'),
+    );
     handle.position.set(o.width - 0.12, -0.05, 0.05);
     const leaf = new THREE.Group();
     leaf.name = 'leaf';
@@ -170,7 +192,7 @@ export function buildGreybox(layout: RoomLayout): GreyboxRoom {
           fw + 0.06,
           fh + 0.06,
           0.02,
-          mat(C.boardFrame, { metalness: 0.6, roughness: 0.4 }),
+          mat(C.boardFrame, { metalness: 0.6, roughness: 0.4 }, 'metal'),
         );
         const face = box(fw, fh, 0.025, mat(C.board, { roughness: 0.3 }));
         const tray = box(fw * 0.8, 0.03, 0.08, mat(C.boardFrame));
@@ -202,13 +224,13 @@ export function buildGreybox(layout: RoomLayout): GreyboxRoom {
         break;
       }
       case 'radiator': {
-        mesh = box(fw, fh, 0.12, mat(C.radiator, { metalness: 0.4, roughness: 0.5 }));
+        mesh = box(fw, fh, 0.12, mat(C.radiator, { metalness: 0.4, roughness: 0.5 }, 'metal'));
         inset = 0.07;
         break;
       }
       case 'sink': {
         const g = new THREE.Group();
-        const tiles = box(1.4, 1.2, 0.02, mat(C.tile, { roughness: 0.4 }));
+        const tiles = box(1.4, 1.2, 0.02, mat(C.tile, { roughness: 0.4 }, 'tile'));
         tiles.position.y = 0.45;
         const basin = box(fw, 0.18, fh, mat(0xf2f2f2, { roughness: 0.2 }));
         basin.position.z = fh / 2;
@@ -239,12 +261,12 @@ export function buildGreybox(layout: RoomLayout): GreyboxRoom {
   // --- Tables (instanced tops + legs) ------------------------------------------------------
   const tTop = new THREE.InstancedMesh(
     new THREE.BoxGeometry(1, 0.03, 1),
-    mat(C.table, { roughness: 0.5 }),
+    mat(C.table, { roughness: 0.5 }, 'table'),
     layout.tables.length,
   );
   const tLeg = new THREE.InstancedMesh(
     new THREE.BoxGeometry(0.03, 1, 0.03),
-    mat(C.chrome, { metalness: 0.9, roughness: 0.25 }),
+    mat(C.chrome, { metalness: 0.9, roughness: 0.25 }, 'metal'),
     layout.tables.length * 4,
   );
   tTop.castShadow = tTop.receiveShadow = true;
@@ -285,22 +307,22 @@ export function buildGreybox(layout: RoomLayout): GreyboxRoom {
   const n = chairs.length;
   const cSeat = new THREE.InstancedMesh(
     new THREE.BoxGeometry(0.42, 0.03, 0.42),
-    mat(C.plywood, { roughness: 0.6 }),
+    mat(C.plywood, { roughness: 0.6 }, 'plywood'),
     n,
   );
   const cBack = new THREE.InstancedMesh(
     new THREE.BoxGeometry(0.4, 0.3, 0.025),
-    mat(C.plywood, { roughness: 0.6 }),
+    mat(C.plywood, { roughness: 0.6 }, 'plywood'),
     n,
   );
   const cPost = new THREE.InstancedMesh(
     new THREE.CylinderGeometry(0.025, 0.025, 0.42, 10),
-    mat(C.chrome, { metalness: 0.9, roughness: 0.25 }),
+    mat(C.chrome, { metalness: 0.9, roughness: 0.25 }, 'metal'),
     n,
   );
   const cBase = new THREE.InstancedMesh(
     new THREE.CylinderGeometry(0.3, 0.3, 0.03, 5),
-    mat(C.chrome, { metalness: 0.9, roughness: 0.25 }),
+    mat(C.chrome, { metalness: 0.9, roughness: 0.25 }, 'metal'),
     n,
   );
   for (const im of [cSeat, cBack, cPost, cBase]) im.castShadow = im.receiveShadow = true;
@@ -324,7 +346,7 @@ export function buildGreybox(layout: RoomLayout): GreyboxRoom {
       case 'standing-desk': {
         const [w, h, d] = p.size ?? [1.4, 1.05, 0.7];
         const g = new THREE.Group();
-        const top = box(w, 0.03, d, mat(C.table, { roughness: 0.5 }));
+        const top = box(w, 0.03, d, mat(C.table, { roughness: 0.5 }, 'table'));
         top.position.y = h;
         const legA = box(0.08, h, 0.08, mat(C.desk));
         legA.position.set(-w / 2 + 0.15, h / 2, 0);

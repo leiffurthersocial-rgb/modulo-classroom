@@ -1,0 +1,106 @@
+{
+  "materials": {
+    "concrete": {
+      "source": "ambientcg",
+      "id": "Concrete034",
+      "label": "Concrete (column, beam, window wall)",
+      "scale": 1.1,
+      "brightness": 0.85
+    },
+    "plaster": {
+      "source": "ambientcg",
+      "id": "Plaster002",
+      "label": "Painted walls",
+      "scale": 2.0,
+      "brightness": 0.88,
+      "normalScale": 0.5
+    },
+    "carpet": {
+      "source": "ambientcg",
+      "id": "Fabric029",
+      "label": "Carpet floor",
+      "scale": 0.8,
+      "tint": "#e8b898",
+      "brightness": 3.0
+    },
+    "ceiling": {
+      "source": "ambientcg",
+      "id": "Wood092",
+      "label": "Ceiling slats (wood)",
+      "scale": 0.8,
+      "brightness": 1.3
+    },
+    "table": {
+      "source": "ambientcg",
+      "id": "Plastic013A",
+      "label": "White table top",
+      "scale": 1.0,
+      "roughness": 0.8
+    },
+    "plywood": {
+      "source": "polyhaven",
+      "id": "okoume_veneer",
+      "label": "Plywood chair shells",
+      "scale": 0.5,
+      "tint": "#ffd0a0"
+    },
+    "metal": {
+      "source": "ambientcg",
+      "id": "Metal009",
+      "label": "Brushed metal",
+      "scale": 0.5,
+      "roughness": 0.7
+    },
+    "tile": {
+      "source": "ambientcg",
+      "id": "Tiles139",
+      "label": "Mosaic tile splashback",
+      "scale": 0.5
+    },
+    "door": {
+      "source": "ambientcg",
+      "id": "Plastic007",
+      "label": "Painted door",
+      "scale": 1.0
+    }
+  },
+  "hdris": {
+    "overcast": {
+      "source": "polyhaven",
+      "id": "kloofendal_overcast",
+      "intensity": 0.35
+    }
+  },
+  "models": {
+    "plant": {
+      "source": "polyhaven",
+      "id": "potted_plant_01",
+      "maxTriangles": 6000,
+      "label": "Potted plant"
+    },
+    "books": {
+      "source": "polyhaven",
+      "id": "book_encyclopedia_set_01",
+      "maxTriangles": 3000,
+      "label": "Book set"
+    },
+    "notebook": {
+      "source": "polyhaven",
+      "id": "binder_notebook",
+      "maxTriangles": 1500,
+      "label": "Binder notebook"
+    },
+    "stationery": {
+      "source": "polyhaven",
+      "id": "stationery_supplies",
+      "maxTriangles": 3000,
+      "label": "Stationery"
+    },
+    "bin": {
+      "source": "polyhaven",
+      "id": "metal_trash_can",
+      "maxTriangles": 2000,
+      "label": "Waste bin"
+    }
+  }
+}

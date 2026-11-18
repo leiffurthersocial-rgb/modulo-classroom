@@ -1,5 +1,6 @@
 // Minimal, mostly diegetic HUD + menus (plain DOM). The sim's numbers stay hidden except in the
 // debug view; relationships are shown as a notebook page with sticky notes.
+import ASSET_CREDITS from '../data/asset-credits.json';
 import { CAST, CHALLENGES, LESSONS, NOTES, PLAYABLE_LESSON_TYPES, TEACHERS } from '../sim/data';
 import { gradeAverage, letter, type StudentRecord } from '../sim/record';
 import type { CaughtCard } from '../sim/world';
@@ -32,6 +33,8 @@ const CSS = `
 .panel{background:#1d2026;border:1px solid #333a44;border-radius:14px;padding:20px 22px;width:min(640px,100%);max-height:92vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.5)}
 .panel h1{margin:0 0 4px;font-size:28px}.panel h2{margin:16px 0 8px;font-size:17px}.panel p{margin:6px 0;opacity:.9}
 .panel .sub2{opacity:.7;font-size:13px}
+.panel ul.credits{max-height:40vh;overflow:auto;padding-left:18px;font-size:13px;line-height:1.5}
+.panel ul.credits a{color:inherit}
 .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:8px 0}
 .row label{min-width:120px;opacity:.85}
 .btn{pointer-events:auto;background:#e9c46a;color:#1d1a12;border:0;border-radius:10px;padding:10px 16px;font:600 15px system-ui;cursor:pointer;min-height:44px}
@@ -478,12 +481,17 @@ export class UI {
   }
 
   credits(onClose: () => void): void {
+    const assets = ASSET_CREDITS.map(
+      (c) =>
+        `<li><a href="${esc(c.url)}" target="_blank" rel="noopener">${esc(c.name)}</a> — ${esc(c.by)} · ${esc(c.license)} <span class="sub2">(${esc(c.use)})</span></li>`,
+    ).join('');
     this.open(
       `<h1>Credits</h1>
-      <p>Modulo: Classroom · greybox build. Design, code and placeholder content are original to this project.</p>
-      <p class="sub2">No third-party art, audio or video is used yet: everything is generated (flat colours, synthesized sounds, procedural "videos"). Real assets arrive with Phase 4 and will be listed here with their licences.</p>
-      <p class="sub2">Built with three.js (MIT). Research credits: see docs/classroom/RESEARCH.md.</p>
-      <p class="sub2">All characters are fictional.</p>`,
+      <p>Modulo: Classroom. Design, code, characters and placeholder content are original to this project. All characters are fictional.</p>
+      <h2>Assets</h2>
+      ${assets ? `<ul class="credits">${assets}</ul>` : '<p class="sub2">No third-party assets loaded.</p>'}
+      <p class="sub2">Materials, models and sky light from Poly Haven and ambientCG (CC0, thank you!). Full list with sources: assets/LICENSES.json.</p>
+      <p class="sub2">Sounds are synthesized in the browser; the in-class "videos" are procedural. Built with three.js (MIT). Research credits: docs/classroom/RESEARCH.md.</p>`,
       [['Back', onClose]],
     );
   }

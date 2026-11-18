@@ -1,0 +1,1332 @@
+{
+  "ambientcg:Carpet001": {
+    "source": "ambientcg",
+    "id": "Carpet001",
+    "name": "Carpet 001",
+    "authors": [
+      "ambientCG (Lennart Demes)"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=Carpet001",
+    "key": "ambientcg:Carpet001",
+    "fetchedAt": "2026-11-18"
+  },
+  "ambientcg:Carpet003": {
+    "source": "ambientcg",
+    "id": "Carpet003",
+    "name": "Carpet 003",
+    "authors": [
+      "ambientCG (Lennart Demes)"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=Carpet003",
+    "key": "ambientcg:Carpet003",
+    "fetchedAt": "2026-11-18"
+  },
+  "ambientcg:Carpet004": {
+    "source": "ambientcg",
+    "id": "Carpet004",
+    "name": "Carpet 004",
+    "authors": [
+      "ambientCG (Lennart Demes)"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=Carpet004",
+    "key": "ambientcg:Carpet004",
+    "fetchedAt": "2026-11-18"
+  },
+  "ambientcg:Carpet012": {
+    "source": "ambientcg",
+    "id": "Carpet012",
+    "name": "Carpet 012",
+    "authors": [
+      "ambientCG (Lennart Demes)"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=Carpet012",
+    "key": "ambientcg:Carpet012",
+    "fetchedAt": "2026-11-18"
+  },
+  "ambientcg:Concrete006": {
+    "source": "ambientcg",
+    "id": "Concrete006",
+    "name": "Concrete 006",
+    "authors": [
+      "ambientCG (Lennart Demes)"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=Concrete006",
+    "key": "ambientcg:Concrete006",
+    "fetchedAt": "2026-11-18"
+  },
+  "ambientcg:Concrete014": {
+    "source": "ambientcg",
+    "id": "Concrete014",
+    "name": "Concrete 014",
+    "authors": [
+      "ambientCG (Lennart Demes)"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=Concrete014",
+    "key": "ambientcg:Concrete014",
+    "fetchedAt": "2026-11-18"
+  },
+  "ambientcg:Concrete016": {
+    "source": "ambientcg",
+    "id": "Concrete016",
+    "name": "Concrete 016",
+    "authors": [
+      "ambientCG (Lennart Demes)"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=Concrete016",
+    "key": "ambientcg:Concrete016",
+    "fetchedAt": "2026-11-18"
+  },
+  "ambientcg:Concrete025": {
+    "source": "ambientcg",
+    "id": "Concrete025",
+    "name": "Concrete 025",
+    "authors": [
+      "ambientCG (Lennart Demes)"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=Concrete025",
+    "key": "ambientcg:Concrete025",
+    "fetchedAt": "2026-11-18"
+  },
+  "ambientcg:Concrete027": {
+    "source": "ambientcg",
+    "id": "Concrete027",
+    "name": "Concrete 027",
+    "authors": [
+      "ambientCG (Lennart Demes)"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=Concrete027",
+    "key": "ambientcg:Concrete027",
+    "fetchedAt": "2026-11-18"
+  },
+  "ambientcg:Concrete028": {
+    "source": "ambientcg",
+    "id": "Concrete028",
+    "name": "Concrete 028",
+    "authors": [
+      "ambientCG (Lennart Demes)"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=Concrete028",
+    "key": "ambientcg:Concrete028",
+    "fetchedAt": "2026-11-18"
+  },
+  "ambientcg:Concrete029": {
+    "source": "ambientcg",
+    "id": "Concrete029",
+    "name": "Concrete 029",
+    "authors": [
+      "ambientCG (Lennart Demes)"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=Concrete029",
+    "key": "ambientcg:Concrete029",
+    "fetchedAt": "2026-11-18"
+  },
+  "ambientcg:Concrete030": {
+    "source": "ambientcg",
+    "id": "Concrete030",
+    "name": "Concrete 030",
+    "authors": [
+      "ambientCG (Lennart Demes)"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=Concrete030",
+    "key": "ambientcg:Concrete030",
+    "fetchedAt": "2026-11-18"
+  },
+  "ambientcg:Concrete034": {
+    "source": "ambientcg",
+    "id": "Concrete034",
+    "name": "Concrete 034",
+    "authors": [
+      "ambientCG (Lennart Demes)"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=Concrete034",
+    "key": "ambientcg:Concrete034",
+    "fetchedAt": "2026-11-18"
+  },
+  "ambientcg:Concrete042A": {
+    "source": "ambientcg",
+    "id": "Concrete042A",
+    "name": "Concrete 042 A",
+    "authors": [
+      "ambientCG (Lennart Demes)"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=Concrete042A",
+    "key": "ambientcg:Concrete042A",
+    "fetchedAt": "2026-11-18"
+  },
+  "ambientcg:Concrete046": {
+    "source": "ambientcg",
+    "id": "Concrete046",
+    "name": "Concrete 046",
+    "authors": [
+      "ambientCG (Lennart Demes)"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=Concrete046",
+    "key": "ambientcg:Concrete046",
+    "fetchedAt": "2026-11-18"
+  },
+  "ambientcg:Fabric022": {
+    "source": "ambientcg",
+    "id": "Fabric022",
+    "name": "Fabric 022",
+    "authors": [
+      "ambientCG (Lennart Demes)"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=Fabric022",
+    "key": "ambientcg:Fabric022",
+    "fetchedAt": "2026-11-18"
+  },
+  "ambientcg:Fabric023": {
+    "source": "ambientcg",
+    "id": "Fabric023",
+    "name": "Fabric 023",
+    "authors": [
+      "ambientCG (Lennart Demes)"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=Fabric023",
+    "key": "ambientcg:Fabric023",
+    "fetchedAt": "2026-11-18"
+  },
+  "ambientcg:Fabric025": {
+    "source": "ambientcg",
+    "id": "Fabric025",
+    "name": "Fabric 025",
+    "authors": [
+      "ambientCG (Lennart Demes)"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=Fabric025",
+    "key": "ambientcg:Fabric025",
+    "fetchedAt": "2026-11-18"
+  },
+  "ambientcg:Fabric028": {
+    "source": "ambientcg",
+    "id": "Fabric028",
+    "name": "Fabric 028",
+    "authors": [
+      "ambientCG (Lennart Demes)"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=Fabric028",
+    "key": "ambientcg:Fabric028",
+    "fetchedAt": "2026-11-18"
+  },
+  "ambientcg:Fabric029": {
+    "source": "ambientcg",
+    "id": "Fabric029",
+    "name": "Fabric 029",
+    "authors": [
+      "ambientCG (Lennart Demes)"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=Fabric029",
+    "key": "ambientcg:Fabric029",
+    "fetchedAt": "2026-11-18"
+  },
+  "ambientcg:Metal009": {
+    "source": "ambientcg",
+    "id": "Metal009",
+    "name": "Metal 009",
+    "authors": [
+      "ambientCG (Lennart Demes)"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=Metal009",
+    "key": "ambientcg:Metal009",
+    "fetchedAt": "2026-11-18"
+  },
+  "ambientcg:Metal010": {
+    "source": "ambientcg",
+    "id": "Metal010",
+    "name": "Metal 010",
+    "authors": [
+      "ambientCG (Lennart Demes)"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=Metal010",
+    "key": "ambientcg:Metal010",
+    "fetchedAt": "2026-11-18"
+  },
+  "ambientcg:Metal011": {
+    "source": "ambientcg",
+    "id": "Metal011",
+    "name": "Metal 011",
+    "authors": [
+      "ambientCG (Lennart Demes)"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=Metal011",
+    "key": "ambientcg:Metal011",
+    "fetchedAt": "2026-11-18"
+  },
+  "ambientcg:Metal012": {
+    "source": "ambientcg",
+    "id": "Metal012",
+    "name": "Metal 012",
+    "authors": [
+      "ambientCG (Lennart Demes)"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=Metal012",
+    "key": "ambientcg:Metal012",
+    "fetchedAt": "2026-11-18"
+  },
+  "ambientcg:Metal014": {
+    "source": "ambientcg",
+    "id": "Metal014",
+    "name": "Metal 014",
+    "authors": [
+      "ambientCG (Lennart Demes)"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=Metal014",
+    "key": "ambientcg:Metal014",
+    "fetchedAt": "2026-11-18"
+  },
+  "ambientcg:Metal016": {
+    "source": "ambientcg",
+    "id": "Metal016",
+    "name": "Metal 016",
+    "authors": [
+      "ambientCG (Lennart Demes)"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=Metal016",
+    "key": "ambientcg:Metal016",
+    "fetchedAt": "2026-11-18"
+  },
+  "ambientcg:Metal027": {
+    "source": "ambientcg",
+    "id": "Metal027",
+    "name": "Metal 027",
+    "authors": [
+      "ambientCG (Lennart Demes)"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=Metal027",
+    "key": "ambientcg:Metal027",
+    "fetchedAt": "2026-11-18"
+  },
+  "ambientcg:Metal028": {
+    "source": "ambientcg",
+    "id": "Metal028",
+    "name": "Metal 028",
+    "authors": [
+      "ambientCG (Lennart Demes)"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=Metal028",
+    "key": "ambientcg:Metal028",
+    "fetchedAt": "2026-11-18"
+  },
+  "ambientcg:Metal030": {
+    "source": "ambientcg",
+    "id": "Metal030",
+    "name": "Metal 030",
+    "authors": [
+      "ambientCG (Lennart Demes)"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=Metal030",
+    "key": "ambientcg:Metal030",
+    "fetchedAt": "2026-11-18"
+  },
+  "ambientcg:Metal032": {
+    "source": "ambientcg",
+    "id": "Metal032",
+    "name": "Metal 032",
+    "authors": [
+      "ambientCG (Lennart Demes)"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=Metal032",
+    "key": "ambientcg:Metal032",
+    "fetchedAt": "2026-11-18"
+  },
+  "ambientcg:Metal036": {
+    "source": "ambientcg",
+    "id": "Metal036",
+    "name": "Metal 036",
+    "authors": [
+      "ambientCG (Lennart Demes)"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=Metal036",
+    "key": "ambientcg:Metal036",
+    "fetchedAt": "2026-11-18"
+  },
+  "ambientcg:Metal049A": {
+    "source": "ambientcg",
+    "id": "Metal049A",
+    "name": "Metal 049 A",
+    "authors": [
+      "ambientCG (Lennart Demes)"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=Metal049A",
+    "key": "ambientcg:Metal049A",
+    "fetchedAt": "2026-11-18"
+  },
+  "ambientcg:Metal050A": {
+    "source": "ambientcg",
+    "id": "Metal050A",
+    "name": "Metal 050 A",
+    "authors": [
+      "ambientCG (Lennart Demes)"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=Metal050A",
+    "key": "ambientcg:Metal050A",
+    "fetchedAt": "2026-11-18"
+  },
+  "ambientcg:Metal051A": {
+    "source": "ambientcg",
+    "id": "Metal051A",
+    "name": "Metal 051 A",
+    "authors": [
+      "ambientCG (Lennart Demes)"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=Metal051A",
+    "key": "ambientcg:Metal051A",
+    "fetchedAt": "2026-11-18"
+  },
+  "ambientcg:Paint004": {
+    "source": "ambientcg",
+    "id": "Paint004",
+    "name": "Paint 004",
+    "authors": [
+      "ambientCG (Lennart Demes)"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=Paint004",
+    "key": "ambientcg:Paint004",
+    "fetchedAt": "2026-11-18"
+  },
+  "ambientcg:PaintedPlaster001": {
+    "source": "ambientcg",
+    "id": "PaintedPlaster001",
+    "name": "Painted Plaster 001",
+    "authors": [
+      "ambientCG (Lennart Demes)"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=PaintedPlaster001",
+    "key": "ambientcg:PaintedPlaster001",
+    "fetchedAt": "2026-11-18"
+  },
+  "ambientcg:PaintedPlaster004": {
+    "source": "ambientcg",
+    "id": "PaintedPlaster004",
+    "name": "Painted Plaster 004",
+    "authors": [
+      "ambientCG (Lennart Demes)"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=PaintedPlaster004",
+    "key": "ambientcg:PaintedPlaster004",
+    "fetchedAt": "2026-11-18"
+  },
+  "ambientcg:PaintedPlaster005": {
+    "source": "ambientcg",
+    "id": "PaintedPlaster005",
+    "name": "Painted Plaster 005",
+    "authors": [
+      "ambientCG (Lennart Demes)"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=PaintedPlaster005",
+    "key": "ambientcg:PaintedPlaster005",
+    "fetchedAt": "2026-11-18"
+  },
+  "ambientcg:PaintedPlaster017": {
+    "source": "ambientcg",
+    "id": "PaintedPlaster017",
+    "name": "Painted Plaster 017",
+    "authors": [
+      "ambientCG (Lennart Demes)"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=PaintedPlaster017",
+    "key": "ambientcg:PaintedPlaster017",
+    "fetchedAt": "2026-11-18"
+  },
+  "ambientcg:PaintedWood008C": {
+    "source": "ambientcg",
+    "id": "PaintedWood008C",
+    "name": "Painted Wood 008 C",
+    "authors": [
+      "ambientCG (Lennart Demes)"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=PaintedWood008C",
+    "key": "ambientcg:PaintedWood008C",
+    "fetchedAt": "2026-11-18"
+  },
+  "ambientcg:PaintedWood009C": {
+    "source": "ambientcg",
+    "id": "PaintedWood009C",
+    "name": "Painted Wood 009 C",
+    "authors": [
+      "ambientCG (Lennart Demes)"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=PaintedWood009C",
+    "key": "ambientcg:PaintedWood009C",
+    "fetchedAt": "2026-11-18"
+  },
+  "ambientcg:Plaster002": {
+    "source": "ambientcg",
+    "id": "Plaster002",
+    "name": "Plaster 002",
+    "authors": [
+      "ambientCG (Lennart Demes)"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=Plaster002",
+    "key": "ambientcg:Plaster002",
+    "fetchedAt": "2026-11-18"
+  },
+  "ambientcg:Plaster003": {
+    "source": "ambientcg",
+    "id": "Plaster003",
+    "name": "Plaster 003",
+    "authors": [
+      "ambientCG (Lennart Demes)"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=Plaster003",
+    "key": "ambientcg:Plaster003",
+    "fetchedAt": "2026-11-18"
+  },
+  "ambientcg:Plaster004": {
+    "source": "ambientcg",
+    "id": "Plaster004",
+    "name": "Plaster 004",
+    "authors": [
+      "ambientCG (Lennart Demes)"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=Plaster004",
+    "key": "ambientcg:Plaster004",
+    "fetchedAt": "2026-11-18"
+  },
+  "ambientcg:Plaster005": {
+    "source": "ambientcg",
+    "id": "Plaster005",
+    "name": "Plaster 005",
+    "authors": [
+      "ambientCG (Lennart Demes)"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=Plaster005",
+    "key": "ambientcg:Plaster005",
+    "fetchedAt": "2026-11-18"
+  },
+  "ambientcg:Plaster006": {
+    "source": "ambientcg",
+    "id": "Plaster006",
+    "name": "Plaster 006",
+    "authors": [
+      "ambientCG (Lennart Demes)"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=Plaster006",
+    "key": "ambientcg:Plaster006",
+    "fetchedAt": "2026-11-18"
+  },
+  "ambientcg:Plastic007": {
+    "source": "ambientcg",
+    "id": "Plastic007",
+    "name": "Plastic 007",
+    "authors": [
+      "ambientCG (Lennart Demes)"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=Plastic007",
+    "key": "ambientcg:Plastic007",
+    "fetchedAt": "2026-11-18"
+  },
+  "ambientcg:Plastic010": {
+    "source": "ambientcg",
+    "id": "Plastic010",
+    "name": "Plastic 010",
+    "authors": [
+      "ambientCG (Lennart Demes)"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=Plastic010",
+    "key": "ambientcg:Plastic010",
+    "fetchedAt": "2026-11-18"
+  },
+  "ambientcg:Plastic013A": {
+    "source": "ambientcg",
+    "id": "Plastic013A",
+    "name": "Plastic 013 A",
+    "authors": [
+      "ambientCG (Lennart Demes)"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=Plastic013A",
+    "key": "ambientcg:Plastic013A",
+    "fetchedAt": "2026-11-18"
+  },
+  "ambientcg:Plastic013B": {
+    "source": "ambientcg",
+    "id": "Plastic013B",
+    "name": "Plastic 013 B",
+    "authors": [
+      "ambientCG (Lennart Demes)"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=Plastic013B",
+    "key": "ambientcg:Plastic013B",
+    "fetchedAt": "2026-11-18"
+  },
+  "ambientcg:Plastic014A": {
+    "source": "ambientcg",
+    "id": "Plastic014A",
+    "name": "Plastic 014 A",
+    "authors": [
+      "ambientCG (Lennart Demes)"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=Plastic014A",
+    "key": "ambientcg:Plastic014A",
+    "fetchedAt": "2026-11-18"
+  },
+  "ambientcg:Tiles019": {
+    "source": "ambientcg",
+    "id": "Tiles019",
+    "name": "Tiles 019",
+    "authors": [
+      "ambientCG (Lennart Demes)"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=Tiles019",
+    "key": "ambientcg:Tiles019",
+    "fetchedAt": "2026-11-18"
+  },
+  "ambientcg:Tiles066": {
+    "source": "ambientcg",
+    "id": "Tiles066",
+    "name": "Tiles 066",
+    "authors": [
+      "ambientCG (Lennart Demes)"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=Tiles066",
+    "key": "ambientcg:Tiles066",
+    "fetchedAt": "2026-11-18"
+  },
+  "ambientcg:Tiles071": {
+    "source": "ambientcg",
+    "id": "Tiles071",
+    "name": "Tiles 071",
+    "authors": [
+      "ambientCG (Lennart Demes)"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=Tiles071",
+    "key": "ambientcg:Tiles071",
+    "fetchedAt": "2026-11-18"
+  },
+  "ambientcg:Tiles131": {
+    "source": "ambientcg",
+    "id": "Tiles131",
+    "name": "Tiles 131",
+    "authors": [
+      "ambientCG (Lennart Demes)"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=Tiles131",
+    "key": "ambientcg:Tiles131",
+    "fetchedAt": "2026-11-18"
+  },
+  "ambientcg:Tiles139": {
+    "source": "ambientcg",
+    "id": "Tiles139",
+    "name": "Tiles 139",
+    "authors": [
+      "ambientCG (Lennart Demes)"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=Tiles139",
+    "key": "ambientcg:Tiles139",
+    "fetchedAt": "2026-11-18"
+  },
+  "ambientcg:Tiles141": {
+    "source": "ambientcg",
+    "id": "Tiles141",
+    "name": "Tiles 141",
+    "authors": [
+      "ambientCG (Lennart Demes)"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=Tiles141",
+    "key": "ambientcg:Tiles141",
+    "fetchedAt": "2026-11-18"
+  },
+  "ambientcg:Tiles142": {
+    "source": "ambientcg",
+    "id": "Tiles142",
+    "name": "Tiles 142",
+    "authors": [
+      "ambientCG (Lennart Demes)"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=Tiles142",
+    "key": "ambientcg:Tiles142",
+    "fetchedAt": "2026-11-18"
+  },
+  "ambientcg:Tiles143": {
+    "source": "ambientcg",
+    "id": "Tiles143",
+    "name": "Tiles 143",
+    "authors": [
+      "ambientCG (Lennart Demes)"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=Tiles143",
+    "key": "ambientcg:Tiles143",
+    "fetchedAt": "2026-11-18"
+  },
+  "ambientcg:Tiles144": {
+    "source": "ambientcg",
+    "id": "Tiles144",
+    "name": "Tiles 144",
+    "authors": [
+      "ambientCG (Lennart Demes)"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=Tiles144",
+    "key": "ambientcg:Tiles144",
+    "fetchedAt": "2026-11-18"
+  },
+  "ambientcg:Wood030": {
+    "source": "ambientcg",
+    "id": "Wood030",
+    "name": "Wood 030",
+    "authors": [
+      "ambientCG (Lennart Demes)"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=Wood030",
+    "key": "ambientcg:Wood030",
+    "fetchedAt": "2026-11-18"
+  },
+  "ambientcg:Wood048": {
+    "source": "ambientcg",
+    "id": "Wood048",
+    "name": "Wood 048",
+    "authors": [
+      "ambientCG (Lennart Demes)"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=Wood048",
+    "key": "ambientcg:Wood048",
+    "fetchedAt": "2026-11-18"
+  },
+  "ambientcg:Wood052": {
+    "source": "ambientcg",
+    "id": "Wood052",
+    "name": "Wood 052",
+    "authors": [
+      "ambientCG (Lennart Demes)"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=Wood052",
+    "key": "ambientcg:Wood052",
+    "fetchedAt": "2026-11-18"
+  },
+  "ambientcg:Wood068": {
+    "source": "ambientcg",
+    "id": "Wood068",
+    "name": "Wood 068",
+    "authors": [
+      "ambientCG (Lennart Demes)"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=Wood068",
+    "key": "ambientcg:Wood068",
+    "fetchedAt": "2026-11-18"
+  },
+  "ambientcg:Wood087": {
+    "source": "ambientcg",
+    "id": "Wood087",
+    "name": "Wood 087",
+    "authors": [
+      "ambientCG (Lennart Demes)"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=Wood087",
+    "key": "ambientcg:Wood087",
+    "fetchedAt": "2026-11-18"
+  },
+  "ambientcg:Wood088": {
+    "source": "ambientcg",
+    "id": "Wood088",
+    "name": "Wood 088",
+    "authors": [
+      "ambientCG (Lennart Demes)"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=Wood088",
+    "key": "ambientcg:Wood088",
+    "fetchedAt": "2026-11-18"
+  },
+  "ambientcg:Wood089": {
+    "source": "ambientcg",
+    "id": "Wood089",
+    "name": "Wood 089",
+    "authors": [
+      "ambientCG (Lennart Demes)"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=Wood089",
+    "key": "ambientcg:Wood089",
+    "fetchedAt": "2026-11-18"
+  },
+  "ambientcg:Wood092": {
+    "source": "ambientcg",
+    "id": "Wood092",
+    "name": "Wood 092",
+    "authors": [
+      "ambientCG (Lennart Demes)"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=Wood092",
+    "key": "ambientcg:Wood092",
+    "fetchedAt": "2026-11-18"
+  },
+  "ambientcg:Wood095": {
+    "source": "ambientcg",
+    "id": "Wood095",
+    "name": "Wood 095",
+    "authors": [
+      "ambientCG (Lennart Demes)"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=Wood095",
+    "key": "ambientcg:Wood095",
+    "fetchedAt": "2026-11-18"
+  },
+  "ambientcg:Wood096": {
+    "source": "ambientcg",
+    "id": "Wood096",
+    "name": "Wood 096",
+    "authors": [
+      "ambientCG (Lennart Demes)"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://ambientcg.com/view?id=Wood096",
+    "key": "ambientcg:Wood096",
+    "fetchedAt": "2026-11-18"
+  },
+  "polyhaven:angli_veneer": {
+    "source": "polyhaven",
+    "id": "angli_veneer",
+    "name": "Angli Veneer",
+    "authors": [
+      "Jenelle van Heerden"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://polyhaven.com/a/angli_veneer",
+    "key": "polyhaven:angli_veneer",
+    "fetchedAt": "2026-11-18"
+  },
+  "polyhaven:ash_veneer": {
+    "source": "polyhaven",
+    "id": "ash_veneer",
+    "name": "Ash Veneer",
+    "authors": [
+      "Jenelle van Heerden"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://polyhaven.com/a/ash_veneer",
+    "key": "polyhaven:ash_veneer",
+    "fetchedAt": "2026-11-18"
+  },
+  "polyhaven:beige_wall_001": {
+    "source": "polyhaven",
+    "id": "beige_wall_001",
+    "name": "Beige Wall 001",
+    "authors": [
+      "Dimitrios Savva",
+      "Rico Cilliers"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://polyhaven.com/a/beige_wall_001",
+    "key": "polyhaven:beige_wall_001",
+    "fetchedAt": "2026-11-18"
+  },
+  "polyhaven:beige_wall_002": {
+    "source": "polyhaven",
+    "id": "beige_wall_002",
+    "name": "Beige Wall 002",
+    "authors": [
+      "Dimitrios Savva",
+      "Rico Cilliers"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://polyhaven.com/a/beige_wall_002",
+    "key": "polyhaven:beige_wall_002",
+    "fetchedAt": "2026-11-18"
+  },
+  "polyhaven:belfast_open_field": {
+    "source": "polyhaven",
+    "id": "belfast_open_field",
+    "name": "Belfast Open Field",
+    "authors": [
+      "Dimitrios Savva",
+      "Jarod Guest"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://polyhaven.com/a/belfast_open_field",
+    "key": "polyhaven:belfast_open_field",
+    "fetchedAt": "2026-11-18"
+  },
+  "polyhaven:binder_notebook": {
+    "source": "polyhaven",
+    "id": "binder_notebook",
+    "name": "Binder Notebook",
+    "authors": [
+      "DaDrood"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://polyhaven.com/a/binder_notebook",
+    "key": "polyhaven:binder_notebook",
+    "fetchedAt": "2026-11-18"
+  },
+  "polyhaven:blue_metal_plate": {
+    "source": "polyhaven",
+    "id": "blue_metal_plate",
+    "name": "Blue Metal Plate",
+    "authors": [
+      "Rob Tuytel"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://polyhaven.com/a/blue_metal_plate",
+    "key": "polyhaven:blue_metal_plate",
+    "fetchedAt": "2026-11-18"
+  },
+  "polyhaven:book_encyclopedia_set_01": {
+    "source": "polyhaven",
+    "id": "book_encyclopedia_set_01",
+    "name": "Book Encyclopedia Set 01",
+    "authors": [
+      "John Malcolm"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://polyhaven.com/a/book_encyclopedia_set_01",
+    "key": "polyhaven:book_encyclopedia_set_01",
+    "fetchedAt": "2026-11-18"
+  },
+  "polyhaven:cloudy_cliffside_road": {
+    "source": "polyhaven",
+    "id": "cloudy_cliffside_road",
+    "name": "Cloudy Cliffside Road",
+    "authors": [
+      "Greg Zaal",
+      "Rico Cilliers"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://polyhaven.com/a/cloudy_cliffside_road",
+    "key": "polyhaven:cloudy_cliffside_road",
+    "fetchedAt": "2026-11-18"
+  },
+  "polyhaven:concrete": {
+    "source": "polyhaven",
+    "id": "concrete",
+    "name": "Concrete",
+    "authors": [
+      "Rob Tuytel"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://polyhaven.com/a/concrete",
+    "key": "polyhaven:concrete",
+    "fetchedAt": "2026-11-18"
+  },
+  "polyhaven:concrete_slab_wall_02": {
+    "source": "polyhaven",
+    "id": "concrete_slab_wall_02",
+    "name": "Concrete Slab Wall 02",
+    "authors": [
+      "Amal Kumar"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://polyhaven.com/a/concrete_slab_wall_02",
+    "key": "polyhaven:concrete_slab_wall_02",
+    "fetchedAt": "2026-11-18"
+  },
+  "polyhaven:concrete_wall_004": {
+    "source": "polyhaven",
+    "id": "concrete_wall_004",
+    "name": "Concrete Wall 004",
+    "authors": [
+      "Dario Barresi",
+      "Charlotte Baglioni"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://polyhaven.com/a/concrete_wall_004",
+    "key": "polyhaven:concrete_wall_004",
+    "fetchedAt": "2026-11-18"
+  },
+  "polyhaven:concrete_wall_007": {
+    "source": "polyhaven",
+    "id": "concrete_wall_007",
+    "name": "Concrete Wall 007",
+    "authors": [
+      "Dario Barresi",
+      "Rico Cilliers",
+      "Charlotte Baglioni"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://polyhaven.com/a/concrete_wall_007",
+    "key": "polyhaven:concrete_wall_007",
+    "fetchedAt": "2026-11-18"
+  },
+  "polyhaven:concrete_wall_009": {
+    "source": "polyhaven",
+    "id": "concrete_wall_009",
+    "name": "Concrete Wall 009",
+    "authors": [
+      "Charlotte Baglioni"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://polyhaven.com/a/concrete_wall_009",
+    "key": "polyhaven:concrete_wall_009",
+    "fetchedAt": "2026-11-18"
+  },
+  "polyhaven:dirty_carpet": {
+    "source": "polyhaven",
+    "id": "dirty_carpet",
+    "name": "Dirty Carpet",
+    "authors": [
+      "Rohit Seervi"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://polyhaven.com/a/dirty_carpet",
+    "key": "polyhaven:dirty_carpet",
+    "fetchedAt": "2026-11-18"
+  },
+  "polyhaven:farmland_overcast": {
+    "source": "polyhaven",
+    "id": "farmland_overcast",
+    "name": "Farmland Overcast",
+    "authors": [
+      "Grzegorz Wronkowski"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://polyhaven.com/a/farmland_overcast",
+    "key": "polyhaven:farmland_overcast",
+    "fetchedAt": "2026-11-18"
+  },
+  "polyhaven:floor_tiles_08": {
+    "source": "polyhaven",
+    "id": "floor_tiles_08",
+    "name": "Floor Tiles 08",
+    "authors": [
+      "Rob Tuytel"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://polyhaven.com/a/floor_tiles_08",
+    "key": "polyhaven:floor_tiles_08",
+    "fetchedAt": "2026-11-18"
+  },
+  "polyhaven:fouriesburg_mountain_cloudy": {
+    "source": "polyhaven",
+    "id": "fouriesburg_mountain_cloudy",
+    "name": "Fouriesburg Mountain Cloudy",
+    "authors": [
+      "Dimitrios Savva",
+      "Jarod Guest"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://polyhaven.com/a/fouriesburg_mountain_cloudy",
+    "key": "polyhaven:fouriesburg_mountain_cloudy",
+    "fetchedAt": "2026-11-18"
+  },
+  "polyhaven:hanger_exterior_cloudy": {
+    "source": "polyhaven",
+    "id": "hanger_exterior_cloudy",
+    "name": "Hanger Exterior Cloudy",
+    "authors": [
+      "Dimitrios Savva",
+      "Jarod Guest"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://polyhaven.com/a/hanger_exterior_cloudy",
+    "key": "polyhaven:hanger_exterior_cloudy",
+    "fetchedAt": "2026-11-18"
+  },
+  "polyhaven:kloetzle_blei": {
+    "source": "polyhaven",
+    "id": "kloetzle_blei",
+    "name": "Kloetzle Blei",
+    "authors": [
+      "Andreas Mischok"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://polyhaven.com/a/kloetzle_blei",
+    "key": "polyhaven:kloetzle_blei",
+    "fetchedAt": "2026-11-18"
+  },
+  "polyhaven:kloofendal_overcast": {
+    "source": "polyhaven",
+    "id": "kloofendal_overcast",
+    "name": "Kloofendal Overcast",
+    "authors": [
+      "Greg Zaal"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://polyhaven.com/a/kloofendal_overcast",
+    "key": "polyhaven:kloofendal_overcast",
+    "fetchedAt": "2026-11-18"
+  },
+  "polyhaven:kloofendal_overcast_puresky": {
+    "source": "polyhaven",
+    "id": "kloofendal_overcast_puresky",
+    "name": "Kloofendal Overcast (Pure Sky)",
+    "authors": [
+      "Greg Zaal"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://polyhaven.com/a/kloofendal_overcast_puresky",
+    "key": "polyhaven:kloofendal_overcast_puresky",
+    "fetchedAt": "2026-11-18"
+  },
+  "polyhaven:marble_mosaic_tiles": {
+    "source": "polyhaven",
+    "id": "marble_mosaic_tiles",
+    "name": "Marble Mosaic Tiles",
+    "authors": [
+      "Amal Kumar"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://polyhaven.com/a/marble_mosaic_tiles",
+    "key": "polyhaven:marble_mosaic_tiles",
+    "fetchedAt": "2026-11-18"
+  },
+  "polyhaven:metal_trash_can": {
+    "source": "polyhaven",
+    "id": "metal_trash_can",
+    "name": "Metal Trash Can",
+    "authors": [
+      "GurJas Studios"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://polyhaven.com/a/metal_trash_can",
+    "key": "polyhaven:metal_trash_can",
+    "fetchedAt": "2026-11-18"
+  },
+  "polyhaven:mud_road": {
+    "source": "polyhaven",
+    "id": "mud_road",
+    "name": "Mud Road",
+    "authors": [
+      "Sergey Rudavin"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://polyhaven.com/a/mud_road",
+    "key": "polyhaven:mud_road",
+    "fetchedAt": "2026-11-18"
+  },
+  "polyhaven:oak_veneer_02": {
+    "source": "polyhaven",
+    "id": "oak_veneer_02",
+    "name": "Oak Veneer 02",
+    "authors": [
+      "Jenelle van Heerden"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://polyhaven.com/a/oak_veneer_02",
+    "key": "polyhaven:oak_veneer_02",
+    "fetchedAt": "2026-11-18"
+  },
+  "polyhaven:okoume_veneer": {
+    "source": "polyhaven",
+    "id": "okoume_veneer",
+    "name": "Okoume Veneer",
+    "authors": [
+      "Jenelle van Heerden"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://polyhaven.com/a/okoume_veneer",
+    "key": "polyhaven:okoume_veneer",
+    "fetchedAt": "2026-11-18"
+  },
+  "polyhaven:overcast_industrial_courtyard": {
+    "source": "polyhaven",
+    "id": "overcast_industrial_courtyard",
+    "name": "Overcast Industrial Courtyard",
+    "authors": [
+      "Grzegorz Wronkowski"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://polyhaven.com/a/overcast_industrial_courtyard",
+    "key": "polyhaven:overcast_industrial_courtyard",
+    "fetchedAt": "2026-11-18"
+  },
+  "polyhaven:overcast_soil": {
+    "source": "polyhaven",
+    "id": "overcast_soil",
+    "name": "Overcast Soil",
+    "authors": [
+      "Sergej Majboroda"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://polyhaven.com/a/overcast_soil",
+    "key": "polyhaven:overcast_soil",
+    "fetchedAt": "2026-11-18"
+  },
+  "polyhaven:overcast_soil_2": {
+    "source": "polyhaven",
+    "id": "overcast_soil_2",
+    "name": "Overcast Soil 2",
+    "authors": [
+      "Sergej Majboroda"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://polyhaven.com/a/overcast_soil_2",
+    "key": "polyhaven:overcast_soil_2",
+    "fetchedAt": "2026-11-18"
+  },
+  "polyhaven:overcast_soil_puresky": {
+    "source": "polyhaven",
+    "id": "overcast_soil_puresky",
+    "name": "Overcast Soil (Pure Sky)",
+    "authors": [
+      "Jarod Guest",
+      "Sergej Majboroda"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://polyhaven.com/a/overcast_soil_puresky",
+    "key": "polyhaven:overcast_soil_puresky",
+    "fetchedAt": "2026-11-18"
+  },
+  "polyhaven:painted_plaster_wall": {
+    "source": "polyhaven",
+    "id": "painted_plaster_wall",
+    "name": "Painted Plaster Wall",
+    "authors": [
+      "Amal Kumar"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://polyhaven.com/a/painted_plaster_wall",
+    "key": "polyhaven:painted_plaster_wall",
+    "fetchedAt": "2026-11-18"
+  },
+  "polyhaven:plywood": {
+    "source": "polyhaven",
+    "id": "plywood",
+    "name": "Plywood",
+    "authors": [
+      "Rob Tuytel"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://polyhaven.com/a/plywood",
+    "key": "polyhaven:plywood",
+    "fetchedAt": "2026-11-18"
+  },
+  "polyhaven:potted_plant_01": {
+    "source": "polyhaven",
+    "id": "potted_plant_01",
+    "name": "Potted Plant 01",
+    "authors": [
+      "Rico Cilliers"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://polyhaven.com/a/potted_plant_01",
+    "key": "polyhaven:potted_plant_01",
+    "fetchedAt": "2026-11-18"
+  },
+  "polyhaven:red_hill_cloudy": {
+    "source": "polyhaven",
+    "id": "red_hill_cloudy",
+    "name": "Red Hill Cloudy",
+    "authors": [
+      "Greg Zaal"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://polyhaven.com/a/red_hill_cloudy",
+    "key": "polyhaven:red_hill_cloudy",
+    "fetchedAt": "2026-11-18"
+  },
+  "polyhaven:rogland_overcast": {
+    "source": "polyhaven",
+    "id": "rogland_overcast",
+    "name": "Rogland Overcast",
+    "authors": [
+      "Greg Zaal"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://polyhaven.com/a/rogland_overcast",
+    "key": "polyhaven:rogland_overcast",
+    "fetchedAt": "2026-11-18"
+  },
+  "polyhaven:stationery_supplies": {
+    "source": "polyhaven",
+    "id": "stationery_supplies",
+    "name": "Stationery Supplies",
+    "authors": [
+      "Mateusz Sadek"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://polyhaven.com/a/stationery_supplies",
+    "key": "polyhaven:stationery_supplies",
+    "fetchedAt": "2026-11-18"
+  },
+  "polyhaven:white_maple_veneer": {
+    "source": "polyhaven",
+    "id": "white_maple_veneer",
+    "name": "White Maple Veneer",
+    "authors": [
+      "Jenelle van Heerden"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://polyhaven.com/a/white_maple_veneer",
+    "key": "polyhaven:white_maple_veneer",
+    "fetchedAt": "2026-11-18"
+  },
+  "polyhaven:white_planks_clean": {
+    "source": "polyhaven",
+    "id": "white_planks_clean",
+    "name": "White Planks Clean",
+    "authors": [
+      "Rob Tuytel"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://polyhaven.com/a/white_planks_clean",
+    "key": "polyhaven:white_planks_clean",
+    "fetchedAt": "2026-11-18"
+  },
+  "polyhaven:white_plaster_02": {
+    "source": "polyhaven",
+    "id": "white_plaster_02",
+    "name": "White Plaster 02",
+    "authors": [
+      "Rob Tuytel"
+    ],
+    "license": "CC0-1.0",
+    "url": "https://polyhaven.com/a/white_plaster_02",
+    "key": "polyhaven:white_plaster_02",
+    "fetchedAt": "2026-11-18"
+  }
+}

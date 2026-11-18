@@ -127,3 +127,38 @@ test('classroom benchmark route reports stats', async ({ page }, info) => {
   await page.screenshot({ path: 'screenshots/latest/classroom-bench-desktop.png' });
   expect(errors).toEqual([]);
 });
+
+test('classroom swaps greybox for PBR materials, ?pbr=0 keeps the greybox', async ({
+  page,
+}, info) => {
+  test.skip(info.project.name !== 'desktop', 'one viewport is enough');
+  const errors = collectErrors(page);
+  await page.goto('/?shot=2&seed=1&cam=overview&preset=battery');
+  await page.waitForFunction(() => window.__shotReady === true, null, { timeout: 120_000 });
+  const pbr = await page.evaluate(() => window.__info);
+  expect((pbr?.pbr as string[]).length).toBe(9);
+  expect(pbr?.pbrTier).toBe(512);
+  await page.goto('/?shot=2&seed=1&cam=overview&pbr=0');
+  await page.waitForFunction(() => window.__shotReady === true, null, { timeout: 90_000 });
+  const grey = await page.evaluate(() => window.__info);
+  expect(grey?.pbr).toEqual([]);
+  expect(errors).toEqual([]);
+});
+
+test('material lab renders candidates', async ({ page }, info) => {
+  test.skip(info.project.name === 'ipad-keyboard', 'desktop + touch are enough');
+  const errors = collectErrors(page);
+  await page.goto('/lab');
+  await page.waitForFunction(
+    () => (window as unknown as { __labReady?: boolean }).__labReady === true,
+    null,
+    {
+      timeout: 60_000,
+    },
+  );
+  await page.click('button[data-slot="carpet"]');
+  expect(await page.locator('.cand').count()).toBeGreaterThanOrEqual(8);
+  await page.screenshot({ path: `screenshots/latest/lab-carpet-${info.project.name}.png` });
+  // Live Poly Haven previews may be unreachable offline; only app errors fail the test.
+  expect(errors.filter((e) => !/polyhaven|Failed to load resource/i.test(e))).toEqual([]);
+});

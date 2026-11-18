@@ -1,0 +1,271 @@
+{
+ "version": 1,
+ "materials": {
+  "concrete": {
+   "source": "ambientcg",
+   "id": "Concrete034",
+   "tiers": {
+    "512": {
+     "color": "/pack/materials/concrete/512/color.c577cbf2.ktx2",
+     "normal": "/pack/materials/concrete/512/normal.ddbc35b0.ktx2",
+     "arm": "/pack/materials/concrete/512/arm.19d7af1f.ktx2",
+     "bytes": 430889
+    },
+    "1024": {
+     "color": "/pack/materials/concrete/1024/color.a4509020.ktx2",
+     "normal": "/pack/materials/concrete/1024/normal.0fe17d7c.ktx2",
+     "arm": "/pack/materials/concrete/1024/arm.26a5c883.ktx2",
+     "bytes": 1613807
+    },
+    "2048": {
+     "color": "/pack/materials/concrete/2048/color.28427010.ktx2",
+     "normal": "/pack/materials/concrete/2048/normal.0fe17d7c.ktx2",
+     "arm": "/pack/materials/concrete/2048/arm.46a59da1.ktx2",
+     "bytes": 2240167
+    }
+   }
+  },
+  "plaster": {
+   "source": "ambientcg",
+   "id": "Plaster002",
+   "tiers": {
+    "512": {
+     "color": "/pack/materials/plaster/512/color.1f9e4358.ktx2",
+     "normal": "/pack/materials/plaster/512/normal.f75eddc1.ktx2",
+     "arm": "/pack/materials/plaster/512/arm.f5a65d70.ktx2",
+     "bytes": 469041
+    },
+    "1024": {
+     "color": "/pack/materials/plaster/1024/color.8608474b.ktx2",
+     "normal": "/pack/materials/plaster/1024/normal.6df2b283.ktx2",
+     "arm": "/pack/materials/plaster/1024/arm.565f3407.ktx2",
+     "bytes": 1732571
+    },
+    "2048": {
+     "color": "/pack/materials/plaster/2048/color.33aed060.ktx2",
+     "normal": "/pack/materials/plaster/2048/normal.6df2b283.ktx2",
+     "arm": "/pack/materials/plaster/2048/arm.049a93ef.ktx2",
+     "bytes": 2667602
+    }
+   }
+  },
+  "carpet": {
+   "source": "ambientcg",
+   "id": "Fabric029",
+   "tiers": {
+    "512": {
+     "color": "/pack/materials/carpet/512/color.592033ee.ktx2",
+     "normal": "/pack/materials/carpet/512/normal.9dba1489.ktx2",
+     "arm": "/pack/materials/carpet/512/arm.67d301b8.ktx2",
+     "bytes": 380313
+    },
+    "1024": {
+     "color": "/pack/materials/carpet/1024/color.71c00ac2.ktx2",
+     "normal": "/pack/materials/carpet/1024/normal.0fbcada2.ktx2",
+     "arm": "/pack/materials/carpet/1024/arm.ef94cfb8.ktx2",
+     "bytes": 1467279
+    },
+    "2048": {
+     "color": "/pack/materials/carpet/2048/color.4a07a750.ktx2",
+     "normal": "/pack/materials/carpet/2048/normal.0fbcada2.ktx2",
+     "arm": "/pack/materials/carpet/2048/arm.b04ebe50.ktx2",
+     "bytes": 2554577
+    }
+   }
+  },
+  "ceiling": {
+   "source": "ambientcg",
+   "id": "Wood092",
+   "tiers": {
+    "512": {
+     "color": "/pack/materials/ceiling/512/color.019e635b.ktx2",
+     "normal": "/pack/materials/ceiling/512/normal.0837bf91.ktx2",
+     "arm": "/pack/materials/ceiling/512/arm.ec8c2124.ktx2",
+     "bytes": 271591
+    },
+    "1024": {
+     "color": "/pack/materials/ceiling/1024/color.c93140a8.ktx2",
+     "normal": "/pack/materials/ceiling/1024/normal.3a4d6e99.ktx2",
+     "arm": "/pack/materials/ceiling/1024/arm.9d34a26e.ktx2",
+     "bytes": 1036695
+    },
+    "2048": {
+     "color": "/pack/materials/ceiling/2048/color.b3d51b03.ktx2",
+     "normal": "/pack/materials/ceiling/2048/normal.3a4d6e99.ktx2",
+     "arm": "/pack/materials/ceiling/2048/arm.94fb6760.ktx2",
+     "bytes": 1878882
+    }
+   }
+  },
+  "table": {
+   "source": "ambientcg",
+   "id": "Plastic013A",
+   "tiers": {
+    "512": {
+     "color": "/pack/materials/table/512/color.ff0a9056.ktx2",
+     "normal": "/pack/materials/table/512/normal.21dee341.ktx2",
+     "arm": "/pack/materials/table/512/arm.75043652.ktx2",
+     "bytes": 297006
+    },
+    "1024": {
+     "color": "/pack/materials/table/1024/color.606f6a53.ktx2",
+     "normal": "/pack/materials/table/1024/normal.22099d15.ktx2",
+     "arm": "/pack/materials/table/1024/arm.34e19e20.ktx2",
+     "bytes": 1480526
+    },
+    "2048": {
+     "color": "/pack/materials/table/2048/color.43bd8f73.ktx2",
+     "normal": "/pack/materials/table/2048/normal.22099d15.ktx2",
+     "arm": "/pack/materials/table/2048/arm.fd74a2c8.ktx2",
+     "bytes": 2489825
+    }
+   }
+  },
+  "plywood": {
+   "source": "polyhaven",
+   "id": "okoume_veneer",
+   "tiers": {
+    "512": {
+     "color": "/pack/materials/plywood/512/color.057d2b0f.ktx2",
+     "normal": "/pack/materials/plywood/512/normal.dcd44774.ktx2",
+     "arm": "/pack/materials/plywood/512/arm.f8222112.ktx2",
+     "bytes": 346650
+    },
+    "1024": {
+     "color": "/pack/materials/plywood/1024/color.02231723.ktx2",
+     "normal": "/pack/materials/plywood/1024/normal.e2600d46.ktx2",
+     "arm": "/pack/materials/plywood/1024/arm.1a54bf94.ktx2",
+     "bytes": 1341385
+    },
+    "2048": {
+     "color": "/pack/materials/plywood/2048/color.446bdb58.ktx2",
+     "normal": "/pack/materials/plywood/2048/normal.e2600d46.ktx2",
+     "arm": "/pack/materials/plywood/2048/arm.084afa4f.ktx2",
+     "bytes": 2437199
+    }
+   }
+  },
+  "metal": {
+   "source": "ambientcg",
+   "id": "Metal009",
+   "tiers": {
+    "512": {
+     "color": "/pack/materials/metal/512/color.2ff2aed8.ktx2",
+     "normal": "/pack/materials/metal/512/normal.d031f79f.ktx2",
+     "arm": "/pack/materials/metal/512/arm.b55438a2.ktx2",
+     "bytes": 325014
+    },
+    "1024": {
+     "color": "/pack/materials/metal/1024/color.554c78ca.ktx2",
+     "normal": "/pack/materials/metal/1024/normal.180a7c03.ktx2",
+     "arm": "/pack/materials/metal/1024/arm.2a719571.ktx2",
+     "bytes": 1270415
+    },
+    "2048": {
+     "color": "/pack/materials/metal/2048/color.38acf533.ktx2",
+     "normal": "/pack/materials/metal/2048/normal.180a7c03.ktx2",
+     "arm": "/pack/materials/metal/2048/arm.cea8da18.ktx2",
+     "bytes": 1998472
+    }
+   }
+  },
+  "tile": {
+   "source": "ambientcg",
+   "id": "Tiles139",
+   "tiers": {
+    "512": {
+     "color": "/pack/materials/tile/512/color.0ea92a19.ktx2",
+     "normal": "/pack/materials/tile/512/normal.9dc92e5c.ktx2",
+     "arm": "/pack/materials/tile/512/arm.695b5e79.ktx2",
+     "bytes": 363198
+    },
+    "1024": {
+     "color": "/pack/materials/tile/1024/color.f3c327ed.ktx2",
+     "normal": "/pack/materials/tile/1024/normal.c1e0cfc0.ktx2",
+     "arm": "/pack/materials/tile/1024/arm.93dd9cd3.ktx2",
+     "bytes": 1342554
+    },
+    "2048": {
+     "color": "/pack/materials/tile/2048/color.ec3d130a.ktx2",
+     "normal": "/pack/materials/tile/2048/normal.c1e0cfc0.ktx2",
+     "arm": "/pack/materials/tile/2048/arm.2a773b8c.ktx2",
+     "bytes": 2365306
+    }
+   }
+  },
+  "door": {
+   "source": "ambientcg",
+   "id": "Plastic007",
+   "tiers": {
+    "512": {
+     "color": "/pack/materials/door/512/color.617281ea.ktx2",
+     "normal": "/pack/materials/door/512/normal.c81903fc.ktx2",
+     "arm": "/pack/materials/door/512/arm.324fc539.ktx2",
+     "bytes": 314008
+    },
+    "1024": {
+     "color": "/pack/materials/door/1024/color.aa8f0031.ktx2",
+     "normal": "/pack/materials/door/1024/normal.77f2e512.ktx2",
+     "arm": "/pack/materials/door/1024/arm.228ad162.ktx2",
+     "bytes": 1288442
+    },
+    "2048": {
+     "color": "/pack/materials/door/2048/color.83323a63.ktx2",
+     "normal": "/pack/materials/door/2048/normal.77f2e512.ktx2",
+     "arm": "/pack/materials/door/2048/arm.84879803.ktx2",
+     "bytes": 2103697
+    }
+   }
+  }
+ },
+ "models": {
+  "plant": {
+   "source": "polyhaven",
+   "id": "potted_plant_01",
+   "file": "/pack/models/plant.6e0ed45b.glb",
+   "bytes": 1315300,
+   "triangles": 5993,
+   "height": 1.335
+  },
+  "books": {
+   "source": "polyhaven",
+   "id": "book_encyclopedia_set_01",
+   "file": "/pack/models/books.bdcff6cc.glb",
+   "bytes": 935120,
+   "triangles": 19887,
+   "height": 0.237
+  },
+  "notebook": {
+   "source": "polyhaven",
+   "id": "binder_notebook",
+   "file": "/pack/models/notebook.10e7d925.glb",
+   "bytes": 503692,
+   "triangles": 1498,
+   "height": 0.024
+  },
+  "stationery": {
+   "source": "polyhaven",
+   "id": "stationery_supplies",
+   "file": "/pack/models/stationery.1025449c.glb",
+   "bytes": 624820,
+   "triangles": 2992,
+   "height": 0.164
+  },
+  "bin": {
+   "source": "polyhaven",
+   "id": "metal_trash_can",
+   "file": "/pack/models/bin.ef59e21a.glb",
+   "bytes": 1464808,
+   "triangles": 1992,
+   "height": 0.906
+  }
+ },
+ "hdris": {
+  "overcast": {
+   "source": "polyhaven",
+   "id": "kloofendal_overcast",
+   "file": "/pack/hdris/overcast-1k.9b3f50a2.hdr",
+   "bytes": 1590386
+  }
+ }
+}
