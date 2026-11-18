@@ -20,6 +20,7 @@ import { CAST, CHALLENGES, LESSONS, NOTES, PLAYABLE_LESSON_TYPES, TEACHERS } fro
 import { dist2, wrapAngle, yawDir, yawTo } from './sim/geom';
 import { EYE_HEIGHT } from './sim/perception';
 import { interactables } from './sim/player';
+import { binPos } from './sim/throwing';
 import {
   callHomeText,
   endLesson,
@@ -89,6 +90,13 @@ const SOUND_FOR_NOISE: Record<string, SoundKind> = {
   whisper: 'whisper',
   laugh: 'laugh',
   drop: 'thud',
+  pap: 'pap',
+  drum: 'drum',
+  hum: 'hum',
+  snore: 'snore',
+  crash: 'crash',
+  click: 'click',
+  'bin-tok': 'swish',
 };
 
 export class ClassroomApp {
@@ -111,6 +119,9 @@ export class ClassroomApp {
   private quickMenu: QuickMenu | null = null;
   private gazeLevel = 0;
   private lastHudT = 0;
+  /** Camera flinch (hit by a ball, chair crash), seconds. */
+  private hitShake = 0;
+  private napEl: HTMLDivElement | null = null;
   private yaw = 0;
   private pitch = -0.08;
   private lean = 0;
@@ -722,6 +733,12 @@ export class ClassroomApp {
     if (pr.has('brightUp')) this.pending.device = 'bright-up';
     if (pr.has('brightDown')) this.pending.device = 'bright-down';
     if (pr.has('raiseHand')) this.pending.raiseHand = true;
+    if (pr.has('sillyQ')) this.pending.act = 'silly-question';
+    if (pr.has('cough')) this.pending.act = 'cough';
+    if (pr.has('drum')) this.pending.act = 'drum';
+    if (pr.has('hum')) this.pending.act = 'hum';
+    if (pr.has('leanBack')) this.pending.act = 'lean-back';
+    if (pr.has('nap')) this.pending.act = 'nap';
     if (pr.has('paper')) this.pending.make = 'paper-ball';
     if (pr.has('plane')) this.pending.make = 'paper-plane';
     if (pr.has('throw') && p.holding) this.throwCharge = 0;
@@ -845,6 +862,7 @@ export class ClassroomApp {
           this.settings.reducedMotion ? 0 : -this.lean * 0.12,
           'YXZ',
         );
+        this.applyActionCamera(w, dt);
       } else this.placeShotCamera(shotCam);
     }
     view.sync(w, alpha, this.camera.position);
@@ -882,6 +900,40 @@ export class ClassroomApp {
     this.post.render(view.scene, this.camera, q, view.mood.exposure);
     if (!this.bench && (!this.shot || this.shot.hud)) this.updateHud();
     this.updateAudio();
+  }
+
+  /** Chair tilt, head on the table, flinch: camera offsets from the player's self-actions. */
+  private applyActionCamera(w: World, dt: number): void {
+    const f = w.ps.fun;
+    const calm = this.settings.reducedMotion;
+    if (this.hitShake > 0) this.hitShake = Math.max(0, this.hitShake - dt);
+    const napping = f.act?.id === 'nap';
+    if (!this.napEl) {
+      const el = document.createElement('div');
+      el.style.cssText =
+        'position:fixed;inset:0;pointer-events:none;background:#05060a;opacity:0;transition:opacity .5s;z-index:5';
+      document.body.appendChild(el);
+      this.napEl = el;
+    }
+    this.napEl.style.opacity = napping ? String(Math.min(0.78, 0.25 + f.sleepT * 0.1)) : '0';
+    if (napping) {
+      this.camera.position.y -= 0.32;
+      this.camera.rotation.x = -0.95;
+    }
+    if (f.lean > 0) {
+      this.camera.position.y += f.lean * 0.12;
+      this.camera.rotation.x += f.lean * 0.3;
+      if (!calm) this.camera.rotation.z += Math.sin(w.t * 11) * 0.012 * f.lean * f.lean;
+    }
+    if (f.slamT > 0 && !calm) {
+      this.camera.position.y -= Math.sin((f.slamT / 0.7) * Math.PI) * 0.25;
+      this.camera.rotation.x += 0.2 * (f.slamT / 0.7);
+    }
+    if (this.hitShake > 0 && !calm) {
+      const k = this.hitShake / 0.45;
+      this.camera.rotation.x -= 0.1 * k;
+      this.camera.rotation.z += Math.sin(w.t * 40) * 0.03 * k;
+    }
   }
 
   private placeShotCamera(cam: string): void {
@@ -938,7 +990,7 @@ export class ClassroomApp {
     const held = w.items.find((i) => i.id === w.player.holding);
     if (held)
       chips.push({
-        text: `Holding a ${held.kind === 'paper-ball' ? 'paper ball' : held.kind === 'paper-plane' ? 'paper plane' : held.kind}. Hold ${k('throw')} to throw`,
+        text: `Holding a ${held.kind === 'paper-ball' ? 'paper ball' : held.kind === 'paper-plane' ? 'paper plane' : held.kind}. Hold ${k('throw')} to throw${this.binHint(w, held.kind)}`,
       });
     if (ps.cover && w.t < ps.cover.until)
       chips.push({
@@ -950,6 +1002,25 @@ export class ClassroomApp {
         bar: ps.action.t / ps.action.dur,
       });
     if (ps.working) chips.push({ text: 'Working (lowers suspicion)' });
+    const act = ps.fun.act;
+    if (act) {
+      const label: Record<string, string> = {
+        drum: 'Drumming on the table',
+        hum: 'Humming',
+        'lean-back': 'Leaning back on the chair',
+        nap: 'Napping',
+      };
+      if (label[act.id])
+        chips.push({
+          text: `${label[act.id]} (${k(act.id === 'lean-back' ? 'leanBack' : act.id)} to stop)`,
+          warn: act.id === 'lean-back' && ps.fun.lean > 0.6,
+          bar: act.id === 'lean-back' ? ps.fun.lean : undefined,
+        });
+    }
+    if (ps.fun.binStreak >= 2) chips.push({ text: `Bin shots in a row: ${ps.fun.binStreak}` });
+    if (ps.fun.swap) chips.push({ text: 'Seats swapped until the break' });
+    if (w.brain.anger > 0.45 && w.teacher.present)
+      chips.push({ text: 'The teacher is on edge. Keep your head down.', warn: true });
     if (ps.peeking)
       chips.push({ text: `Peeking at ${w.agent(ps.peeking)?.name}’s test`, warn: true });
     if (ps.handRaised) chips.push({ text: 'Hand raised' });
@@ -1044,6 +1115,20 @@ export class ClassroomApp {
     if (w.t > 40) ui.tryHint('ideas', k);
   }
 
+  /** "Bin: release at ~60%" when the bin is roughly in front of you. */
+  private binHint(w: World, kind: string): string {
+    if (kind !== 'paper-ball') return '';
+    const bin = binPos(w);
+    const p = w.player;
+    const d = dist2(bin, p.pos);
+    const off = Math.abs(wrapAngle(yawTo(p.pos, bin) - this.yaw));
+    if (d > 9 || off > 0.5) return '';
+    const reach = 6.5 * (p.sittingIn ? 0.8 : 1);
+    const pw = Math.max(0, Math.min(1, (d - 1.5) / reach));
+    if (d - 1.5 > reach + 0.3) return '. The bin is too far from here: stand up and get closer';
+    return `. Bin ahead: release near ${Math.round(pw * 100)}%${off > 0.08 ? ' (turn a little to line up)' : ''}`;
+  }
+
   private updateAudio(): void {
     const w = this.world!;
     if (!this.audio.ready) return;
@@ -1080,6 +1165,10 @@ export class ClassroomApp {
       case 'bark': {
         const name = e.who === 'teacher' ? w.profile.name : (who?.name ?? '');
         if (e.text) this.ui.subtitle(name, e.text);
+        if (e.kind === 'hit' || e.kind === 'hitBack' || e.kind === 'hitPlane')
+          this.audio.play('murmur', pos3(w.teacher.pos.x, w.teacher.pos.z, 1.6));
+        if (who && (e.kind === 'gasp' || e.kind === 'cheer'))
+          this.audio.play(e.kind as SoundKind, pos3(who.pos.x, who.pos.z, 1.1));
         if (
           who &&
           (e.kind === 'cough' ||
@@ -1211,6 +1300,104 @@ export class ClassroomApp {
       case 'throw':
         this.audio.play('paper');
         break;
+      case 'hit': {
+        const hp = e.pos ?? { x: 0, z: 0 };
+        this.audio.play('pap', pos3(hp.x, hp.z, 1.2), { volume: 1.2 });
+        if (e.who === 'player') {
+          this.ui.toast('Hit by a paper ball!');
+          this.hitShake = 0.45;
+        } else if (e.who === 'teacher')
+          this.ui.subtitle(
+            '',
+            `[the paper ball hits ${w.profile.name} ${e.text === 'back' ? 'in the back of the head' : e.text === 'front' ? 'in the face' : 'on the side'}]`,
+            true,
+          );
+        else
+          this.ui.subtitle(
+            '',
+            `[the paper ball hits ${w.agent(e.who ?? '')?.name ?? 'someone'}]`,
+            true,
+          );
+        break;
+      }
+      case 'teacher-hit':
+        this.audio.play('murmur', pos3(w.teacher.pos.x, w.teacher.pos.z, 1.6), { volume: 1.2 });
+        if (e.who === 'player')
+          this.ui.toast(e.value ? 'She saw you throw it!' : 'Direct hit! Now look innocent.', 3500);
+        break;
+      case 'hunt':
+        this.ui.subtitle('', '[the teacher scans the room from where it came]', true);
+        break;
+      case 'interrogate':
+        if (e.target === 'player')
+          this.ui.toast('She is asking you. Put the paper away and look busy.', 3500);
+        break;
+      case 'covered':
+        this.ui.toast(`${w.agent(e.who ?? '')?.name} covered for you.`);
+        break;
+      case 'incident-identified':
+        if (e.target === 'player') this.audio.play('telegraph');
+        break;
+      case 'collective':
+        this.ui.toast(
+          'Nobody owned up: questions for the whole class, and a stricter teacher.',
+          4500,
+        );
+        break;
+      case 'teacher-calm':
+        this.ui.subtitle('', '[the teacher takes a breath and calms down]', true);
+        break;
+      case 'fight':
+        this.ui.subtitle('', '[a paper ball fight is breaking out]', true);
+        break;
+      case 'bin-shot':
+        this.audio.play('swish', pos3(e.pos?.x ?? 0, e.pos?.z ?? 0, 0.8));
+        break;
+      case 'bin-streak':
+        this.ui.toast(e.value ? `Swish! ${e.value} in a row` : 'Missed. Streak over.');
+        break;
+      case 'drum':
+        this.audio.play('drum', undefined, { volume: 0.5 });
+        break;
+      case 'hum':
+        this.audio.play('hum', undefined, { volume: 0.4 });
+        break;
+      case 'snore':
+        this.audio.play('snore', undefined, { volume: 0.5 });
+        this.ui.subtitle('', '[you snore]', true);
+        break;
+      case 'crash':
+        this.audio.play('crash', undefined, { volume: 1 });
+        this.ui.toast('The chair goes over!');
+        this.hitShake = 0.7;
+        break;
+      case 'lean-save':
+        this.ui.toast('Nice save. Smooth.');
+        break;
+      case 'wake':
+        this.ui.toast('You wake up.');
+        break;
+      case 'cough-chain':
+        this.ui.toast(`Cough chain: ${e.value} in a row!`);
+        break;
+      case 'face-result':
+        this.ui.toast(e.value ? `${who?.name} cracks up.` : `${who?.name} rolls their eyes.`);
+        break;
+      case 'swap':
+        this.ui.toast(`Swapped seats with ${w.agent(e.target ?? '')?.name}.`);
+        break;
+      case 'swap-back':
+        this.ui.toast('Seats back to normal.');
+        break;
+      case 'lights-flick':
+        this.audio.play('click');
+        this.ui.subtitle('', '[the lights go out for a moment]', true);
+        break;
+      case 'silly-question':
+        break;
+      case 'act':
+        if (e.kind === 'nap') this.ui.toast('Head down. Press again to wake up.');
+        break;
       case 'gust':
         this.ui.subtitle('', '[a gust of wind: papers everywhere]', true);
         break;
@@ -1265,6 +1452,17 @@ export class ClassroomApp {
         <span>Block Drop best</span><b>${st.bestScore}</b>
         <span>Video watched</span><b>${Math.round(st.videoSeconds)} s</b>
         ${NOTES_ENABLED ? `<span>Notes delivered</span><b>${st.notesDelivered.length}</b>` : ''}
+        ${st.hits.teacher ? `<span>Hit the teacher</span><b>${st.hits.teacher}× (${st.cleanHits} never traced to you${st.classPenalties ? `, class got extra questions ${st.classPenalties}×` : ''})</b>` : ''}
+        ${st.hits.students || st.studentThrows ? `<span>Paper ball fights</span><b>${st.hits.students} classmates hit, ${st.studentThrows} thrown back</b>` : ''}
+        ${st.binMade || st.binMissed ? `<span>Bin shots</span><b>${st.binMade} made, ${st.binMissed} missed (best streak ${st.binBest})</b>` : ''}
+        ${
+          Object.keys(st.acts).length
+            ? `<span>Mischief</span><b>${Object.entries(st.acts)
+                .map(([k, n]) => `${k} ×${n}`)
+                .join(', ')}</b>`
+            : ''
+        }
+        ${st.facesLaughed ? `<span>Faces that landed</span><b>${st.facesLaughed}</b>` : ''}
         <span>Pranks pulled</span><b>${st.pranks.length} (${st.pranks.filter((p) => p.clean).length} unnoticed)</b>
         <span>Unnoticed time out of seat</span><b>${Math.round(st.sneakSeconds)} s</b>
         ${st.testScore !== null ? `<span>Test</span><b>${st.testScore}% (${letter(st.testScore)})${st.cheated ? ' · copied' : ''}</b>` : ''}

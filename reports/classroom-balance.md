@@ -1,6 +1,6 @@
 # Classroom balance report
 
-Runs: 300 lessons (seeds 1000..1299), runtime 121.5 s. Notes feature: off (postman bot omitted).
+Runs: 300 lessons (seeds 1000..1299), runtime 141.8 s. Notes feature: off (postman bot omitted).
 
 ## Before / after the retune
 
@@ -14,7 +14,7 @@ Before = report of the previous build (same seeds). After = this run. Changes: w
 | prankster: call homes / lesson | 0.96 | 0.00 |
 | gamer: % lessons caught | 57.1% | 73.3% |
 | sneaky: % lessons caught | 12% | 15.0% |
-| chaos: offenses / lesson | 6.63 | 6.62 |
+| chaos: offenses / lesson | 6.63 | 6.43 |
 
 Repeat offenders (6 lessons in a row, one record), before:
 
@@ -34,7 +34,15 @@ After: see "Repeat offenders" below.
 | gamer | 60 | 0.73 | 73.3% | 6 | 38 | 0 | 0 | 0 | 2.65 | 3.17 | 0 | 277.4 | 0/0 | 0.00 | 0.0 |
 | sneaky | 60 | 0.45 | 15.0% | 2 | 19 | 6 | 0 | 0 | 4.25 | 10.87 | 0 | 231.2 | 0/0 | 0.00 | 58.8 |
 | prankster | 60 | 0.65 | 45.0% | 8 | 26 | 5 | 0 | 0 | 2.65 | 6.17 | 0 | 0.0 | 80/94 | 0.00 | 64.8 |
-| chaos | 60 | 6.62 | 90.0% | 24 | 327 | 46 | 0 | 0 | 2.65 | 7.51 | 0 | 97.5 | 63/81 | 0.00 | 0.0 |
+| chaos | 60 | 6.43 | 90.0% | 21 | 320 | 45 | 0 | 0 | 2.60 | 7.78 | 0 | 100.3 | 66/80 | 0.00 | 0.0 |
+| sniper | 50 | 0.04 | 4.0% | 0 | 2 | 0 | 0 | 0 | 2.65 | 2.65 | 0 | 0.0 | 0/0 | 0.00 | 65.8 |
+| jester | 50 | 0.02 | 2.0% | 0 | 1 | 0 | 0 | 0 | 3.85 | 3.85 | 0 | 0.0 | 0/0 | 0.00 | 50.2 |
+
+## Paper-ball hits and new actions (sniper + jester bots)
+
+Over 50 lessons each: 14 hits on the teacher, 12 never traced to the thrower (class got the collective consequence 12x), 2 pinned on the thrower (all telegraphed >= 1 s). Classmate throw-backs: 0. Bin shots made: 0.
+
+Self-actions used by the jester: cough x181, face x98, drum x146, hum x144, lean-back x82, nap x56, silly-question x41.
 
 ## Prankster bot: clean rate per prank
 
@@ -64,27 +72,27 @@ After: see "Repeat offenders" below.
 |---|---|---|---|---|---|---|
 | gamer | 15 | 0.77 | 23% | 2.13 | 0.53 | 0.00 |
 | prankster | 15 | 0.67 | 61% | 0.87 | 0.40 | 0.00 |
-| chaos | 15 | 8.03 | 3% | 3.87 | 3.33 | 2.87 |
+| chaos | 15 | 7.94 | 4% | 3.80 | 3.40 | 2.87 |
 
 ## Per teacher profile
 
 | teacher | runs | % lessons with a catch | offenses/lesson |
 |---|---|---|---|
-| strict | 60 | 46.7% | 2.53 |
-| lazy | 60 | 35.0% | 0.90 |
-| distracted | 60 | 31.7% | 0.68 |
-| hawk | 60 | 51.7% | 2.35 |
-| substitute | 60 | 58.3% | 1.98 |
+| strict | 80 | 35.0% | 1.84 |
+| lazy | 80 | 25.0% | 0.59 |
+| distracted | 80 | 26.3% | 0.53 |
+| hawk | 80 | 40.0% | 1.75 |
+| substitute | 80 | 45.0% | 1.54 |
 
 ## Per teacher profile, excluding the angel bot (offending styles only)
 
 | teacher | runs | % lessons with a catch |
 |---|---|---|
-| strict | 48 | 58.3% |
-| lazy | 48 | 43.8% |
-| distracted | 48 | 39.6% |
-| hawk | 48 | 64.6% |
-| substitute | 48 | 72.9% |
+| strict | 68 | 41.2% |
+| lazy | 68 | 29.4% |
+| distracted | 68 | 30.9% |
+| hawk | 68 | 47.1% |
+| substitute | 68 | 52.9% |
 
 ## Balance flags
 

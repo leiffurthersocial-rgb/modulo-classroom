@@ -988,7 +988,12 @@ export function updateTeacher(w: World): void {
       if (b.confrontBarked && b.stateT >= b.dur) {
         if (a.id === 'player' && b.question?.silly) {
           w.ps.handRaised = false;
-          w.emit({ type: 'bark', who: 'teacher', text: 'Right. Sit up. Eyes on the board.', kind: 'answer' });
+          w.emit({
+            type: 'bark',
+            who: 'teacher',
+            text: 'Right. Sit up. Eyes on the board.',
+            kind: 'answer',
+          });
         } else if (a.id === 'player') {
           w.ps.handRaised = false;
           const goodAnswer = w.ps.working || w.stats.workSeconds > 20;

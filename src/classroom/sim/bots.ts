@@ -10,14 +10,7 @@ import { type ActId, idleCommand, type PlayerCommand, type SimEvent } from './ty
 import type { World } from './world';
 
 export type BotStyle =
-  | 'angel'
-  | 'gamer'
-  | 'sneaky'
-  | 'prankster'
-  | 'postman'
-  | 'chaos'
-  | 'sniper'
-  | 'jester';
+  'angel' | 'gamer' | 'sneaky' | 'prankster' | 'postman' | 'chaos' | 'sniper' | 'jester';
 export const BOT_STYLES: BotStyle[] = [
   'angel',
   'gamer',
@@ -49,6 +42,8 @@ export class Bot {
   private nextChaos = 0;
   private holdThrow = 0;
   private nextThrow = 25;
+  private holdT = 0;
+  private binAt = 0;
   private nextAct = 20;
   private actUntil = 0;
   private activeAct: ActId | null = null;
@@ -184,39 +179,70 @@ export class Bot {
         break;
       }
       case 'sniper': {
-        // Paper ball at the teacher's back while she writes (the "funny and safe" shot).
+        // Paper ball at the teacher's back while she writes (the "funny and safe" shot). The
+        // ball is folded only when the shot is on, and dumped if the chance passes.
         cmd.work = !p.holding;
         const T = w.teacher;
         const b = w.brain;
-        if (!p.holding && p.sittingIn && w.t >= this.nextThrow - 5 && !danger) cmd.make = 'paper-ball';
-        if (p.holding && p.sittingIn && w.t >= this.nextThrow && T.present && b.state === 'board') {
-          const d = dist2(T.pos, p.pos);
-          const away = Math.abs(wrapAngle(yawTo(p.pos, T.pos) + Math.PI - T.headYaw)) > 2.3;
-          const lane = w.students.every(
-            (s) =>
-              !s.agent.present ||
-              Math.abs(wrapAngle(yawTo(p.pos, s.agent.pos) - yawTo(p.pos, T.pos))) > 0.12 ||
-              dist2(p.pos, s.agent.pos) > d,
-          );
-          if (d < 8 && away && lane && w.t - this.alarmT > 3) {
+        const d = dist2(T.pos, p.pos);
+        const away = Math.abs(wrapAngle(yawTo(p.pos, T.pos) + Math.PI - T.headYaw)) > 2.3;
+        const lane = w.students.every(
+          (s) =>
+            !s.agent.present ||
+            Math.abs(wrapAngle(yawTo(p.pos, s.agent.pos) - yawTo(p.pos, T.pos))) > 0.12 ||
+            dist2(p.pos, s.agent.pos) > d,
+        );
+        const on =
+          p.sittingIn &&
+          T.present &&
+          b.state === 'board' &&
+          b.glancing <= 0 &&
+          d < 8 &&
+          away &&
+          lane &&
+          w.t - this.alarmT > 3;
+        if (!p.holding && on && w.t >= this.nextThrow) cmd.make = 'paper-ball';
+        if (p.holding) {
+          this.holdT += 0.05;
+          if (on) {
             cmd.yaw = yawTo(p.pos, T.pos);
-            const range = d / 0.7;
-            cmd.throwPower = clamp((range / 0.8 - 1.5) / 6.5, 0.1, 1);
+            cmd.throwPower = clamp((d / 0.7 / 0.8 - 1.5) / 6.5, 0.1, 1);
+            this.holdT = 0;
             this.nextThrow = w.t + 60 + this.rng.next() * 60;
-          } else if (d >= 8 || !away) this.nextThrow = Math.max(this.nextThrow, w.t + 1);
-        }
+          } else if (this.holdT > 2.5) {
+            // The chance passed: toss it under the desk.
+            cmd.yaw = this.yaw;
+            cmd.throwPower = 0.02;
+            this.holdT = 0;
+          }
+        } else this.holdT = 0;
         break;
       }
       case 'jester': {
         cmd.work = !this.activeAct;
         const T = w.teacher;
+        if (p.holding && this.binAt > 0 && w.t >= this.binAt) {
+          const bin = w.layout.spots?.bin;
+          this.binAt = 0;
+          if (bin) {
+            const d = Math.hypot(bin[0] - p.pos.x, bin[1] - p.pos.z);
+            cmd.yaw = yawTo(p.pos, { x: bin[0], z: bin[1] });
+            cmd.throwPower = clamp(((d - 0.3) / 0.8 - 1.5) / 6.5, 0.05, 1);
+          }
+        }
         // Stop whatever it is as soon as it feels risky or the time is up.
         if (this.activeAct && (danger || w.t > this.actUntil || !p.sittingIn)) {
           cmd.act = this.activeAct;
           if (this.activeAct === 'cough') this.activeAct = null;
           this.activeAct = null;
           this.nextAct = w.t + 12 + this.rng.next() * 25;
-        } else if (!this.activeAct && w.t >= this.nextAct && p.sittingIn && !danger && this.safeSince > 3) {
+        } else if (
+          !this.activeAct &&
+          w.t >= this.nextAct &&
+          p.sittingIn &&
+          !danger &&
+          this.safeSince > 3
+        ) {
           const options: [ActId | 'face' | 'bin', number][] = [
             ['cough', 3],
             ['drum', 2],
@@ -244,16 +270,9 @@ export class Bot {
               .sort((a, b2) => dist2(a.agent.pos, p.pos) - dist2(b2.agent.pos, p.pos))[0];
             if (nb) cmd.interact = { target: nb.agent.id, verb: 'face' };
           } else if (pick === 'bin') {
-            if (!p.holding) cmd.make = 'paper-ball';
-            else {
-              const bin = w.layout.spots?.bin;
-              if (bin) {
-                const dx = bin[0] - p.pos.x;
-                const dz = bin[1] - p.pos.z;
-                const d = Math.hypot(dx, dz);
-                cmd.yaw = yawTo(p.pos, { x: bin[0], z: bin[1] });
-                cmd.throwPower = clamp(((d - 0.3) / 0.8 - 1.5) / 6.5, 0.05, 1);
-              }
+            if (!p.holding) {
+              cmd.make = 'paper-ball';
+              this.binAt = w.t + 0.4;
             }
           } else {
             cmd.act = pick;

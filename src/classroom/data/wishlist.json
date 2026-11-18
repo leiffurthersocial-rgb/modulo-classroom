@@ -49,6 +49,42 @@
       "text": "Raise three classmates to friend level (50+)",
       "counter": "friends",
       "goal": 3
+    },
+    {
+      "id": "sniper",
+      "text": "Hit the teacher with a paper ball and never get traced",
+      "counter": "cleanHits",
+      "goal": 1
+    },
+    {
+      "id": "swish",
+      "text": "Make 3 bin shots in a row",
+      "counter": "binStreakBest",
+      "goal": 3
+    },
+    {
+      "id": "choir",
+      "text": "Start a cough chain of 4",
+      "counter": "coughChain",
+      "goal": 4
+    },
+    {
+      "id": "drummer",
+      "text": "Get 2 classmates drumming along",
+      "counter": "drumJoined",
+      "goal": 2
+    },
+    {
+      "id": "jester",
+      "text": "Make 3 classmates laugh with funny faces",
+      "counter": "facesLaughed",
+      "goal": 3
+    },
+    {
+      "id": "nap",
+      "text": "Nap for 30 seconds without being noticed",
+      "counter": "napSeconds",
+      "goal": 30
     }
   ]
 }

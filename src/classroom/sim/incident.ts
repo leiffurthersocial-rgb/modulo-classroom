@@ -149,7 +149,7 @@ export function teacherHit(w: World, info: HitInfo): void {
 export function playerGuilt(w: World, inc: Incident): { p: number; reasons: string[] } {
   if (inc.thrower !== 'player') return { p: 0, reasons: [] };
   const reasons: string[] = [];
-  let p = 0.22;
+  let p = 0.32;
   const held = w.items.find((i) => i.id === w.player.holding);
   if (held && (held.kind === 'paper-ball' || held.kind === 'paper-plane')) {
     p += 0.5;
@@ -159,7 +159,7 @@ export function playerGuilt(w: World, inc: Incident): { p: number; reasons: stri
     p += 0.25;
     reasons.push('You were out of your seat.');
   }
-  if (w.ps.working) p *= 0.45;
+  if (w.ps.working) p *= 0.6;
   p += 0.3 * Math.min(1, w.susp('player').s);
   p -= 0.25 * inc.covers;
   if ((w.record.trust[w.profile.id] ?? 0) < -20) p += 0.1;
@@ -180,7 +180,8 @@ function identify(w: World, id: string, reasons: string[]): void {
     const plane = inc.kind === 'paper-plane';
     const redHanded = inc.seen && inc.side === 'front';
     const lines = [HIT_TEXT[inc.region][inc.side] + '.', ...inc.reasons, ...reasons];
-    if (redHanded) lines.push('A hit in the face, with you in view: that skips a step on the ladder.');
+    if (redHanded)
+      lines.push('A hit in the face, with you in view: that skips a step on the ladder.');
     b.pendingPunish = b.pendingPunish.filter((x) => x.target !== 'player');
     b.pendingPunish.push({
       target: 'player',
@@ -276,13 +277,23 @@ function spike(w: World, inc: Incident): void {
     const st = w.susp(s.agent.id);
     const laughing = w.t - s.lastLaughT < 3 ? 0.15 : 0;
     st.s = Math.min(0.45, Math.max(st.s, st.heat) + 0.25 + laughing);
-    st.lastEvidence = { kind: 'throw', point: 'torso', zone: 'near', dist: dist2(w.teacher.pos, s.agent.pos) };
+    st.lastEvidence = {
+      kind: 'throw',
+      point: 'torso',
+      zone: 'near',
+      dist: dist2(w.teacher.pos, s.agent.pos),
+    };
     st.lastEvidenceT = w.t;
   }
   if (inc.thrower === 'player' && dist2(w.player.pos, inc.origin) <= SUSPECT_RADIUS) {
     const st = w.susp('player');
     st.s = Math.min(0.6, st.s + 0.25);
-    st.lastEvidence = { kind: 'throw', point: 'torso', zone: 'near', dist: dist2(w.teacher.pos, w.player.pos) };
+    st.lastEvidence = {
+      kind: 'throw',
+      point: 'torso',
+      zone: 'near',
+      dist: dist2(w.teacher.pos, w.player.pos),
+    };
     st.lastEvidenceT = w.t;
   }
 }
@@ -295,7 +306,11 @@ function resolveAnswer(w: World, id: string): boolean {
   if (id === 'player') {
     const g = playerGuilt(w, inc);
     if (inc.thrower === 'player' && w.rngTeacher.next() < g.p) {
-      identify(w, 'player', g.reasons.length ? g.reasons : ['Asked point blank, you looked guilty.']);
+      identify(
+        w,
+        'player',
+        g.reasons.length ? g.reasons : ['Asked point blank, you looked guilty.'],
+      );
       return true;
     }
     return false;
@@ -317,7 +332,9 @@ function resolveAnswer(w: World, id: string): boolean {
   if (inc.thrower === 'player') {
     const aff = w.relations.toPlayer(id);
     if (witnessed && t.snitch >= 0.4 && aff < 20) {
-      w.say(id, 'student', 'pointAt', { target: w.profile.knowsNames ? w.player.name : 'that one' });
+      w.say(id, 'student', 'pointAt', {
+        target: w.profile.knowsNames ? w.player.name : 'that one',
+      });
       queueReact(w, s, 'point', 0.05);
       w.relations.change(id, -3, 'pointed you out as the thrower', w);
       identify(w, 'player', ['A classmate pointed you out.']);

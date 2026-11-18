@@ -220,6 +220,8 @@ export interface StateInput {
   action: string;
   /** Which side a whispering student leans to. */
   whisperSide: 'L' | 'R';
+  /** Teacher mood 0..1 (angry idle pose when high). */
+  anger?: number;
 }
 
 const WALK_REF_SPEED = 1.18;
@@ -234,6 +236,7 @@ export function pickClip(s: StateInput): ClipRequest {
       case 'facing':
       case 'answer':
       case 'handout':
+        if ((s.anger ?? 0) > 0.4) return { clip: 'teacher_angry' };
         return {
           clip: Math.floor(s.t / 9 + (hashId(s.id) % 3)) % 3 === 2 ? 'teacher_point' : 'talk',
         };
@@ -242,10 +245,16 @@ export function pickClip(s: StateInput): ClipRequest {
       case 'confront':
       case 'penalty':
         return { clip: 'teacher_hands_on_hips' };
+      case 'flinch':
+        return { clip: 'teacher_flinch', once: true };
+      case 'hunt':
+        return { clip: 'teacher_angry' };
+      case 'interrogate':
+        return { clip: 'teacher_accuse' };
       case 'check':
         return { clip: 'teacher_point' };
       default:
-        return { clip: 'idle_stand' };
+        return { clip: (s.anger ?? 0) > 0.4 ? 'teacher_angry' : 'idle_stand' };
     }
   }
   if (!s.sitting) return { clip: s.action === 'break' ? 'talk' : 'idle_stand' };

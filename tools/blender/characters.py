@@ -1422,6 +1422,138 @@ def stand_raise(P, u):
     arm_hang(P, 'L', bend=0.08)
 
 
+
+# ---- reaction / action clips (hit reactions, laughs, drumming, napping, ...) -------------------
+
+
+def teacher_flinch(P, u):
+    """Hit from behind: the body jerks forward, the head snaps, shoulders hunch, then recover."""
+    e = env(u, 0.0, 0.18, 0.42, 1.0)
+    stand_base(P, 0.0, stance=0.03, sway=0.2)
+    P.rel_euler('Spine', x=9.0 * e)
+    P.rel_euler('Chest', x=7.0 * e, z=-5.0 * e)
+    head_pose(P, pitch=14.0 * e, yaw=-10.0 * e, roll=5.0 * e)
+    P.rel_euler('Shoulder_L', y=6.0 * e)
+    P.rel_euler('Shoulder_R', y=-6.0 * e)
+    for side in ('L', 'R'):
+        arm_hang(P, side, swing=0.30 * e, bend=0.08 + 0.3 * e, out=0.10 + 0.08 * e)
+
+
+def teacher_rub_head(P, u):
+    phi = TAU * u
+    stand_base(P, u, stance=0.03, sway=0.3)
+    P.rel_euler('Chest', x=3.0)
+    head_pose(P, pitch=6.0, yaw=0.0, roll=-4.0 + 1.5 * math.sin(phi * 4))
+    P.rel_euler('Shoulder_R', y=-8.0)
+    tgt = v3(-0.07 + 0.02 * math.sin(phi * 4), 0.13, 1.55)
+    arm_to(P, 'R', tgt, palm=v3(0, -1, 0.1), fwd=v3(0.2, -0.3, 1.0), pole=v3(-1.0, 0.4, 0.3))
+    arm_hang(P, 'L', bend=0.12)
+
+
+def teacher_angry(P, u):
+    """Furious: fists on hips, chest out, a little head shake, restless shifting."""
+    phi = TAU * u
+    stand_base(P, u, stance=0.06, sway=1.2)
+    P.rel_euler('Chest', x=-4.0 - 1.0 * math.sin(phi * 3), z=3.0 * math.sin(phi))
+    head_pose(P, pitch=4.0, yaw=5.0 * math.sin(phi * 2), roll=3.0 * math.sin(phi * 3))
+    for side in ('L', 'R'):
+        sx = sx_of(side)
+        arm_to(P, side, v3(sx * 0.27, -0.03, 0.97), palm='in', fwd=v3(-sx * 0.25, -0.45, -0.8), pole=v3(sx * 1.0, 0.6, 0.0))
+
+
+def teacher_accuse(P, u):
+    """Arm out, finger jabbing: 'Was it you?'"""
+    phi = TAU * u
+    stand_base(P, u, stance=0.04, sway=0.5, lean=4.0)
+    P.rel_euler('Chest', x=3.0, z=-6.0)
+    head_pose(P, pitch=4.0, yaw=0.0, roll=2.0)
+    P.rel_euler('Shoulder_R', y=6.0)
+    jab = max(0.0, math.sin(phi * 2.0)) ** 2
+    tgt = v3(-0.20, -0.52 - 0.12 * jab, 1.36 + 0.03 * math.sin(phi * 2.0))
+    arm_to(P, 'R', tgt, palm=v3(-0.3, 0.0, -1.0), fwd=v3(-0.12, -1.0, 0.05), pole=v3(-0.8, 0.5, -0.6))
+    arm_to(P, 'L', v3(0.27, -0.03, 0.97), palm='in', fwd=v3(-0.25, -0.45, -0.8), pole=v3(1.0, 0.6, 0.0))
+
+
+def sit_laugh(P, u):
+    phi = TAU * u
+    k = math.sin(phi * 7.0)
+    seat_base(P, lean=lerp(7.0, -2.0, 0.8) + 2.0 * k, twist=0.0, u=u)
+    P.rel_euler('Chest', x=-4.0 + 3.0 * k)
+    head_pose(P, pitch=-12.0 + 4.0 * k, yaw=0.0, roll=4.0 * math.sin(phi))
+    hold = mouth_point(P, (-0.01, 0.0, -0.06))
+    arm_to(P, 'R', hold, palm=v3(0.2, 0.9, 0.3), fwd=v3(0.2, -0.2, 1.0), pole=v3(-0.4, 0.9, -1.0))
+    arm_to(P, 'L', v3(0.12, -0.28 + 0.01 * k, 0.757), palm='down', fwd=v3(-0.05, -1, -0.08), pole=v3(0.8, 0.5, -0.4))
+
+
+def sit_gasp(P, u):
+    e = env(u, 0.0, 0.15, 0.8, 1.0)
+    seat_base(P, lean=lerp(7.0, -6.0, e), twist=0.0, u=u)
+    head_pose(P, pitch=lerp(2.0, -8.0, e), yaw=0.0, roll=0.0)
+    for side in ('L', 'R'):
+        sx = sx_of(side)
+        rest = v3(sx * 0.12, -0.31, 0.757)
+        hold = mouth_point(P, (sx * 0.03, 0.0, -0.07))
+        arm_to(P, side, lerp3(rest, hold, e), palm=lerp3(v3(0, 0, -1), v3(-sx * 0.3, 0.9, 0.2), e), fwd=lerp3(v3(0, -1, -0.08), v3(-sx * 0.15, -0.2, 1.0), e), pole=v3(sx * 0.4, 0.9, -1.0))
+
+
+def sit_glare(P, u):
+    phi = TAU * u
+    seat_base(P, lean=0.0, twist=1.5 * math.sin(phi), u=u)
+    breathe(P, u, 1.0, 1.0)
+    head_pose(P, pitch=-2.0, yaw=0.0, roll=-4.0 + 1.0 * math.sin(phi * 2))
+    arm_to(P, 'L', mouth_point(P, (-0.13, -0.02, -0.30)), palm='down', fwd=v3(-1.0, -0.2, 0.0), pole=v3(0.8, 0.8, -0.3))
+    arm_to(P, 'R', mouth_point(P, (0.13, 0.0, -0.33)), palm='down', fwd=v3(1.0, -0.2, 0.0), pole=v3(-0.8, 0.8, -0.3))
+
+
+def sit_point(P, u):
+    phi = TAU * u
+    e = env(u, 0.0, 0.2, 0.95, 1.0) if False else 1.0
+    seat_base(P, lean=6.0, twist=-4.0, u=u)
+    breathe(P, u, 1.0, 1.0)
+    head_pose(P, pitch=-1.0, yaw=0.0, roll=1.0)
+    P.rel_euler('Shoulder_R', y=-6.0)
+    tgt = v3(-0.22, -0.60 - 0.03 * max(0.0, math.sin(phi * 2.0)), 1.20)
+    arm_to(P, 'R', tgt, palm=v3(-0.3, 0.0, -1.0), fwd=v3(-0.1, -1.0, 0.1), pole=v3(-0.9, 0.5, -0.3))
+    arm_to(P, 'L', v3(0.10, -0.31, 0.757), palm='down', fwd=v3(-0.05, -1, -0.08), pole=v3(0.4, 0.9, -1.0))
+
+
+def sit_drum(P, u):
+    phi = TAU * u
+    seat_base(P, lean=12.0, twist=0.0, u=u)
+    head_pose(P, pitch=10.0 + 3.0 * math.sin(phi * 4), yaw=0.0, roll=3.0 * math.sin(phi * 2))
+    for side, off in (('L', 0.0), ('R', 0.5)):
+        sx = sx_of(side)
+        k = max(0.0, math.sin(TAU * (u * 2.0 + off))) ** 2
+        arm_to(P, side, v3(sx * 0.13, -0.36, 0.757 + 0.07 * k), palm='down', fwd=v3(-sx * 0.1, -1, -0.2), pole=v3(sx * 0.4, 0.9, -1.0))
+
+
+def sit_hum(P, u):
+    phi = TAU * u
+    seat_base(P, lean=6.0, twist=6.0 * math.sin(phi), tilt=3.0 * math.sin(phi), u=u)
+    breathe(P, u, 1.0, 1.0)
+    head_pose(P, pitch=-2.0 + 2.0 * math.sin(phi * 2), yaw=3.0 * math.sin(phi), roll=7.0 * math.sin(phi))
+    seated_arms_table(P)
+
+
+def sit_sleep(P, u):
+    phi = TAU * u
+    seat_base(P, lean=48.0 + 1.0 * math.sin(phi), twist=0.0, u=u)
+    breathe(P, u, 1.5, 1.0)
+    head_pose(P, pitch=30.0, yaw=0.0, roll=-8.0)
+    for side in ('L', 'R'):
+        sx = sx_of(side)
+        arm_to(P, side, v3(sx * 0.10, -0.42, 0.765), palm='down', fwd=v3(-sx * 0.5, -1, -0.02), pole=v3(sx * 0.4, 0.9, -1.0))
+
+
+def sit_lean_back(P, u):
+    phi = TAU * u
+    seat_base(P, lean=-16.0 + 1.5 * math.sin(phi * 2), twist=0.0, u=u)
+    head_pose(P, pitch=-4.0, yaw=0.0, roll=2.0 * math.sin(phi))
+    for side in ('L', 'R'):
+        sx = sx_of(side)
+        arm_to(P, side, mouth_point(P, (sx * 0.09, 0.17, 0.0)), palm=v3(-sx * 0.3, -0.8, 0.0), fwd=v3(-sx * 0.2, 0.6, 0.6), pole=v3(sx * 1.0, 0.2, 0.2))
+
+
 CLIPS = [
     # name, duration s, loop, builder
     ('idle_stand', 4.0, True, idle_stand),
@@ -1445,6 +1577,18 @@ CLIPS = [
     ('teacher_write_board', 3.0, True, write_board),
     ('teacher_hands_on_hips', 4.0, True, hands_on_hips),
     ('teacher_type', 2.0, True, stand_type),
+    ('teacher_flinch', 1.1, False, teacher_flinch),
+    ('teacher_rub_head', 1.8, True, teacher_rub_head),
+    ('teacher_angry', 3.0, True, teacher_angry),
+    ('teacher_accuse', 2.4, True, teacher_accuse),
+    ('sit_laugh', 1.6, True, sit_laugh),
+    ('sit_gasp', 1.3, False, sit_gasp),
+    ('sit_glare', 3.0, True, sit_glare),
+    ('sit_point', 2.0, True, sit_point),
+    ('sit_drum', 1.0, True, sit_drum),
+    ('sit_hum', 2.4, True, sit_hum),
+    ('sit_sleep', 4.0, True, sit_sleep),
+    ('sit_lean_back', 3.0, True, sit_lean_back),
 ]
 
 

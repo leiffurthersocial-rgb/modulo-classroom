@@ -165,7 +165,7 @@ function doCough(w: World): void {
     kind: sneeze ? 'sneeze' : 'cough',
   });
   w.noise(p.pos, sneeze ? 4 : 2.8, sneeze ? 'sneeze' : 'cough', 'player');
-  addHeat(w, 0.3, 'a suspiciously healthy cough');
+  addHeat(w, 0.45, 'a suspiciously healthy cough');
   count(w, 'cough');
   if (w.t - f.chainT > 12 || f.chainDone) {
     f.chain = 0;
@@ -209,7 +209,17 @@ export function updateActs(w: World): void {
     if (f.chain >= 3) {
       w.emit({ type: 'cough-chain', value: f.chain });
       const b = w.brain;
-      const free = !['watch', 'confront', 'penalty', 'flinch', 'hunt', 'interrogate', 'away', 'leave', 'task'].includes(b.state);
+      const free = ![
+        'watch',
+        'confront',
+        'penalty',
+        'flinch',
+        'hunt',
+        'interrogate',
+        'away',
+        'leave',
+        'task',
+      ].includes(b.state);
       if (f.chain >= 4 && w.teacher.present && free && b.anger < 0.4)
         b.tasks.push({
           kind: 'sick',
@@ -233,7 +243,8 @@ export function updateActs(w: World): void {
     }
     if (s.humUntil > w.t) {
       if (close) s.humUntil = 0;
-      else if (Math.floor(w.t) !== Math.floor(w.t - dt)) w.noise(s.agent.pos, 2.0, 'hum', s.agent.id);
+      else if (Math.floor(w.t) !== Math.floor(w.t - dt))
+        w.noise(s.agent.pos, 2.0, 'hum', s.agent.id);
     }
   }
 
@@ -270,7 +281,10 @@ export function updateActs(w: World): void {
           if (!f.drummers.includes(s.def.id)) f.drummers.push(s.def.id);
         }
         w.stats.drummersBest = Math.max(w.stats.drummersBest, f.drummers.length);
-        w.record.counters.drumJoined = Math.max(w.record.counters.drumJoined ?? 0, f.drummers.length);
+        w.record.counters.drumJoined = Math.max(
+          w.record.counters.drumJoined ?? 0,
+          f.drummers.length,
+        );
       }
       if (teacherNear(w, 2.2) && teacherCanSee(w, p, 'head')) {
         // Hands off the table: it is over.
@@ -287,7 +301,13 @@ export function updateActs(w: World): void {
       if (Math.floor(a.t / 2) !== Math.floor((a.t - dt) / 2) && a.t >= 1.9) {
         let joined = 0;
         for (const s of w.students) {
-          if (!s.agent.present || s.humUntil > w.t || dist2(s.agent.pos, p.pos) > 3.8 || joined >= 2) continue;
+          if (
+            !s.agent.present ||
+            s.humUntil > w.t ||
+            dist2(s.agent.pos, p.pos) > 3.8 ||
+            joined >= 2
+          )
+            continue;
           if (s.def.traits.rebellious < 0.4 || !w.rngSocial.chance(0.4)) continue;
           joined++;
           queueReact(w, s, 'hum', 0.2);
@@ -313,7 +333,12 @@ export function updateActs(w: World): void {
         w.noise(p.pos, 2.6, 'snore', 'player');
         w.emit({ type: 'snore', who: 'player' });
         for (const s of w.students) {
-          if (!s.agent.present || dist2(s.agent.pos, p.pos) > 2.6 || !cd(w, `snore:${s.def.id}`, 25)) continue;
+          if (
+            !s.agent.present ||
+            dist2(s.agent.pos, p.pos) > 2.6 ||
+            !cd(w, `snore:${s.def.id}`, 25)
+          )
+            continue;
           if (w.relations.toPlayer(s.def.id) >= 10 && w.rngSocial.chance(0.6)) {
             w.say(s.def.id, 'student', 'snoreGiggle');
             break;
@@ -329,7 +354,12 @@ export function updateActs(w: World): void {
         f.wokeT = w.t;
         const st = w.susp('player');
         st.s = Math.max(st.s, 0.55);
-        st.lastEvidence = { kind: 'sleeping', point: 'head', zone: 'near', dist: dist2(w.teacher.pos, p.pos) };
+        st.lastEvidence = {
+          kind: 'sleeping',
+          point: 'head',
+          zone: 'near',
+          dist: dist2(w.teacher.pos, p.pos),
+        };
         st.lastEvidenceT = w.t;
         w.say('teacher', 'teacher', w.profile.knowsNames ? 'rise' : 'riseAnon', { name: p.name });
         stopAct(w, 'woken');
@@ -378,7 +408,8 @@ export function canStartFunVerb(w: World, verb: FunVerb, target: string): string
     case 'face': {
       const s = w.student(target);
       if (!s || !s.agent.present) return 'They are not here.';
-      if ((w.ps.fun.cooldowns[`face:${target}`] ?? -99) > w.t) return 'They have seen that one already.';
+      if ((w.ps.fun.cooldowns[`face:${target}`] ?? -99) > w.t)
+        return 'They have seen that one already.';
       return null;
     }
     case 'swap-seat': {
@@ -402,7 +433,15 @@ export function funVerbDuration(verb: FunVerb): number {
 }
 
 export function beginFunVerb(w: World, verb: FunVerb, target: string): void {
-  addHeat(w, verb === 'face' ? 0.45 : 0.6, verb === 'face' ? 'pulling faces' : verb === 'swap-seat' ? 'swapping seats' : 'playing with the lights');
+  addHeat(
+    w,
+    verb === 'face' ? 0.45 : 0.6,
+    verb === 'face'
+      ? 'pulling faces'
+      : verb === 'swap-seat'
+        ? 'swapping seats'
+        : 'playing with the lights',
+  );
   if (verb === 'swap-seat') w.say(target, 'student', 'swapYes');
   count(w, verb);
   stopAct(w);
@@ -504,7 +543,17 @@ function flickLights(w: World): void {
     else if (t.goody >= 0.5 || t.anxious >= 0.5) queueReact(w, s, 'gasp', 0.15 + 0.06 * k);
   }
   const b = w.brain;
-  const free = !['watch', 'confront', 'penalty', 'flinch', 'hunt', 'interrogate', 'away', 'leave', 'task'].includes(b.state);
+  const free = ![
+    'watch',
+    'confront',
+    'penalty',
+    'flinch',
+    'hunt',
+    'interrogate',
+    'away',
+    'leave',
+    'task',
+  ].includes(b.state);
   if (w.teacher.present && free)
     b.tasks.push({ kind: 'lights', dur: 4, pos: door, bark: 'lightsFlick' });
 }

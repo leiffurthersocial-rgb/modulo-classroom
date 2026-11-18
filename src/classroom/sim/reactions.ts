@@ -36,7 +36,13 @@ export function setAnim(a: Agent, now: number, clip: string, secs: number, once 
   a.anim = { clip, until: now + secs, once };
 }
 
-export function queueReact(w: World, s: StudentState, kind: ReactKind, delay: number, arg?: string): void {
+export function queueReact(
+  w: World,
+  s: StudentState,
+  kind: ReactKind,
+  delay: number,
+  arg?: string,
+): void {
   s.react.push({ at: w.t + delay, kind, arg });
 }
 
@@ -181,16 +187,20 @@ export function classmateHit(w: World, info: HitInfo): void {
   if (!s || !thrower) return;
   const t = s.def.traits;
   const byPlayer = info.thrower === 'player';
-  const aff = byPlayer ? w.relations.toPlayer(s.def.id) : w.relations.between(s.def.id, info.thrower);
+  const aff = byPlayer
+    ? w.relations.toPlayer(s.def.id)
+    : w.relations.between(s.def.id, info.thrower);
   const face = info.region === 'head' && info.side === 'front';
   w.fight.heat += 1;
   w.fight.lastT = w.t;
   if (byPlayer) w.stats.hits.students++;
   w.noise(info.pos, 2.4, 'pap', null);
-  const takesJoke = aff >= -20 && ((t.rebellious >= 0.45 && t.goody < 0.65) || (aff >= 20 && t.goody < 0.75));
+  const takesJoke =
+    aff >= -20 && ((t.rebellious >= 0.45 && t.goody < 0.65) || (aff >= 20 && t.goody < 0.75));
   if (takesJoke) {
     queueReact(w, s, 'laugh', 0.25, info.thrower);
-    if (byPlayer && aff >= 0) w.relations.change(s.def.id, 1.5, 'laughed when your paper ball hit them', w);
+    if (byPlayer && aff >= 0)
+      w.relations.change(s.def.id, 1.5, 'laughed when your paper ball hit them', w);
     const canThrow = t.rebellious >= 0.5 && (s.cooldowns.throwback ?? -99) <= w.t;
     if (canThrow && w.stats.studentThrows < MAX_STUDENT_THROWS) {
       s.cooldowns.throwback = w.t + 12;
@@ -240,7 +250,10 @@ export function playerHit(w: World, info: HitInfo): void {
   w.fight.heat += 1;
   w.fight.lastT = w.t;
   w.noise(info.pos, 2.4, 'pap', null);
-  w.emit({ type: 'hint', text: `Hit by a paper ball${thrower ? ` from ${thrower.name}` : ''}! Throw it back?` });
+  w.emit({
+    type: 'hint',
+    text: `Hit by a paper ball${thrower ? ` from ${thrower.name}` : ''}! Throw it back?`,
+  });
   if (info.thrower !== 'player' && thrower && w.student(info.thrower)) {
     const aff = w.relations.toPlayer(info.thrower);
     if (aff >= 0) w.relations.change(info.thrower, 0.5, 'started a paper ball fight with you', w);

@@ -25,6 +25,12 @@ export type Action =
   | 'paper'
   | 'note'
   | 'raiseHand'
+  | 'cough'
+  | 'drum'
+  | 'hum'
+  | 'leanBack'
+  | 'nap'
+  | 'sillyQ'
   | 'cheat'
   | 'notebook'
   | 'work'
@@ -344,6 +350,12 @@ class Touch implements Controller {
     mk(this.tray, 'peek', 'Peek', { hold: true });
     mk(this.tray, 'cheat', 'Cheat sheet', { hold: true });
     mk(this.tray, 'raiseHand', '✋ Hand', { sub: 'raise' });
+    mk(this.tray, 'sillyQ', '🤪 Silly Q', { sub: 'raise' });
+    mk(this.tray, 'cough', '🤧 Cough', { sub: 'chain' });
+    mk(this.tray, 'drum', '🥁 Drum', { sub: 'table' });
+    mk(this.tray, 'hum', '🎵 Hum');
+    mk(this.tray, 'leanBack', '🪑 Lean back');
+    mk(this.tray, 'nap', '😴 Nap');
     // Context row: only when relevant.
     mk(ctxRow, 'switch', 'Hide screen', { cls: 'danger', sub: 'decoy notes' });
     mk(ctxRow, 'content', 'Game / Video');

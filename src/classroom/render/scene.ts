@@ -6,6 +6,7 @@ import { yawDir } from '../sim/geom';
 import { facingDir } from '../sim/layout';
 import { EYE_HEIGHT } from '../sim/perception';
 import type { Agent } from '../sim/types';
+import { flightAt } from '../sim/throwing';
 import type { World } from '../sim/world';
 import { createPrankProps, type PrankProps } from './prank-props';
 import { buildGreybox, type GreyboxRoom } from './greybox';
@@ -408,7 +409,7 @@ export class RoomView {
     this.prankProps.update(w, w.t + alpha * TICK_DT);
     const renderT = w.t + alpha * TICK_DT;
     const o = w.objects;
-    const dim = o.lightsDim;
+    const dim = o.lightsDim || o.lightsOff > 0;
     this.screen.visible = dim || o.projectorInput === 2;
     this.lighting.update(dim, this.screen.visible);
     this.atmos.update(renderT, this.lighting.daylight());
@@ -456,8 +457,12 @@ export class RoomView {
           t: renderT,
           action: a.kind === 'teacher' ? w.brain.state : (st?.action ?? 'listen'),
           whisperSide: side,
+          anger: a.kind === 'teacher' ? w.brain.anger : 0,
         });
-        ch.setClip(req, sit);
+        // Reaction / action clips set by the sim (flinch, laugh, drum, nap, …) win while active.
+        if (a.anim && renderT < a.anim.until)
+          ch.setClip({ clip: a.anim.clip, once: a.anim.once }, sit);
+        else ch.setClip(req, sit);
         // Clips assume the table edge 0.275 m in front of the seat centre; seat further back
         // (side tables) -> slide the body toward its table rather than stretching the arms.
         const off = sit ? this.seatReach(w, a.sittingIn) : 0;

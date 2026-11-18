@@ -27,7 +27,17 @@ export type SoundKind =
   | 'plane'
   | 'telegraph'
   | 'caught'
-  | 'ui';
+  | 'ui'
+  | 'pap'
+  | 'drum'
+  | 'hum'
+  | 'snore'
+  | 'crash'
+  | 'swish'
+  | 'click'
+  | 'gasp'
+  | 'murmur'
+  | 'cheer';
 
 export interface V3 {
   x: number;
@@ -257,6 +267,73 @@ const RECIPES: Record<SoundKind, (v: Voice) => number> = {
       v.burst('highpass', 3000, 0.7, t, 0.07, 0.05);
     }
     return 0.65;
+  },
+  pap: (v) => {
+    // A soft paper ball hitting something: dull "pap" with a little rustle.
+    v.tone('sine', 190, 0, 0.09, 0.5, 90);
+    v.burst('lowpass', 900, 0.7, 0, 0.07, 0.4);
+    v.burst('highpass', 3500, 0.8, 0.02, 0.05, 0.08);
+    return 0.2;
+  },
+  drum: (v) => {
+    v.tone('sine', 150, 0, 0.12, 0.45, 80);
+    v.burst('bandpass', 1400, 1.5, 0, 0.04, 0.3);
+    return 0.16;
+  },
+  hum: (v) => {
+    v.tone('triangle', 210, 0, 0.7, 0.14, 230, v.filter('lowpass', 800, 1));
+    v.tone('sine', 420, 0, 0.7, 0.05, 460);
+    return 0.75;
+  },
+  snore: (v) => {
+    v.tone('sawtooth', 70, 0, 0.9, 0.16, 55, v.filter('bandpass', 180, 2));
+    v.burst('lowpass', 400, 0.7, 0.05, 0.8, 0.14, 250);
+    v.tone('sawtooth', 95, 1.0, 0.5, 0.1, 70, v.filter('bandpass', 220, 2));
+    return 1.6;
+  },
+  crash: (v) => {
+    v.tone('sine', 90, 0, 0.5, 0.7, 40);
+    v.burst('lowpass', 1200, 0.6, 0, 0.3, 0.6, 300);
+    v.burst('bandpass', 2200, 1.2, 0.05, 0.25, 0.25, 900);
+    v.tone('square', 600, 0.1, 0.06, 0.05, 300);
+    return 0.65;
+  },
+  swish: (v) => {
+    v.burst('highpass', 2500, 0.6, 0, 0.22, 0.12, 6000);
+    v.tone('sine', 520, 0.2, 0.08, 0.12, 380);
+    return 0.35;
+  },
+  click: (v) => {
+    v.burst('highpass', 3500, 1, 0, 0.012, 0.5);
+    v.tone('square', 1800, 0, 0.015, 0.1);
+    v.tone('square', 1200, 0.18, 0.012, 0.08);
+    return 0.25;
+  },
+  gasp: (v) => {
+    v.burst('bandpass', 1800, 0.8, 0, 0.2, 0.3, 2600);
+    v.tone('triangle', 520, 0, 0.18, 0.07, 700, v.filter('bandpass', 1200, 2));
+    return 0.25;
+  },
+  murmur: (v) => {
+    // Angry teacher voice murmur: low, rough, falling.
+    const f = v.filter('bandpass', 420, 2.5);
+    v.tone('sawtooth', 130, 0, 0.35, 0.22, 95, f);
+    v.tone('sawtooth', 150, 0.32, 0.4, 0.2, 100, v.filter('bandpass', 380, 2.5));
+    v.burst('bandpass', 900, 1.5, 0.05, 0.6, 0.05);
+    return 0.85;
+  },
+  cheer: (v) => {
+    for (let i = 0; i < 3; i++)
+      v.tone(
+        'sawtooth',
+        340 + i * 70,
+        i * 0.05,
+        0.4,
+        0.07,
+        400 + i * 80,
+        v.filter('bandpass', 1100, 1.5),
+      );
+    return 0.5;
   },
   thud: (v) => {
     v.tone('sine', 70, 0, 0.28, 0.6, 38);

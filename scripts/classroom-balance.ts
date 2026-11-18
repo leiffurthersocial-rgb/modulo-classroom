@@ -19,7 +19,20 @@ const TEACHERS = ['strict', 'lazy', 'distracted', 'hawk', 'substitute'];
 const PENALTIES = ['letoff', 'warning', 'written', 'detention', 'callhome'];
 
 // The postman only exists while note passing is on (data/features.json).
-const STYLES = BOT_STYLES.filter((s) => s !== 'postman' || FEATURES.notes);
+const NEW_STYLES: BotStyle[] = ['sniper', 'jester'];
+const STYLES = BOT_STYLES.filter(
+  (s) => !NEW_STYLES.includes(s) && (s !== 'postman' || FEATURES.notes),
+);
+const ALL_STYLES: BotStyle[] = [...STYLES, ...NEW_STYLES];
+const funTotals = {
+  hits: 0,
+  clean: 0,
+  classPenalties: 0,
+  identified: 0,
+  studentThrows: 0,
+  binMade: 0,
+  acts: {} as Record<string, number>,
+};
 
 const t0 = performance.now();
 const results: RunResult[] = [];
@@ -38,6 +51,26 @@ for (let i = 0; i < runs; i++) {
       else t.dirty++;
       prankTally.set(p.id, t);
     }
+}
+
+// The new-action bots (paper-ball sniper, jester using the new self-actions) run as extra lessons
+// so the original styles keep their seeds and numbers comparable.
+const extraRuns = Math.max(20, Math.round(runs / 6));
+for (let i = 0; i < extraRuns * NEW_STYLES.length; i++) {
+  const style = NEW_STYLES[i % NEW_STYLES.length]!;
+  const seed = 2000 + i;
+  const lessonType = PLAYABLE_LESSON_TYPES[seed % PLAYABLE_LESSON_TYPES.length]!;
+  const teacher = TEACHERS[Math.floor(i / NEW_STYLES.length) % TEACHERS.length]!;
+  const world = new World({ seed, lessonType, teacher });
+  results.push(runLesson(world, new Bot(style, new Rng(seed ^ 0x9e3779b9))));
+  funTotals.hits += world.stats.hits.teacher;
+  funTotals.clean += world.stats.cleanHits;
+  funTotals.classPenalties += world.stats.classPenalties;
+  funTotals.identified += world.stats.offenses.filter((o) => o.kind === 'throw').length;
+  funTotals.studentThrows += world.stats.studentThrows;
+  funTotals.binMade += world.stats.binMade;
+  for (const [k, n] of Object.entries(world.stats.acts))
+    funTotals.acts[k] = (funTotals.acts[k] ?? 0) + n;
 }
 
 // Repeat-offender campaigns: the same record over 6 consecutive lessons (strikes persist, a
@@ -100,7 +133,7 @@ interface StyleAgg {
   test: number | null;
 }
 
-const aggs: StyleAgg[] = STYLES.map((style) => {
+const aggs: StyleAgg[] = ALL_STYLES.map((style) => {
   const rs = results.filter((r) => r.style === style);
   const leads = rs.flatMap((r) => r.telegraphLeads);
   const penalties: Record<string, number> = {};
@@ -183,6 +216,14 @@ for (const a of aggs) {
     `| ${a.style} | ${a.runs} | ${f(a.offensesMean)} | ${f(a.caughtPct, 1)}% | ${PENALTIES.map((p) => a.penalties[p]).join(' | ')} | ${a.leadMin === null ? '-' : f(a.leadMin)} | ${a.leadMean === null ? '-' : f(a.leadMean)} | ${a.violations} | ${f(a.deviceSec, 1)} | ${a.pranksClean}/${a.pranksTotal} | ${f(a.notes)} | ${a.test === null ? '-' : f(a.test, 1)} |`,
   );
 }
+lines.push('', '## Paper-ball hits and new actions (sniper + jester bots)', '');
+lines.push(
+  `Over ${extraRuns} lessons each: ${funTotals.hits} hits on the teacher, ${funTotals.clean} never traced to the thrower (class got the collective consequence ${funTotals.classPenalties}x), ${funTotals.identified} pinned on the thrower (all telegraphed >= 1 s). Classmate throw-backs: ${funTotals.studentThrows}. Bin shots made: ${funTotals.binMade}.`,
+  '',
+  `Self-actions used by the jester: ${Object.entries(funTotals.acts)
+    .map(([k, n]) => `${k} x${n}`)
+    .join(', ')}.`,
+);
 lines.push('', '## Prankster bot: clean rate per prank', '');
 lines.push('| prank | clean | caught | clean % |', '|---|---|---|---|');
 const totalClean = [...prankTally.values()].reduce((a, t) => a + t.clean, 0);

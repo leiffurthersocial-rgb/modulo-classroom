@@ -81,6 +81,12 @@ export const ACTION_LABELS: Record<string, string> = {
   paper: 'Make paper ball',
   note: 'Pass a note',
   raiseHand: 'Raise hand',
+  sillyQ: 'Silly question',
+  cough: 'Fake cough (chain)',
+  drum: 'Drum on the table',
+  hum: 'Hum a tune',
+  leanBack: 'Lean back on the chair',
+  nap: 'Nap on the table',
   cheat: 'Cheat sheet (hold)',
   notebook: 'Notebook',
   ideas: 'Ideas panel',
@@ -92,6 +98,7 @@ export const BINDING_GROUPS: [string, string[]][] = [
   ['Move', ['forward', 'back', 'left', 'right', 'sprint', 'crouch', 'leanLeft', 'leanRight']],
   ['Interact', ['interact', 'nextVerb', 'sit', 'paper', 'throw', 'raiseHand', 'cheat']],
   ['Devices', ['phone', 'laptop', 'switch', 'content', 'earbud']],
+  ['Mischief', ['cough', 'drum', 'hum', 'leanBack', 'nap', 'sillyQ']],
   ['Menus', ['ideas', 'help', 'notebook', ...(NOTES_ENABLED ? ['note'] : [])]],
 ];
 
@@ -114,6 +121,12 @@ const TOUCH_NAMES: Record<string, string> = {
   paper: 'Paper ball',
   throw: 'Throw',
   raiseHand: 'Hand',
+  sillyQ: 'Silly Q',
+  cough: 'Cough',
+  drum: 'Drum',
+  hum: 'Hum',
+  leanBack: 'Lean back',
+  nap: 'Nap',
   cheat: 'Cheat sheet',
   notebook: 'Notebook',
   ideas: 'Ideas',
@@ -152,7 +165,14 @@ export function controlRows(device: Device, k: KeyLabels): [string, string][] {
     [`${k('content')} · ${k('earbud')} · , .`, 'Game / video · earbud · screen brightness'],
     ['A / D while gaming', 'Move the Block Drop paddle'],
     [`${k('paper')} · Shift+${k('paper')} · hold ${k('throw')}`, 'Paper ball · plane · throw'],
-    [`${k('raiseHand')} · ${k('notebook')}`, 'Raise hand · notebook'],
+    [
+      `${k('raiseHand')} · ${k('sillyQ')} · ${k('notebook')}`,
+      'Raise hand · silly question · notebook',
+    ],
+    [
+      `${k('cough')} ${k('drum')} ${k('hum')} ${k('leanBack')} ${k('nap')}`,
+      'Cough chain · drum · hum · lean back · nap',
+    ],
     ['Hold right button (or Y)', 'Peek at a neighbour’s test'],
     [`hold ${k('cheat')}`, 'Use your cheat sheet (pack one on the title screen)'],
     [`${k('leanLeft')} / ${k('leanRight')}`, 'Lean left / right'],
@@ -389,6 +409,109 @@ export function buildIdeas(w: World, k: KeyLabels, device: Device = 'keyboard'):
           device === 'touch'
             ? `${k('paper')} · ${k('throw')}`
             : `${k('paper')} ball · Shift+${k('paper')} plane · hold ${k('throw')}`,
+      },
+    ],
+  });
+
+  const hitTeacher = w.stats.hits.teacher;
+  sections.push({
+    title: 'Paper fights',
+    blurb:
+      'Soft paper only. A hit on the back of the head while the teacher writes is the funniest and safest. In the face while she watches is almost certain trouble.',
+    items: [
+      {
+        title: 'Hit the teacher',
+        detail:
+          'She flinches, snaps round, and hunts for the thrower: classmates may laugh, point, or cover for you ("it came from the window!"). Put the paper away and look busy when she comes asking. If nobody owns up the whole class gets questions.',
+        keys:
+          device === 'touch'
+            ? `${k('paper')} · ${k('throw')}`
+            : `${k('paper')} then hold ${k('throw')}`,
+        ...(hitTeacher
+          ? { status: 'done' as const, statusText: `${hitTeacher} hit${hitTeacher > 1 ? 's' : ''}` }
+          : {}),
+      },
+      {
+        title: 'Hit a classmate',
+        detail:
+          'Friends and rebels laugh and may throw it back (a ball fight that gets louder and louder). Goody-goodies glare, and snitches may tell.',
+      },
+      {
+        title: 'Bin shot',
+        detail:
+          'Throw a ball into the bin for a streak. The bar shows the power to release at. A miss is a loud thud.',
+        keys: `hold ${k('throw')} at the bin`,
+        ...(w.stats.binMade
+          ? { status: 'done' as const, statusText: `${w.stats.binMade} made` }
+          : {}),
+      },
+    ],
+  });
+
+  const act = (id: string) => w.stats.acts[id] ?? 0;
+  const state = (n: number) => (n ? { status: 'done' as const, statusText: `${n}×` } : {});
+  sections.push({
+    title: 'Mischief',
+    blurb:
+      'Harmless and cheeky. The teacher sees fidgeting and hears noise, and blames whoever she can see.',
+    items: [
+      {
+        title: 'Fake a cough chain',
+        detail: 'Classmates may cough along. Four in a row and the teacher goes to open a window.',
+        keys: k('cough'),
+        ...state(act('cough')),
+      },
+      {
+        title: 'Drum on the table',
+        detail: 'The rhythm spreads to rebels nearby. Stop when the teacher walks over.',
+        keys: k('drum'),
+        ...state(act('drum')),
+      },
+      {
+        title: 'Hum a tune',
+        detail: 'Others may hum along, so it is hard to tell who it was. Quiet, but it carries.',
+        keys: k('hum'),
+        ...state(act('hum')),
+      },
+      {
+        title: 'Lean back on the chair',
+        detail:
+          'Hold it as long as you dare. Past a point the chair crashes over: loud, and everyone looks.',
+        keys: k('leanBack'),
+        ...state(act('lean-back')),
+      },
+      {
+        title: 'Nap on the table',
+        detail: 'Hard to see the teacher coming, and snoring carries. Friends may cover for you.',
+        keys: k('nap'),
+        ...state(act('nap')),
+      },
+      {
+        title: 'Ask a silly question',
+        detail: 'The teacher is busy with you, the class laughs, and your trust drops a little.',
+        keys: k('sillyQ'),
+        ...state(act('silly-question')),
+      },
+      {
+        title: 'Pull a funny face',
+        detail:
+          'Aim at a nearby classmate and press Use. They laugh (and may get told off) or roll their eyes.',
+        keys: k('interact'),
+        ...state(act('face')),
+      },
+      {
+        title: 'Swap seats with a friend',
+        detail:
+          'Friends (15+) only, once per lesson, until the break. The wrong seat is noticed by teachers who know faces.',
+        keys: k('interact'),
+        ...state(act('swap-seat')),
+      },
+      {
+        title: 'Flick the lights',
+        detail:
+          'At the switch by the door (stand up). Two dark seconds, a class reaction, and the teacher comes to look.',
+        keys: k('interact'),
+        ...state(act('flick-lights')),
       },
     ],
   });

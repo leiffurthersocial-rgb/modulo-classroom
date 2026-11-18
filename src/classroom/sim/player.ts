@@ -189,7 +189,12 @@ export function playerEvidence(w: World): Evidence[] {
     out.push({ kind: 'sleeping', weight: 0.4, point: 'head' });
   if (ps.fun.heat > 0.25)
     out.push({ kind: 'mischief', weight: Math.min(0.8, ps.fun.heat * 0.6), point: 'head' });
-  if (ps.action && (ps.action.kind === 'face' || ps.action.kind === 'swap-seat' || ps.action.kind === 'flick-lights'))
+  if (
+    ps.action &&
+    (ps.action.kind === 'face' ||
+      ps.action.kind === 'swap-seat' ||
+      ps.action.kind === 'flick-lights')
+  )
     out.push({ kind: 'mischief', weight: 0.5, point: 'torso' });
   if (ps.fun.swap && p.sittingIn === p.seat && w.profile.knowsNames && !r.break && !r.seatFree)
     out.push({ kind: 'wrong-seat', weight: 0.3, point: 'head' });
@@ -322,7 +327,14 @@ function interact(w: World, target: string, verb: string): void {
     return;
   }
   if (verb === 'stand') return standUp(w);
-  if (p.sittingIn && verb !== 'chat' && verb !== 'whisper' && verb !== 'pickup' && verb !== 'face' && verb !== 'swap-seat')
+  if (
+    p.sittingIn &&
+    verb !== 'chat' &&
+    verb !== 'whisper' &&
+    verb !== 'pickup' &&
+    verb !== 'face' &&
+    verb !== 'swap-seat'
+  )
     return hint(w, 'Stand up first.');
   if (verb === 'face' || verb === 'swap-seat' || verb === 'flick-lights') {
     const err = canStartFunVerb(w, verb, target);
@@ -719,9 +731,14 @@ export function interactables(w: World): Interactable[] {
     add('doc-camera', 'doccam', 'Document camera', { x: 0.85, z: 1.55, y: 1.3 }, camVerbs, 1.2);
   if (!p.sittingIn && (w.ps.fun.cooldowns.lights ?? -99) <= w.t) {
     const dr = spot('door', [0.85, 6.75]);
-    add('light-switch', 'switch', 'Light switch', { x: dr.x, z: dr.z, y: 1.3 }, [
-      { verb: 'flick-lights', label: 'Flick the lights', risk: 'risky' },
-    ], 1.4);
+    add(
+      'light-switch',
+      'switch',
+      'Light switch',
+      { x: dr.x, z: dr.z, y: 1.3 },
+      [{ verb: 'flick-lights', label: 'Flick the lights', risk: 'risky' }],
+      1.4,
+    );
   }
   const win = spot('window', [8.55, 1.4]);
   add(
@@ -784,7 +801,14 @@ export function interactables(w: World): Interactable[] {
         : [{ verb: 'whisper', label: `Whisper to ${s.def.name}`, risk: 'risky' }];
     if (canStartFunVerb(w, 'face', s.agent.id) === null)
       verbs.push({ verb: 'face', label: `Pull a funny face at ${s.def.name}`, risk: 'risky' });
-    if (!r.break && p.sittingIn && s.agent.sittingIn && w.relations.toPlayer(s.agent.id) >= 15 && !w.ps.fun.swap && !r.test)
+    if (
+      !r.break &&
+      p.sittingIn &&
+      s.agent.sittingIn &&
+      w.relations.toPlayer(s.agent.id) >= 15 &&
+      !w.ps.fun.swap &&
+      !r.test
+    )
       verbs.push({ verb: 'swap-seat', label: `Swap seats with ${s.def.name}`, risk: 'risky' });
     out.push({
       id: s.agent.id,
