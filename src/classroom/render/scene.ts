@@ -6,6 +6,7 @@ import { yawDir } from '../sim/geom';
 import { EYE_HEIGHT } from '../sim/perception';
 import type { Agent } from '../sim/types';
 import type { World } from '../sim/world';
+import { createPrankProps, type PrankProps } from './prank-props';
 import { buildGreybox, type GreyboxRoom } from './greybox';
 import type { QualitySettings } from '../quality';
 import { Atmosphere } from './atmosphere';
@@ -89,6 +90,7 @@ export function createRoomLights(layout: World['layout']): {
 
 export class RoomView {
   readonly scene = new THREE.Scene();
+  private prankProps: PrankProps;
   readonly room: GreyboxRoom;
   private agents = new Map<string, AgentView>();
   private items = new Map<string, THREE.Mesh>();
@@ -128,6 +130,9 @@ export class RoomView {
     this.scene.background = new THREE.Color(0x1a1d21);
     this.room = buildGreybox(layout);
     this.scene.add(this.room.root);
+    // Visual state of pranks (duck, cups, sticky notes, signs, turned chairs …), driven by the sim.
+    this.prankProps = createPrankProps(layout, { room: this.room.root });
+    this.scene.add(this.prankProps.group);
     const [W] = layout.room.size;
 
     const lights = createRoomLights(layout);
@@ -377,6 +382,7 @@ export class RoomView {
   }
 
   sync(w: World, alpha: number, camPos: THREE.Vector3): void {
+    this.prankProps.update(w, w.t + alpha * TICK_DT);
     const renderT = w.t + alpha * TICK_DT;
     const o = w.objects;
     const dim = o.lightsDim;
@@ -652,6 +658,7 @@ export class RoomView {
   }
 
   dispose(): void {
+    this.prankProps.dispose();
     for (const v of this.agents.values()) v.char?.dispose();
     this.room.dispose();
     this.scene.traverse((o) => {

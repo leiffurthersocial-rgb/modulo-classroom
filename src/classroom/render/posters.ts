@@ -303,7 +303,8 @@ const PAINTERS: Painter[] = [chart, worldDots, quiet, popGrid];
 const cache = new Map<number, THREE.CanvasTexture>();
 
 /** Shared poster texture (index wraps over the four designs). */
-export function posterTexture(index: number): THREE.CanvasTexture {
+export function posterTexture(index: number): THREE.CanvasTexture | null {
+  if (typeof document === 'undefined') return null; // headless (unit tests): plain paper
   const i = index % PAINTERS.length;
   let tex = cache.get(i);
   if (tex) return tex;
@@ -333,6 +334,7 @@ export function createPoster(w: number, h: number, index: number): THREE.Group {
     new THREE.PlaneGeometry(w, h),
     new THREE.MeshStandardMaterial({
       map: posterTexture(index),
+      color: 0xf4f2ec,
       roughness: 0.55,
       metalness: 0,
     }),
