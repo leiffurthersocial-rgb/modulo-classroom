@@ -42,14 +42,15 @@
       "id": "okoume_veneer",
       "label": "Plywood chair shells",
       "scale": 0.5,
-      "tint": "#ffd0a0"
+      "tint": "#c07a42",
+      "brightness": 1.0
     },
     "metal": {
       "source": "ambientcg",
       "id": "Metal009",
       "label": "Brushed metal",
       "scale": 0.5,
-      "roughness": 0.7
+      "roughness": 0.35
     },
     "tile": {
       "source": "ambientcg",
