@@ -130,6 +130,49 @@ lines.push(
   `Runs: ${runs} lessons (seeds 1000..${1000 + runs - 1}), runtime ${f(runtimeS, 1)} s. Notes feature: ${FEATURES.notes ? 'on' : 'off (postman bot omitted)'}.`,
   '',
 );
+// Numbers from the previous report (before the gameplay retune: same seeds, old sim and old bots).
+const BEFORE = {
+  gamer: { off: 0.71, caught: 57.1 },
+  sneaky: { off: 0.81, caught: 12.0 },
+  prankster: { off: 3.58, caught: 73.5, clean: 18, total: 27, callhomes: 80, lessons: 83 },
+  chaos: { off: 6.63, caught: 86.7 },
+  campaign: {
+    gamer: { off: 1.59, clean: 29, written: 0.8, det: 3.64, call: 3.2 },
+    prankster: { off: 1.73, clean: 57, written: 1.72, det: 3.68, call: 2.88 },
+    chaos: { off: 9.06, clean: 1, written: 1.0, det: 26.16, call: 25.72 },
+  },
+};
+const pk = aggs.find((a) => a.style === 'prankster')!;
+const callhomesPer = (st: BotStyle) =>
+  (aggs.find((a) => a.style === st)?.penalties.callhome ?? 0) /
+  Math.max(1, aggs.find((a) => a.style === st)?.runs ?? 1);
+lines.push('## Before / after the retune', '');
+lines.push(
+  'Before = report of the previous build (same seeds). After = this run. Changes: witnesses who like you, love the prank or sit far away keep quiet (snitch chance = trait x affinity x distance), a told-on prank is now actually punished (reports used to be lost during the telegraph), at most 2 strikes can be added per lesson (then only reprimands), call home resets to 1 strike, two calm lessons heal a strike. The prankster bot also got smarter (gives up when watched, lies low after a penalty, uses covered moments for fiddly pranks, no longer wedges itself into seated classmates).',
+  '',
+);
+lines.push('| metric | before | after |', '|---|---|---|');
+lines.push(
+  `| prankster: pranks clean | ${BEFORE.prankster.clean}/${BEFORE.prankster.total} (${f(pct(BEFORE.prankster.clean, BEFORE.prankster.total), 0)}%) | ${pk.pranksClean}/${pk.pranksTotal} (${f(pct(pk.pranksClean, pk.pranksTotal), 0)}%) |`,
+  `| prankster: offenses / lesson | ${BEFORE.prankster.off} | ${f(pk.offensesMean)} |`,
+  `| prankster: % lessons caught | ${BEFORE.prankster.caught}% | ${f(pk.caughtPct, 1)}% |`,
+  `| prankster: call homes / lesson | ${f(BEFORE.prankster.callhomes / BEFORE.prankster.lessons)} | ${f(callhomesPer('prankster'))} |`,
+  `| gamer: % lessons caught | ${BEFORE.gamer.caught}% | ${f(aggs.find((a) => a.style === 'gamer')!.caughtPct, 1)}% |`,
+  `| sneaky: % lessons caught | ${BEFORE.sneaky.caught}% | ${f(aggs.find((a) => a.style === 'sneaky')!.caughtPct, 1)}% |`,
+  `| chaos: offenses / lesson | ${BEFORE.chaos.off} | ${f(aggs.find((a) => a.style === 'chaos')!.offensesMean)} |`,
+);
+lines.push('', 'Repeat offenders (6 lessons in a row, one record), before:', '');
+lines.push(
+  '| style | offenses/lesson | clean lessons | written / campaign | detentions / campaign | call homes / campaign |',
+  '|---|---|---|---|---|---|',
+);
+for (const st of CAMPAIGN_STYLES) {
+  const b = BEFORE.campaign[st as 'gamer' | 'prankster' | 'chaos'];
+  lines.push(
+    `| ${st} | ${f(b.off)} | ${b.clean}% | ${f(b.written)} | ${f(b.det)} | ${f(b.call)} |`,
+  );
+}
+lines.push('', 'After: see "Repeat offenders" below.', '');
 lines.push('## Per bot style', '');
 lines.push(
   `| style | runs | offenses/lesson | % lessons caught | ${PENALTIES.join(' | ')} | lead min (s) | lead mean (s) | lead < 1 s | device s | pranks clean/total | notes delivered | test score |`,
