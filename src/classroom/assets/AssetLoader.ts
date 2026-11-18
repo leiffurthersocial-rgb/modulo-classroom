@@ -32,11 +32,17 @@ export interface PackManifest {
   hdris: Record<string, { source: string; id: string; file: string; bytes: number }>;
 }
 
+/** Resolve a site-absolute path ('/pack/…') against the deploy base (e.g. GitHub Pages sub-path). */
+export function assetUrl(path: string): string {
+  if (/^[a-z]+:/i.test(path)) return path;
+  return import.meta.env.BASE_URL + path.replace(/^\//, '');
+}
+
 export const EMPTY_MANIFEST: PackManifest = { version: 1, materials: {}, models: {}, hdris: {} };
 
 let manifestPromise: Promise<PackManifest | null> | null = null;
 export function loadPackManifest(): Promise<PackManifest | null> {
-  manifestPromise ??= fetch('/pack/manifest.json')
+  manifestPromise ??= fetch(assetUrl('pack/manifest.json'))
     .then((r) => (r.ok ? (r.json() as Promise<PackManifest>) : null))
     .catch(() => null);
   return manifestPromise;
@@ -62,7 +68,9 @@ export class AssetLoader {
     renderer: THREE.WebGLRenderer,
     readonly manifest: PackManifest,
   ) {
-    this.ktx2 = new KTX2Loader().setTranscoderPath('/vendor/basis/').detectSupport(renderer);
+    this.ktx2 = new KTX2Loader()
+      .setTranscoderPath(assetUrl('vendor/basis/'))
+      .detectSupport(renderer);
     this.ktx2.setWorkerLimit(2);
     this.gltf = new GLTFLoader().setKTX2Loader(this.ktx2).setMeshoptDecoder(MeshoptDecoder);
   }
@@ -71,7 +79,8 @@ export class AssetLoader {
     const k = `${url}|${srgb}`;
     let p = this.textures.get(k);
     if (!p) {
-      const load = url.endsWith('.ktx2') ? this.ktx2.loadAsync(url) : this.img.loadAsync(url);
+      const abs = assetUrl(url);
+      const load = url.endsWith('.ktx2') ? this.ktx2.loadAsync(abs) : this.img.loadAsync(abs);
       p = load.then((t) => {
         t.wrapS = t.wrapT = THREE.RepeatWrapping;
         t.colorSpace = srgb ? THREE.SRGBColorSpace : THREE.NoColorSpace;
@@ -110,7 +119,7 @@ export class AssetLoader {
   async model(key: string): Promise<GLTF | null> {
     const m = this.manifest.models[key];
     if (!m) return null;
-    const g = await this.gltf.loadAsync(m.file);
+    const g = await this.gltf.loadAsync(assetUrl(m.file));
     this.bytesLoaded += m.bytes;
     g.scene.traverse((o) => {
       const mesh = o as THREE.Mesh;
@@ -129,7 +138,7 @@ export class AssetLoader {
   async hdri(key: string): Promise<THREE.DataTexture | null> {
     const h = this.manifest.hdris[key];
     if (!h) return null;
-    const t = await this.hdr.loadAsync(h.file);
+    const t = await this.hdr.loadAsync(assetUrl(h.file));
     t.mapping = THREE.EquirectangularReflectionMapping;
     this.owned.add(t);
     this.bytesLoaded += h.bytes;

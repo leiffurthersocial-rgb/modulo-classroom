@@ -6,6 +6,7 @@ import * as THREE from 'three';
 import config from '../../config/materials.json';
 import {
   AssetLoader,
+  assetUrl,
   EMPTY_MANIFEST,
   loadPackManifest,
   type PackManifest,
@@ -112,7 +113,7 @@ export class PbrLibrary {
     const aniso = Math.min(8, this.renderer.capabilities.getMaxAnisotropy());
     const labPicks = this.lab ? readLabPicks() : null;
     const labManifest = labPicks
-      ? ((await fetch('/lab/manifest.json')
+      ? ((await fetch(assetUrl('lab/manifest.json'))
           .then((r) => (r.ok ? r.json() : null))
           .catch(() => null)) as LabManifest | null)
       : null;

@@ -27,6 +27,8 @@ function labSave(): Plugin {
 }
 
 export default defineConfig({
+  // '/' on Vercel and locally; '/modulo-classroom/' on GitHub Pages (set by the deploy workflow).
+  base: process.env.BASE_PATH ?? '/',
   plugins: [labSave()],
   build: {
     target: 'es2022',

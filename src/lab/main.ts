@@ -5,7 +5,12 @@
 import * as THREE from 'three';
 import './lab.css';
 import layoutJson from '../classroom/data/layouts/classroom-a.json';
-import { AssetLoader, EMPTY_MANIFEST, loadPackManifest } from '../classroom/assets/AssetLoader';
+import {
+  AssetLoader,
+  assetUrl,
+  EMPTY_MANIFEST,
+  loadPackManifest,
+} from '../classroom/assets/AssetLoader';
 import {
   LAB_PICKS_KEY,
   MATERIALS_CONFIG,
@@ -57,7 +62,7 @@ app.innerHTML = `
     <button id="split" class="on">Split A|B</button>
     <button id="save">Save picks</button>
     <button id="copy">Copy JSON</button>
-    <a href="/?lab=1" target="_blank"><button>Try in classroom ↗</button></a>
+    <a href="${import.meta.env.BASE_URL}?lab=1" target="_blank"><button>Try in classroom ↗</button></a>
   </header>
   <aside id="list"></aside>
   <main id="view">
@@ -311,7 +316,7 @@ function renderList(): void {
       .map((c, i) => {
         const picked = p?.source === c.source && p.id === c.id;
         return `<div class="cand${picked ? ' picked' : ''}">
-          <img loading="lazy" src="${esc(c.maps.color)}" alt="">
+          <img loading="lazy" src="${esc(assetUrl(c.maps.color))}" alt="">
           <div><div class="n">${esc(c.name)}</div>
           <div class="s">${c.source === 'polyhaven' ? 'Poly Haven' : 'ambientCG'} · ${esc(c.authors.join(', '))} · <a href="${esc(c.url)}" target="_blank" rel="noopener">CC0</a></div>
           <div class="w">${esc(c.why ?? '')}</div></div>
@@ -417,7 +422,7 @@ $<HTMLSelectElement>('hdri').onchange = (e) => {
 };
 
 // --- Boot -----------------------------------------------------------------------------------
-lab = (await fetch('/lab/manifest.json').then((r) => (r.ok ? r.json() : null))) ?? lab;
+lab = (await fetch(assetUrl('lab/manifest.json')).then((r) => (r.ok ? r.json() : null))) ?? lab;
 const hdris = lab.hdris.overcast ?? [];
 const pack = (await loadPackManifest()) ?? EMPTY_MANIFEST;
 void pack;
