@@ -12,7 +12,7 @@ import {
   type Vec2,
   wallFrame,
 } from '../sim/layout';
-import { type FurnitureLib, getFurniture } from './furniture';
+import { type FurnitureItem, type FurnitureLib, getFurniture } from './furniture';
 import { createPoster } from './posters';
 import { createWindowGlassMaterial } from './windows';
 
@@ -552,6 +552,24 @@ export function buildGreybox(layout: RoomLayout, furniture?: FurnitureLib | null
     mesh.rotation.y = (p.rot * Math.PI) / 180;
     mesh.name = p.id;
     root.add(mesh);
+  }
+
+  // Decorative window-wall dressing from the reference photos (no effect on the sim): a two-drawer
+  // unit hung under the sill ledge, a storage box under it, a pedestal fan, a tall white cabinet.
+  if (fl && ['drawers', 'storagebox', 'fan', 'cabinet'].every((n) => fl.has(n as FurnitureItem))) {
+    const W = layout.room.size[0];
+    const rotWindow = -Math.PI / 2; // local +z (into the room) -> world -x (window wall on the right)
+    const place = (name: FurnitureItem, x: number, z: number, rotY: number) => {
+      const o = fl.clone(name);
+      o.position.set(x, 0, z);
+      o.rotation.y = rotY;
+      o.name = `decor-${name}`;
+      root.add(o);
+    };
+    place('drawers', W, 5.8, rotWindow);
+    place('storagebox', W - 0.24, 4.45, Math.PI / 2);
+    place('fan', W - 0.42, 5.2, Math.PI / 2);
+    place('cabinet', 7.6, 0, 0);
   }
 
   // Original backpacks beside every second seat (the CC0 decor pack fills the others, see decor.ts).

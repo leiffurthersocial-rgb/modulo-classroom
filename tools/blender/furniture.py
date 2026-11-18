@@ -53,7 +53,7 @@ def lin(h):
 
 # name: (hex, roughness, metallic, alpha)
 MATS = {
-    'pbr:plywood': (0xC98B4B, 0.55, 0.0, 1),
+    'pbr:plywood': (0xA9662B, 0.42, 0.0, 1),
     'pbr:table': (0xEAE8E3, 0.45, 0.0, 1),
     'pbr:metal:chrome': (0x9DA3A8, 0.22, 0.95, 1),
     'pbr:metal:alu': (0xB4B8BC, 0.35, 0.85, 1),
@@ -85,6 +85,13 @@ MATS = {
     'radiator_dark': (0x1C1B1A, 0.9, 0.0, 1),
     'radiator_body': (0xD8D8D4, 0.5, 0.0, 1),
     'bin_grey': (0x5C6266, 0.7, 0.0, 1),
+    'blind_grey': (0x9A9C9E, 0.6, 0.0, 1),
+    'cabinet_white': (0xE9E8E1, 0.5, 0.0, 1),
+    'cabinet_plinth': (0x1A1A1B, 0.7, 0.0, 1),
+    'bin_clear': (0xC9D2D6, 0.25, 0.0, 1),
+    'bin_lid': (0x6F6870, 0.45, 0.0, 1),
+    'fan_white': (0xF3F4F4, 0.35, 0.0, 1),
+    'fan_grey': (0xA9A59F, 0.4, 0.0, 1),
     'bp_fabric': (0x3C6E9E, 0.85, 0.0, 1),
     'bp_accent': (0x222428, 0.8, 0.0, 1),
 }
@@ -316,20 +323,25 @@ def make_chair():
     for z in (-0.24, -0.225, -0.19, -0.13, -0.05, 0.04, 0.15):
         y = seat_y - 0.012 * max(0.0, (-0.19 - z) / 0.05) ** 2 + 0.006 * (1 - ((z + 0.03) / 0.21) ** 2)
         path.append([z, y])
-    for k in range(1, 7):
-        a = math.radians(lean * k / 6)
+    NB = 10  # rows through the bend (dense, so the waist notch stays smooth)
+    for k in range(1, NB + 1):
+        a = math.radians(lean * k / NB)
         path.append([0.15 + R * math.sin(a), seat_y + R * (1 - math.cos(a))])
     a = math.radians(lean)
     tz, ty = math.cos(a), math.sin(a)
     z1, y1 = path[-1]
-    for k in range(1, 6):
-        t = 0.27 * k / 5
+    for k in range(1, 7):
+        t = 0.27 * k / 6
         path.append([z1 + tz * t, y1 + ty * t])
     s = [0.0]
     for p, q in zip(path, path[1:]):
         s.append(s[-1] + math.hypot(q[0] - p[0], q[1] - p[1]))
     total = s[-1]
-    arc0, arc1 = s[6], s[12]
+    arc0, arc1 = s[6], s[6 + NB]
+
+    def smooth(x):
+        x = min(max(x, 0.0), 1.0)
+        return x * x * (3 - 2 * x)
 
     cols = [-math.cos(math.pi * k / 10) for k in range(11)]
     rows = []
@@ -340,7 +352,13 @@ def make_chair():
         ln = math.hypot(dz, dy)
         nz, ny = -dy / ln, dz / ln  # normal toward the sitter
         bf = min(max((s[j] - arc0) / (arc1 - arc0), 0.0), 1.0)
-        hw = 0.225 - 0.04 * bf if s[j] <= arc1 else 0.185
+        # half width: wide seat -> narrow neck (the waist cut-out) -> a paddle back
+        if s[j] <= arc0:
+            hw = 0.225
+        elif s[j] <= arc1:
+            hw = 0.225 + (0.075 - 0.225) * smooth(bf / 0.55) if bf < 0.55 else 0.075
+        else:
+            hw = 0.075 + (0.195 - 0.075) * smooth((s[j] - arc1) / 0.10)
         f = min(s[j] / 0.07, 1.0)
         hw *= 0.3 + 0.7 * math.sqrt(1 - (1 - f) ** 2)
         g = min((total - s[j]) / 0.08, 1.0)
@@ -378,26 +396,25 @@ def make_chair():
 
 
 def make_table():
-    """White laminate table 1.3 x 0.65 x 0.72 on four thin square steel legs with a frame."""
+    """Light laminate table 1.3 x 0.65 x 0.72: thick square-edged top on a chrome rectangular steel
+    frame (square-tube legs at the corners + an apron rail right under the top on all four sides)."""
     it = Item('table')
-    L, D, H, T = 1.3, 0.65, 0.72, 0.03
-    it.add(box((L, T, D), (0, H - T / 2, 0), vround=(0.03, 4)), 'pbr:table', bevel=(0.004, 2))
-    # thin dark edge band under the top lip
-    it.add(box((L - 0.004, 0.012, D - 0.004), (0, H - T - 0.005, 0), vround=(0.03, 4)), 'black_plastic')
-    lx, lz = L / 2 - 0.07, D / 2 - 0.07
-    ft = 0.03
+    L, D, H, T = 1.3, 0.65, 0.72, 0.035
+    it.add(box((L, T, D), (0, H - T / 2, 0)), 'pbr:table', bevel=(0.0015, 1))
+    lx, lz = L / 2 - 0.045, D / 2 - 0.045
+    ft = 0.04  # leg tube section
+    ay, ah, at = H - T - 0.03, 0.06, 0.02  # apron rail centre y, height, thickness
     for sx in (-1, 1):
         for sz in (-1, 1):
-            it.add(box((ft, H - T - 0.02, ft), (sx * lx, (H - T - 0.02) / 2 + 0.02, sz * lz)),
-                   'pbr:metal:chrome', bevel=(0.0035, 1))
-            it.add(tube((sx * lx, 0, sz * lz), (sx * lx, 0.025, sz * lz), 0.018, seg=12), 'rubber',
-                   bevel=(0.003, 1))
-            it.add(box((0.07, 0.01, 0.07), (sx * lx, H - T - 0.005, sz * lz)), 'black_plastic')
-    ry = H - T - 0.045
+            it.add(box((ft, H - T, ft), (sx * lx, (H - T) / 2, sz * lz)), 'pbr:metal:chrome',
+                   bevel=(0.0025, 1))
+            it.add(box((ft + 0.004, 0.012, ft + 0.004), (sx * lx, 0.006, sz * lz)), 'rubber')
     for sz in (-1, 1):
-        it.add(box((2 * lx, 0.05, 0.02), (0, ry, sz * lz)), 'pbr:metal:chrome', bevel=(0.003, 1))
+        it.add(box((2 * lx, ah, at), (0, ay, sz * (lz + ft / 2 - at / 2))), 'pbr:metal:chrome',
+               bevel=(0.0025, 1))
     for sx in (-1, 1):
-        it.add(box((0.02, 0.05, 2 * lz), (sx * lx, ry, 0)), 'pbr:metal:chrome', bevel=(0.003, 1))
+        it.add(box((at, ah, 2 * lz), (sx * (lx + ft / 2 - at / 2), ay, 0)), 'pbr:metal:chrome',
+               bevel=(0.0025, 1))
     return it.build()
 
 
@@ -561,55 +578,119 @@ def make_door():
 
 
 def make_window():
-    """Window 2.7 x 1.75: white frame, two lower sashes, a fixed top light, handles, inner board."""
+    """Window 2.7 x 1.75: white PVC frame, four tall casement sashes (slim mullions, white lever
+    handles), a roller-blind box with a few slats showing at the head, inner board."""
     it = Item('window')
-    W, H, F, Dp = 2.7, 1.75, 0.06, 0.07
-    top = H / 2 - 0.42
+    W, H, F, Dp = 2.7, 1.75, 0.07, 0.09
     it.add(box((W, F, Dp), (0, H / 2 - F / 2, 0)), 'white_paint', bevel=(0.004, 1))
     it.add(box((W, F, Dp), (0, -H / 2 + F / 2, 0)), 'white_paint', bevel=(0.004, 1))
     for sx in (-1, 1):
         it.add(box((F, H - 2 * F, Dp), (sx * (W / 2 - F / 2), 0, 0)), 'white_paint', bevel=(0.004, 1))
-    it.add(box((0.05, top - (-H / 2 + F), Dp), (0, (top - H / 2 + F) / 2, 0)), 'white_paint', bevel=(0.004, 1))
-    it.add(box((W - 2 * F, 0.05, Dp), (0, top, 0)), 'white_paint', bevel=(0.004, 1))
-    sw = (W - 2 * F - 0.05) / 2
-    sh = top - 0.025 - (-H / 2 + F)
-    sy = (top - 0.025 + (-H / 2 + F)) / 2
-    for sx in (-1, 1):
-        cx = sx * (0.025 + sw / 2)
-        for dx, dy, w, h in ((0, 0.5, sw, 0.042), (0, -0.5, sw, 0.042)):
-            it.add(box((w - 0.005, 0.042, 0.05), (cx, sy + dy * (sh / 2 - 0.021), 0.012)), 'white_paint',
-                   bevel=(0.003, 1))
+    iw, ih = W - 2 * F, H - 2 * F
+    mw = 0.05  # mullion between two sashes (two overlapping sash stiles)
+    sw = (iw - 3 * mw) / 4
+    sb = 0.048  # sash border
+    for k in range(4):
+        cx = -iw / 2 + mw / 2 * 0 + k * (sw + mw) + sw / 2 + (0 if k == 0 else 0)
+        cx = -iw / 2 + k * (sw + mw) + sw / 2
+        it.add(box((sw, sb, 0.06), (cx, ih / 2 - sb / 2, 0.012)), 'white_paint', bevel=(0.003, 1))
+        it.add(box((sw, sb, 0.06), (cx, -ih / 2 + sb / 2, 0.012)), 'white_paint', bevel=(0.003, 1))
         for ex in (-1, 1):
-            it.add(box((0.042, sh - 0.005, 0.05), (cx + ex * (sw / 2 - 0.021), sy, 0.012)), 'white_paint',
+            it.add(box((sb, ih - 2 * sb, 0.06), (cx + ex * (sw / 2 - sb / 2), 0, 0.012)), 'white_paint',
                    bevel=(0.003, 1))
-        hx = sx * 0.05
-        it.add(tube((hx, -0.1, 0.037), (hx, -0.1, 0.046), 0.018, seg=16), 'pbr:metal:alu')
-        it.add(box((0.02, 0.1, 0.014), (hx, -0.14, 0.057), vround=(0.006, 2)), 'pbr:metal:alu', bevel=(0.002, 1))
+        if k < 3:
+            it.add(box((mw, ih, 0.075), (cx + sw / 2 + mw / 2, 0, 0.006)), 'white_paint', bevel=(0.003, 1))
+        # lever handle on the free stile, mid height (alternate sides as in the photo)
+        hx = cx + (sw / 2 - sb / 2) * (1 if k % 2 == 0 else -1)
+        it.add(box((0.032, 0.032, 0.012), (hx, -0.02, 0.05)), 'white_plastic', bevel=(0.003, 1))
+        it.add(box((0.018, 0.11, 0.014), (hx, -0.075, 0.062), vround=(0.006, 2)), 'white_plastic',
+               bevel=(0.002, 1))
+    # roller blind: box over the head, slats peeking into the glass area
+    it.add(box((W - 0.04, 0.2, 0.12), (0, H / 2 + 0.1, 0.04)), 'white_paint', bevel=(0.004, 1))
+    it.add(box((W - 2 * F - 0.02, 0.12, 0.012), (0, H / 2 - F - 0.06, -0.03)), 'blind_grey')
+    for yy in (0.0, -0.03, -0.06, -0.09):
+        it.add(box((W - 2 * F - 0.02, 0.006, 0.016), (0, H / 2 - F - 0.015 + yy, -0.026)), 'white_paint')
     it.add(box((W + 0.1, 0.022, 0.11), (0, -H / 2 + 0.006, 0.085), vround=(0.006, 2)), 'white_paint',
            bevel=(0.003, 1))
     return it.build()
 
 
 def make_radiator():
-    """Long linear radiator grille in a sill box. Origin = floor, centred along x, wall at z=0.
-    Built with gaps at +-0.3 (the concrete column) and a stop at +2.45 (the sink)."""
+    """Deep white cantilevered sill ledge along the window wall (the old radiator item; the node
+    keeps its name). Origin = floor, centred along x, wall at z=0. Segments leave gaps at +-0.3 (the
+    concrete column) and a stop at +2.45 (the sink). A slim radiator grille sits in the ledge top."""
     it = Item('radiator')
-    DP, TOPY = 0.17, 0.855
+    DP, TOPY, TH = 0.28, 0.80, 0.045
     for a, b in ((-3.2, -0.3), (0.3, 2.45)):
         w, cx = b - a, (a + b) / 2
-        it.add(box((w, 0.03, DP + 0.02), (cx, TOPY - 0.015, (DP + 0.02) / 2), vround=(0.006, 2)), 'white_paint',
-               bevel=(0.003, 1))
-        it.add(box((w, 0.1, 0.02), (cx, 0.05, DP - 0.01)), 'white_paint', bevel=(0.003, 1))
-        it.add(box((w, 0.125, 0.02), (cx, 0.7 + 0.0625, DP - 0.01)), 'white_paint', bevel=(0.003, 1))
-        for e in (a, b):
-            it.add(box((0.02, TOPY - 0.03, DP), (e + (0.01 if e == a else -0.01), (TOPY - 0.03) / 2, DP / 2)),
-                   'white_paint')
-        it.add(box((w, 0.6, 0.01), (cx, 0.4, 0.03)), 'radiator_dark')
-        it.add(box((w - 0.04, 0.5, 0.03), (cx, 0.4, 0.07)), 'radiator_body')
-        n = 14
-        pitch = 0.6 / n
+        it.add(box((w, TH, DP), (cx, TOPY - TH / 2, DP / 2)), 'white_paint', bevel=(0.003, 1))
+        it.add(box((w, 0.115, 0.02), (cx, TOPY - TH - 0.0575 + 0.0, DP - 0.01)), 'white_paint',
+               bevel=(0.003, 1))  # front fascia
+        # radiator grille set into the top, close to the glass
+        it.add(box((w - 0.4, 0.004, 0.07), (cx, TOPY + 0.0015, 0.08)), 'radiator_dark')
+        n = int((w - 0.5) / 0.03)
         for k in range(n):
-            it.add(box((w - 0.04, 0.018, 0.016), (cx, 0.1 + pitch * (k + 0.5), DP - 0.012)), 'white_paint')
+            it.add(box((0.012, 0.006, 0.062), (cx - (w - 0.5) / 2 + (k + 0.5) * (w - 0.5) / n, TOPY + 0.003, 0.08)),
+                   'white_paint')
+        # steel brackets under the ledge
+        for bx in (a + 0.25, cx, b - 0.25):
+            it.add(box((0.02, 0.07, 0.14), (bx, TOPY - TH - 0.035, 0.07)), 'cabinet_plinth')
+    return it.build()
+
+
+def make_drawers():
+    """Small white two-drawer unit hung under the ledge. Origin = floor, back at z=0 (wall), centred."""
+    it = Item('drawers')
+    W, Hh, Dp, y0 = 0.5, 0.5, 0.36, 0.25
+    it.add(box((W, Hh, Dp), (0, y0 + Hh / 2, Dp / 2)), 'cabinet_white', bevel=(0.003, 1))
+    for k in range(2):
+        yc = y0 + Hh * (0.27 + 0.46 * k)
+        it.add(box((W - 0.03, Hh / 2 - 0.03, 0.02), (0, yc, Dp + 0.005)), 'cabinet_white', bevel=(0.003, 1))
+        it.add(box((0.05, 0.012, 0.012), (0, yc + 0.07, Dp + 0.022)), 'pbr:metal:alu')
+        it.add(box((0.012, 0.012, 0.022), (-0.025, yc + 0.07, Dp + 0.012)), 'pbr:metal:alu')
+        it.add(box((0.012, 0.012, 0.022), (0.025, yc + 0.07, Dp + 0.012)), 'pbr:metal:alu')
+    return it.build()
+
+
+def make_cabinet():
+    """Tall white metal storage cabinet with a lock and a black plinth. Origin = floor, back at z=0."""
+    it = Item('cabinet')
+    W, Hh, Dp, PL = 0.8, 1.95, 0.42, 0.06
+    it.add(box((W, PL, Dp - 0.03), (0, PL / 2, Dp / 2)), 'cabinet_plinth')
+    it.add(box((W, Hh - PL, Dp), (0, PL + (Hh - PL) / 2, Dp / 2)), 'cabinet_white', bevel=(0.004, 1))
+    it.add(box((W - 0.05, Hh - PL - 0.05, 0.012), (0, PL + (Hh - PL) / 2, Dp + 0.004)), 'cabinet_white')
+    it.add(tube((W / 2 - 0.07, 1.0, Dp + 0.01), (W / 2 - 0.07, 1.0, Dp + 0.02), 0.012, seg=12), 'pbr:metal:alu')
+    it.add(tube((W / 2 - 0.07, 0.9, Dp + 0.01), (W / 2 - 0.07, 0.9, Dp + 0.017), 0.009, seg=10), 'pbr:metal:alu')
+    return it.build()
+
+
+def make_storagebox():
+    """Translucent plastic storage box with a grey lid. Origin = floor centre, long side along x."""
+    it = Item('storagebox')
+    L, W, Hh = 0.6, 0.4, 0.3
+    it.add(box((L, Hh - 0.03, W), (0, 0.02 + (Hh - 0.03) / 2, 0), vround=(0.02, 2)), 'bin_clear',
+           bevel=(0.004, 1))
+    it.add(box((L + 0.03, 0.035, W + 0.03), (0, Hh - 0.0075, 0), vround=(0.025, 2)), 'bin_lid',
+           bevel=(0.004, 1))
+    for k in range(6):
+        it.add(box((L - 0.1, 0.008, 0.016), (0, Hh + 0.012, -0.12 + k * 0.048)), 'bin_lid')
+    it.add(box((L - 0.04, 0.02, W - 0.04), (0, 0.01, 0)), 'bin_clear')
+    return it.build()
+
+
+def make_fan():
+    """White pedestal fan: round head, single pole, round base. Origin = floor centre, front = -Z."""
+    it = Item('fan')
+    it.add(lathe([(0, 0.0), (0.2, 0.0), (0.21, 0.012), (0.2, 0.03), (0.07, 0.04), (0.0, 0.04)], 28), 'fan_white')
+    it.add(tube((0, 0.04, 0), (0, 0.78, 0), 0.02, seg=14), 'fan_white')
+    # head: a sphere shell with the grille disc on the front, a carry handle on top
+    it.add(sphere(0.17, (0, 0.95, 0.0), (1, 1, 0.8), seg=18), 'fan_white')
+    it.add(lathe([(0.0, 0.0), (0.145, 0.0), (0.15, 0.01), (0.15, 0.02)], 24, (0, 0.95, -0.12),
+                 rot_x(-90)), 'fan_white')
+    for k in range(6):
+        it.add(box((0.29, 0.01, 0.008), (0.0, 0.95, -0.142), rot_z(30 * k)), 'fan_white')
+    it.add(tube((0, 0.95, -0.14), (0, 0.95, -0.146), 0.03, seg=14), 'fan_grey')
+    it.add(box((0.2, 0.012, 0.03), (0, 1.14, 0.0), vround=(0.004, 1)), 'fan_grey')
     return it.build()
 
 
@@ -708,7 +789,8 @@ def make_backpack():
 
 
 ITEMS = [make_chair, make_table, make_desk, make_doccam, make_laptop, make_projector, make_whiteboard,
-         make_clock, make_door, make_window, make_radiator, make_sink, make_bin, make_pinboard,
+         make_clock, make_door, make_window, make_radiator, make_drawers, make_cabinet,
+         make_storagebox, make_fan, make_sink, make_bin, make_pinboard,
          make_poster, make_sharpener, make_backpack]
 
 
