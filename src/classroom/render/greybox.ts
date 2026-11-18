@@ -1,9 +1,20 @@
 // Greybox room builder: turns a RoomLayout into flat-coloured primitives. No downloaded assets.
 // Instanced where things repeat (tables, chair parts, ceiling slats) so draw calls stay low.
+// When a FurnitureLib is available (render/furniture.ts: Blender-made models) the furniture, wall
+// fixtures, door and window frames come from it instead of boxes; the box path below stays as the
+// fallback (?models=0 or a failed load). Names the scene looks up are identical on both paths.
 import * as THREE from 'three';
-import { facingDir, type RoomLayout, type Vec2, wallFrame } from '../sim/layout';
-import { createWindowGlassMaterial } from './windows';
+import {
+  facingDir,
+  type Fixture,
+  type Prop,
+  type RoomLayout,
+  type Vec2,
+  wallFrame,
+} from '../sim/layout';
+import { type FurnitureLib, getFurniture } from './furniture';
 import { createPoster } from './posters';
+import { createWindowGlassMaterial } from './windows';
 
 export const GREYBOX_COLORS = {
   carpet: 0x4a3a2e,
@@ -69,7 +80,78 @@ export interface GreyboxRoom {
   dispose(): void;
 }
 
-export function buildGreybox(layout: RoomLayout): GreyboxRoom {
+/** A positioned wall fixture from the model library, or null to use the primitive. */
+function fixtureModel(
+  fl: FurnitureLib,
+  fx: Fixture,
+): { obj: THREE.Object3D; floor?: boolean } | null {
+  const [fw, fh] = fx.size;
+  let obj: THREE.Object3D;
+  switch (fx.kind) {
+    case 'whiteboard':
+      obj = fl.clone('whiteboard');
+      obj.scale.set(fw / 3.6, fh / 1.2, 1);
+      break;
+    case 'clock':
+      obj = fl.clone('clock');
+      obj.scale.setScalar(fw / 0.32);
+      break;
+    case 'radiator':
+      obj = fl.clone('radiator'); // origin on the floor, centred along the wall
+      return { obj, floor: true };
+    case 'sink':
+      obj = fl.clone('sink');
+      break;
+    case 'sharpener':
+      obj = fl.clone('sharpener');
+      obj.scale.setScalar(fw / 0.12);
+      break;
+    case 'pinboard':
+      obj = fl.clone('pinboard');
+      obj.scale.set(fw / 2.2, fh / 1.2, 1);
+      break;
+    case 'poster':
+      return null; // framed procedural art (render/posters.ts) beats the blank frame model
+    default:
+      return null;
+  }
+  return { obj };
+}
+
+/** A prop from the model library (origin conventions: tools/blender/furniture.py), or null. */
+function propModel(fl: FurnitureLib, layout: RoomLayout, p: Prop): THREE.Object3D | null {
+  switch (p.kind) {
+    case 'standing-desk': {
+      const [w, , d] = p.size ?? [1, 1.05, 0.6];
+      const g = fl.clone('desk');
+      g.scale.set(w / 1.0, 1, d / 0.6);
+      return g;
+    }
+    case 'document-camera':
+    case 'laptop': {
+      const g = fl.clone(p.kind === 'laptop' ? 'laptop' : 'doccam');
+      // Sits on the desk surface (desk height + half the 3 cm top).
+      const desk = layout.props.find((x) => x.id === p.on);
+      g.position.y = (desk?.size?.[1] ?? 1.05) + 0.015;
+      return g;
+    }
+    case 'ceiling-projector': {
+      const g = fl.clone('projector');
+      g.position.y = p.height ?? 2.55;
+      return g;
+    }
+    case 'bin':
+      return fl.clone('bin');
+    default:
+      return null;
+  }
+}
+
+/** Backpack colours (fabric); the same few repeat around the room. */
+const BACKPACK_COLORS = [0x3c6e9e, 0xb04a3c, 0x3f7d57, 0x6a5aa0, 0x2d3237];
+
+export function buildGreybox(layout: RoomLayout, furniture?: FurnitureLib | null): GreyboxRoom {
+  const fl = furniture === undefined ? getFurniture() : furniture;
   const root = new THREE.Group();
   root.name = `room:${layout.room.id}`;
   const occluders: THREE.Object3D[] = [];
@@ -122,6 +204,16 @@ export function buildGreybox(layout: RoomLayout): GreyboxRoom {
     glass.position.set(W + T * 0.6, sill + win.height / 2, win.offset + win.width / 2);
     glass.rotation.y = -Math.PI / 2;
     root.add(glass);
+    if (fl) {
+      // Frame, sashes and handles sit in the reveal on the glass plane.
+      const wm = fl.clone('window');
+      const p = onWall(layout, win.wall, win.offset + win.width / 2, sill + win.height / 2, -0.12);
+      wm.position.copy(p.pos);
+      wm.rotation.y = p.rotY;
+      wm.scale.set(win.width / 2.7, win.height / 1.75, 1);
+      wm.name = `${win.id}:frame`;
+      root.add(wm);
+    }
     cursor = win.offset + win.width;
   }
   addRight(cursor, D, 0, H);
@@ -158,6 +250,21 @@ export function buildGreybox(layout: RoomLayout): GreyboxRoom {
 
   // --- Openings: door ----------------------------------------------------------------------
   for (const o of layout.openings.filter((x) => x.kind === 'door')) {
+    if (fl) {
+      // Model door: origin = hinge edge on the floor, leaf grows toward local +x. Put the hinge on
+      // whichever end of the opening makes +x run along the opening.
+      const f = wallFrame(o.wall, layout.room.size);
+      const rotY = Math.atan2(f.normal[0], f.normal[1]);
+      const hingeAtStart = Math.cos(rotY) * f.dir[0] - Math.sin(rotY) * f.dir[1] > 0;
+      const p = onWall(layout, o.wall, hingeAtStart ? o.offset : o.offset + o.width, 0, 0);
+      const pivot = fl.clone('door');
+      pivot.position.copy(p.pos);
+      pivot.rotation.y = p.rotY;
+      pivot.scale.set(o.width / 1.0, o.height / 2.1, 1);
+      pivot.name = o.id;
+      root.add(pivot);
+      continue;
+    }
     // Door leaf on a hinge pivot (scene code swings it open).
     const p = onWall(layout, o.wall, o.offset, o.height / 2, 0.03);
     const pivot = new THREE.Group();
@@ -185,6 +292,16 @@ export function buildGreybox(layout: RoomLayout): GreyboxRoom {
   for (const fx of layout.fixtures) {
     const [along, cy] = fx.center;
     const [fw, fh] = fx.size;
+    const model = fl ? fixtureModel(fl, fx) : null;
+    if (model) {
+      if (fx.kind === 'poster') posterIdx++;
+      const p = onWall(layout, fx.wall, along, model.floor ? 0 : cy, 0);
+      model.obj.position.copy(p.pos);
+      model.obj.rotation.y = p.rotY;
+      model.obj.name = fx.id;
+      root.add(model.obj);
+      continue;
+    }
     let mesh: THREE.Object3D;
     let inset = 0.02;
     switch (fx.kind) {
@@ -260,154 +377,202 @@ export function buildGreybox(layout: RoomLayout): GreyboxRoom {
     root.add(mesh);
   }
 
-  // --- Tables (instanced tops + legs) ------------------------------------------------------
-  const tTop = new THREE.InstancedMesh(
-    new THREE.BoxGeometry(1, 0.03, 1),
-    mat(C.table, { roughness: 0.5 }, 'table'),
-    layout.tables.length,
-  );
-  const tLeg = new THREE.InstancedMesh(
-    new THREE.BoxGeometry(0.03, 1, 0.03),
-    mat(C.chrome, { metalness: 0.9, roughness: 0.25 }, 'metal'),
-    layout.tables.length * 4,
-  );
-  tTop.castShadow = tTop.receiveShadow = true;
-  tLeg.castShadow = true;
-  const q = new THREE.Quaternion();
-  const s = new THREE.Vector3();
-  const v = new THREE.Vector3();
-  const up = new THREE.Vector3(0, 1, 0);
-  layout.tables.forEach((t, i) => {
-    const [len, ht, dep] = t.size;
-    q.setFromAxisAngle(up, (t.rot * Math.PI) / 180);
-    tTop.setMatrixAt(i, m4.compose(v.set(t.pos[0], ht - 0.015, t.pos[1]), q, s.set(len, 1, dep)));
-    const corners: Vec2[] = [
-      [-len / 2 + 0.04, -dep / 2 + 0.04],
-      [len / 2 - 0.04, -dep / 2 + 0.04],
-      [-len / 2 + 0.04, dep / 2 - 0.04],
-      [len / 2 - 0.04, dep / 2 - 0.04],
-    ];
-    corners.forEach((c, k) => {
-      const off = new THREE.Vector3(c[0], 0, c[1]).applyQuaternion(q);
-      tLeg.setMatrixAt(
-        i * 4 + k,
-        m4.compose(
-          v.set(t.pos[0] + off.x, (ht - 0.03) / 2, t.pos[1] + off.z),
-          q.clone(),
-          s.set(1, ht - 0.03, 1),
-        ),
-      );
-    });
-  });
-  root.add(tTop, tLeg);
-
-  // --- Chairs (seats + spare): plywood shell + chrome column + 5-star base ----------------
   const chairs = [
     ...layout.seats.map((x) => ({ pos: x.pos, facing: x.facing })),
     ...layout.spareChairs.map((x) => ({ pos: x.pos, facing: x.facing })),
   ];
-  const n = chairs.length;
-  const cSeat = new THREE.InstancedMesh(
-    new THREE.BoxGeometry(0.42, 0.03, 0.42),
-    mat(C.plywood, { roughness: 0.6 }, 'plywood'),
-    n,
-  );
-  const cBack = new THREE.InstancedMesh(
-    new THREE.BoxGeometry(0.4, 0.3, 0.025),
-    mat(C.plywood, { roughness: 0.6 }, 'plywood'),
-    n,
-  );
-  const cPost = new THREE.InstancedMesh(
-    new THREE.CylinderGeometry(0.025, 0.025, 0.42, 10),
-    mat(C.chrome, { metalness: 0.9, roughness: 0.25 }, 'metal'),
-    n,
-  );
-  const cBase = new THREE.InstancedMesh(
-    new THREE.CylinderGeometry(0.3, 0.3, 0.03, 5),
-    mat(C.chrome, { metalness: 0.9, roughness: 0.25 }, 'metal'),
-    n,
-  );
-  for (const im of [cSeat, cBack, cPost, cBase]) im.castShadow = im.receiveShadow = true;
-  chairs.forEach((c, i) => {
-    const f = facingDir(c.facing);
-    q.setFromAxisAngle(up, (c.facing * Math.PI) / 180);
-    cSeat.setMatrixAt(i, m4.compose(v.set(c.pos[0], 0.46, c.pos[1]), q, s.set(1, 1, 1)));
-    cBack.setMatrixAt(
-      i,
-      m4.compose(v.set(c.pos[0] - f[0] * 0.2, 0.72, c.pos[1] - f[1] * 0.2), q, s.set(1, 1, 1)),
+  if (fl) {
+    // --- Tables and chairs from the models: one InstancedMesh per sub-mesh ----------------------
+    const m = new THREE.Matrix4();
+    const yAxis = new THREE.Vector3(0, 1, 0);
+    const qy = new THREE.Quaternion();
+    const tableXf = layout.tables.map((t) => {
+      const [len, ht, dep] = t.size; // the model is 1.3 x 0.72 x 0.65
+      qy.setFromAxisAngle(yAxis, (t.rot * Math.PI) / 180);
+      return new THREE.Matrix4().compose(
+        new THREE.Vector3(t.pos[0], 0, t.pos[1]),
+        qy.clone(),
+        new THREE.Vector3(len / 1.3, ht / 0.72, dep / 0.65),
+      );
+    });
+    const chairXf = chairs.map((c) => {
+      qy.setFromAxisAngle(yAxis, (c.facing * Math.PI) / 180);
+      return m
+        .compose(new THREE.Vector3(c.pos[0], 0, c.pos[1]), qy, new THREE.Vector3(1, 1, 1))
+        .clone();
+    });
+    root.add(...fl.instanced('table', tableXf), ...fl.instanced('chair', chairXf));
+  } else {
+    // --- Tables (instanced tops + legs) ------------------------------------------------------
+    const tTop = new THREE.InstancedMesh(
+      new THREE.BoxGeometry(1, 0.03, 1),
+      mat(C.table, { roughness: 0.5 }, 'table'),
+      layout.tables.length,
     );
-    cPost.setMatrixAt(i, m4.compose(v.set(c.pos[0], 0.24, c.pos[1]), q, s.set(1, 1, 1)));
-    cBase.setMatrixAt(i, m4.compose(v.set(c.pos[0], 0.03, c.pos[1]), q, s.set(1, 1, 1)));
-  });
-  root.add(cSeat, cBack, cPost, cBase);
+    const tLeg = new THREE.InstancedMesh(
+      new THREE.BoxGeometry(0.03, 1, 0.03),
+      mat(C.chrome, { metalness: 0.9, roughness: 0.25 }, 'metal'),
+      layout.tables.length * 4,
+    );
+    tTop.castShadow = tTop.receiveShadow = true;
+    tLeg.castShadow = true;
+    const q = new THREE.Quaternion();
+    const s = new THREE.Vector3();
+    const v = new THREE.Vector3();
+    const up = new THREE.Vector3(0, 1, 0);
+    layout.tables.forEach((t, i) => {
+      const [len, ht, dep] = t.size;
+      q.setFromAxisAngle(up, (t.rot * Math.PI) / 180);
+      tTop.setMatrixAt(i, m4.compose(v.set(t.pos[0], ht - 0.015, t.pos[1]), q, s.set(len, 1, dep)));
+      const corners: Vec2[] = [
+        [-len / 2 + 0.04, -dep / 2 + 0.04],
+        [len / 2 - 0.04, -dep / 2 + 0.04],
+        [-len / 2 + 0.04, dep / 2 - 0.04],
+        [len / 2 - 0.04, dep / 2 - 0.04],
+      ];
+      corners.forEach((c, k) => {
+        const off = new THREE.Vector3(c[0], 0, c[1]).applyQuaternion(q);
+        tLeg.setMatrixAt(
+          i * 4 + k,
+          m4.compose(
+            v.set(t.pos[0] + off.x, (ht - 0.03) / 2, t.pos[1] + off.z),
+            q.clone(),
+            s.set(1, ht - 0.03, 1),
+          ),
+        );
+      });
+    });
+    root.add(tTop, tLeg);
+
+    // --- Chairs (seats + spare): plywood shell + chrome column + 5-star base ----------------
+    const n = chairs.length;
+    const cSeat = new THREE.InstancedMesh(
+      new THREE.BoxGeometry(0.42, 0.03, 0.42),
+      mat(C.plywood, { roughness: 0.6 }, 'plywood'),
+      n,
+    );
+    const cBack = new THREE.InstancedMesh(
+      new THREE.BoxGeometry(0.4, 0.3, 0.025),
+      mat(C.plywood, { roughness: 0.6 }, 'plywood'),
+      n,
+    );
+    const cPost = new THREE.InstancedMesh(
+      new THREE.CylinderGeometry(0.025, 0.025, 0.42, 10),
+      mat(C.chrome, { metalness: 0.9, roughness: 0.25 }, 'metal'),
+      n,
+    );
+    const cBase = new THREE.InstancedMesh(
+      new THREE.CylinderGeometry(0.3, 0.3, 0.03, 5),
+      mat(C.chrome, { metalness: 0.9, roughness: 0.25 }, 'metal'),
+      n,
+    );
+    for (const im of [cSeat, cBack, cPost, cBase]) im.castShadow = im.receiveShadow = true;
+    chairs.forEach((c, i) => {
+      const f = facingDir(c.facing);
+      q.setFromAxisAngle(up, (c.facing * Math.PI) / 180);
+      cSeat.setMatrixAt(i, m4.compose(v.set(c.pos[0], 0.46, c.pos[1]), q, s.set(1, 1, 1)));
+      cBack.setMatrixAt(
+        i,
+        m4.compose(v.set(c.pos[0] - f[0] * 0.2, 0.72, c.pos[1] - f[1] * 0.2), q, s.set(1, 1, 1)),
+      );
+      cPost.setMatrixAt(i, m4.compose(v.set(c.pos[0], 0.24, c.pos[1]), q, s.set(1, 1, 1)));
+      cBase.setMatrixAt(i, m4.compose(v.set(c.pos[0], 0.03, c.pos[1]), q, s.set(1, 1, 1)));
+    });
+    root.add(cSeat, cBack, cPost, cBase);
+  }
 
   // --- Props -------------------------------------------------------------------------------
   for (const p of layout.props) {
-    let mesh: THREE.Object3D | null = null;
-    switch (p.kind) {
-      case 'standing-desk': {
-        const [w, h, d] = p.size ?? [1.4, 1.05, 0.7];
-        const g = new THREE.Group();
-        const top = box(w, 0.03, d, mat(C.table, { roughness: 0.5 }, 'table'));
-        top.position.y = h;
-        const legA = box(0.08, h, 0.08, mat(C.desk));
-        legA.position.set(-w / 2 + 0.15, h / 2, 0);
-        const legB = legA.clone();
-        legB.position.x = w / 2 - 0.15;
-        const cable = box(0.3, 0.12, 0.25, mat(C.desk));
-        cable.position.set(0.2, h - 0.1, 0);
-        g.add(top, legA, legB, cable);
-        mesh = g;
-        break;
+    let mesh: THREE.Object3D | null = fl ? propModel(fl, layout, p) : null;
+    if (!mesh)
+      switch (p.kind) {
+        case 'standing-desk': {
+          const [w, h, d] = p.size ?? [1.4, 1.05, 0.7];
+          const g = new THREE.Group();
+          const top = box(w, 0.03, d, mat(C.table, { roughness: 0.5 }, 'table'));
+          top.position.y = h;
+          const legA = box(0.08, h, 0.08, mat(C.desk));
+          legA.position.set(-w / 2 + 0.15, h / 2, 0);
+          const legB = legA.clone();
+          legB.position.x = w / 2 - 0.15;
+          const cable = box(0.3, 0.12, 0.25, mat(C.desk));
+          cable.position.set(0.2, h - 0.1, 0);
+          g.add(top, legA, legB, cable);
+          mesh = g;
+          break;
+        }
+        case 'document-camera': {
+          const g = new THREE.Group();
+          const base = box(0.25, 0.03, 0.3, mat(0xe8e8e8));
+          const arm = box(0.03, 0.35, 0.03, mat(0xe8e8e8));
+          arm.position.set(0, 0.18, -0.1);
+          const head = box(0.08, 0.05, 0.18, mat(0xe8e8e8));
+          head.name = 'doccam-head';
+          head.position.set(0, 0.36, -0.02);
+          g.add(base, arm, head);
+          g.position.y = 1.07;
+          mesh = g;
+          break;
+        }
+        case 'ceiling-projector': {
+          const g = new THREE.Group();
+          const body = box(0.4, 0.14, 0.32, mat(0xf0f0f0, { roughness: 0.4 }));
+          const rod = box(0.04, 0.2, 0.04, mat(C.chrome, { metalness: 0.8 }));
+          rod.position.y = 0.17;
+          g.add(body, rod);
+          g.position.y = p.height ?? 2.55;
+          mesh = g;
+          break;
+        }
+        case 'laptop': {
+          const g = new THREE.Group();
+          const base = box(0.32, 0.02, 0.22, mat(0x2b2d30, { metalness: 0.5, roughness: 0.4 }));
+          const lid = box(0.32, 0.21, 0.012, mat(0x2b2d30, { metalness: 0.5, roughness: 0.4 }));
+          lid.position.set(0, 0.105, 0.11);
+          lid.rotation.x = -0.25;
+          g.add(base, lid);
+          g.position.y = 1.07;
+          mesh = g;
+          break;
+        }
+        case 'bin': {
+          const bin = new THREE.Mesh(
+            new THREE.CylinderGeometry(0.16, 0.14, 0.4, 16),
+            mat(0x5c6266),
+          );
+          bin.position.y = 0.2;
+          bin.castShadow = true;
+          mesh = bin;
+          break;
+        }
       }
-      case 'document-camera': {
-        const g = new THREE.Group();
-        const base = box(0.25, 0.03, 0.3, mat(0xe8e8e8));
-        const arm = box(0.03, 0.35, 0.03, mat(0xe8e8e8));
-        arm.position.set(0, 0.18, -0.1);
-        const head = box(0.08, 0.05, 0.18, mat(0xe8e8e8));
-        head.name = 'doccam-head';
-        head.position.set(0, 0.36, -0.02);
-        g.add(base, arm, head);
-        g.position.y = 1.07;
-        mesh = g;
-        break;
-      }
-      case 'ceiling-projector': {
-        const g = new THREE.Group();
-        const body = box(0.4, 0.14, 0.32, mat(0xf0f0f0, { roughness: 0.4 }));
-        const rod = box(0.04, 0.2, 0.04, mat(C.chrome, { metalness: 0.8 }));
-        rod.position.y = 0.17;
-        g.add(body, rod);
-        g.position.y = p.height ?? 2.55;
-        mesh = g;
-        break;
-      }
-      case 'laptop': {
-        const g = new THREE.Group();
-        const base = box(0.32, 0.02, 0.22, mat(0x2b2d30, { metalness: 0.5, roughness: 0.4 }));
-        const lid = box(0.32, 0.21, 0.012, mat(0x2b2d30, { metalness: 0.5, roughness: 0.4 }));
-        lid.position.set(0, 0.105, 0.11);
-        lid.rotation.x = -0.25;
-        g.add(base, lid);
-        g.position.y = 1.07;
-        mesh = g;
-        break;
-      }
-      case 'bin': {
-        const bin = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.14, 0.4, 16), mat(0x5c6266));
-        bin.position.y = 0.2;
-        bin.castShadow = true;
-        mesh = bin;
-        break;
-      }
-    }
     if (!mesh) continue;
     mesh.position.x = p.pos[0];
     mesh.position.z = p.pos[1];
     mesh.rotation.y = (p.rot * Math.PI) / 180;
     mesh.name = p.id;
     root.add(mesh);
+  }
+
+  // Original backpacks beside every second seat (the CC0 decor pack fills the others, see decor.ts).
+  if (fl) {
+    const seats = layout.seats.filter((x) => x.id !== layout.playerSeat && !x.id.includes('front'));
+    seats.forEach((x, i) => {
+      if (i % 2 !== 1) return;
+      const f = facingDir(x.facing);
+      const side: Vec2 = [f[1], -f[0]]; // the side decor.ts does not use
+      const bp = fl.clone('backpack', {
+        bp_fabric: BACKPACK_COLORS[(i >> 1) % BACKPACK_COLORS.length]!,
+      });
+      bp.position.set(
+        x.pos[0] - f[0] * 0.15 + side[0] * 0.42,
+        0,
+        x.pos[1] - f[1] * 0.15 + side[1] * 0.42,
+      );
+      bp.rotation.y = (x.facing * Math.PI) / 180 - Math.PI / 2 + 0.25 * ((i % 3) - 1);
+      bp.name = `backpack-${x.id}`;
+      root.add(bp);
+    });
   }
 
   return {

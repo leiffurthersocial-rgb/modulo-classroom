@@ -9,6 +9,7 @@
 import { ClassroomApp, type ShotOptions } from './app';
 import type { BenchOptions } from './bench';
 import type { BotStyle } from './sim/bots';
+import { loadFurniture, setFurniture } from './render/furniture';
 import { parseSeed } from './sim/rng';
 
 const q = new URLSearchParams(location.search);
@@ -38,5 +39,8 @@ if (!shot && q.has('bench')) {
     seed: parseSeed(q.get('seed'), 1),
   };
 }
+// Furniture models are loaded before the app exists: RoomView builds the room in its constructor.
+// A failure (or ?models=0) leaves the library null and the room keeps its box primitives.
+setFurniture(await loadFurniture());
 const app = new ClassroomApp(document.getElementById('app')!, shot, bench);
 app.boot();
