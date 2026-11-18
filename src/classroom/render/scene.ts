@@ -3,6 +3,7 @@
 import * as THREE from 'three';
 import { TICK_DT } from '../sim/clock';
 import { yawDir } from '../sim/geom';
+import { facingDir } from '../sim/layout';
 import { EYE_HEIGHT } from '../sim/perception';
 import type { Agent } from '../sim/types';
 import type { World } from '../sim/world';
@@ -358,6 +359,27 @@ export class RoomView {
     };
   }
 
+  private reach = new Map<string, number>();
+  private seatReach(w: World, seatId: string | null): number {
+    if (!seatId) return 0;
+    let r = this.reach.get(seatId);
+    if (r === undefined) {
+      const seat = w.seat(seatId);
+      const table = seat ? w.layout.tables.find((t) => t.id === seat.table) : undefined;
+      r = 0;
+      if (seat && table) {
+        const f = facingDir(seat.facing);
+        const edge =
+          (table.pos[0] - seat.pos[0]) * f[0] +
+          (table.pos[1] - seat.pos[1]) * f[1] -
+          table.size[2] / 2;
+        r = Math.max(0, Math.min(0.15, edge - 0.275));
+      }
+      this.reach.set(seatId, r);
+    }
+    return r;
+  }
+
   /** Call once per sim tick (before sync) so positions can be interpolated. */
   onTick(world: World): void {
     for (const a of world.allAgents()) {
@@ -435,6 +457,11 @@ export class RoomView {
           whisperSide: side,
         });
         ch.setClip(req, sit);
+        // Clips assume the table edge 0.275 m in front of the seat centre; seat further back
+        // (side tables) -> slide the body toward its table rather than stretching the arms.
+        const off = sit ? this.seatReach(w, a.sittingIn) : 0;
+        const fw = yawDir(a.yaw);
+        ch.root.position.set(fw.x * off, 0, fw.z * off);
         const run = (this.frame + v.slot) % this.animEvery === 0 || v.animDt === 0;
         if (run) {
           ch.update(v.animDt || 1e-4, a.yaw, a.headYaw - a.yaw, sit);
