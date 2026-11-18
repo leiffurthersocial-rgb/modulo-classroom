@@ -51,13 +51,14 @@ function labelSprite(text: string, sub?: string): THREE.Sprite {
   c.width = 256;
   c.height = sub ? 80 : 56;
   const g = c.getContext('2d')!;
-  g.fillStyle = 'rgba(15,17,20,0.55)';
+  g.fillStyle = 'rgba(8,10,14,0.9)';
   g.beginPath();
   g.roundRect(4, 4, c.width - 8, c.height - 8, 14);
   g.fill();
   g.fillStyle = '#fff';
-  g.font = '600 28px system-ui, sans-serif';
+  g.font = '700 28px system-ui, sans-serif';
   g.textAlign = 'center';
+  g.fillStyle = '#ffffff';
   g.fillText(text, c.width / 2, 38);
   if (sub) {
     g.font = '20px system-ui, sans-serif';
@@ -67,7 +68,7 @@ function labelSprite(text: string, sub?: string): THREE.Sprite {
   const tex = new THREE.CanvasTexture(c);
   tex.colorSpace = THREE.SRGBColorSpace;
   const s = new THREE.Sprite(
-    new THREE.SpriteMaterial({ map: tex, depthWrite: false, transparent: true }),
+    new THREE.SpriteMaterial({ map: tex, depthWrite: false, transparent: true, toneMapped: false }),
   );
   s.scale.set(0.42, (0.42 * c.height) / c.width, 1);
   s.renderOrder = 10;
