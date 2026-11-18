@@ -11,6 +11,14 @@ import type { QualitySettings } from '../quality';
 import { Atmosphere } from './atmosphere';
 import { createLightRig, LightController, pickMood, type Mood } from './lighting';
 import { applyWindowMood, buildWindowFrames, collectWindowMaterials } from './windows';
+import {
+  Character,
+  createCharacter,
+  getCharacterLibrary,
+  pickClip,
+  specFor,
+  type CharacterSpec,
+} from './characters';
 
 interface AgentView {
   root: THREE.Group;
@@ -22,9 +30,24 @@ interface AgentView {
   susBar: THREE.Mesh;
   prev: { x: number; z: number };
   cur: { x: number; z: number };
+  spec: CharacterSpec;
+  char: Character | null;
+  /** Sim time accumulated since the character was last animated (npcAnimEvery throttle). */
+  animDt: number;
+  slot: number;
 }
 
 const UP = new THREE.Vector3(0, 1, 0);
+const _handPos = new THREE.Vector3();
+const _handQuat = new THREE.Quaternion();
+/** Maps the capsule-phone box axes (x width, y thickness, z length) onto the hand bone axes. */
+const PHONE_BASIS = new THREE.Quaternion().setFromRotationMatrix(
+  new THREE.Matrix4().makeBasis(
+    new THREE.Vector3(0, 0, 1),
+    new THREE.Vector3(1, 0, 0),
+    new THREE.Vector3(0, 1, 0),
+  ),
+);
 
 function labelSprite(text: string, sub?: string): THREE.Sprite {
   const c = document.createElement('canvas');
@@ -91,10 +114,16 @@ export class RoomView {
   private pathLine: THREE.Line;
   private posterBase: THREE.Vector3[] = [];
   debug = false;
+  private animEvery = 1;
+  private frame = 0;
+  private lastRenderT = 0;
+  private agentIdx = 0;
   private worldRef: World | null = null;
+  private profileId = '';
 
   constructor(world: World) {
     const layout = world.layout;
+    this.profileId = world.profile.id;
     this.scene.background = new THREE.Color(0x1a1d21);
     this.room = buildGreybox(layout);
     this.scene.add(this.room.root);
@@ -305,7 +334,22 @@ export class RoomView {
     susBar.visible = false;
     root.add(body, head, label, hand, phone, susBar);
     this.scene.add(root);
-    return { root, body, head, label, hand, phone, susBar, prev: { ...a.pos }, cur: { ...a.pos } };
+    const spec = specFor(a.id, teacher ? 'teacher' : 'student', a.color, this.profileId);
+    return {
+      root,
+      body,
+      head,
+      label,
+      hand,
+      phone,
+      susBar,
+      prev: { ...a.pos },
+      cur: { ...a.pos },
+      spec,
+      char: null,
+      animDt: 0,
+      slot: this.agentIdx++,
+    };
   }
 
   /** Call once per sim tick (before sync) so positions can be interpolated. */
@@ -328,6 +372,7 @@ export class RoomView {
     this.glow.visible = q.glowLights > 0;
     this.lighting.applyQuality(q);
     this.atmos.applyQuality(q);
+    this.animEvery = Math.max(1, q.npcAnimEvery);
   }
 
   sync(w: World, alpha: number, camPos: THREE.Vector3): void {
@@ -342,6 +387,9 @@ export class RoomView {
     if (this.screen.visible) this.drawScreen(w, renderT);
 
     // Agents
+    this.frame++;
+    const dtFrame = Math.max(0, Math.min(0.1, renderT - this.lastRenderT));
+    this.lastRenderT = renderT;
     for (const a of w.allAgents()) {
       const v = this.agents.get(a.id);
       if (!v) continue;
@@ -352,7 +400,43 @@ export class RoomView {
       v.root.position.set(x, 0, z);
       const eye = EYE_HEIGHT[a.stance];
       const sit = a.stance === 'sit';
-      // Body capsule from hips/feet to shoulders.
+      // Swap the capsule for the rigged character as soon as the GLB is ready.
+      if (!v.char && getCharacterLibrary()) {
+        v.char = createCharacter(v.spec);
+        if (v.char) {
+          v.root.add(v.char.root);
+          v.body.visible = false;
+          v.head.visible = false;
+        }
+      }
+      const ch = v.char;
+      if (ch) {
+        v.animDt += dtFrame;
+        const st = w.student(a.id);
+        const tgt = st?.target ? w.agent(st.target) : undefined;
+        const lx = -Math.cos(a.yaw);
+        const lz = Math.sin(a.yaw);
+        const side = tgt && (tgt.pos.x - a.pos.x) * lx + (tgt.pos.z - a.pos.z) * lz < 0 ? 'R' : 'L';
+        const req = pickClip({
+          kind: a.kind === 'teacher' ? 'teacher' : 'student',
+          id: a.id,
+          moving: a.moving,
+          sitting: sit,
+          speed: a.speed,
+          t: renderT,
+          action: a.kind === 'teacher' ? w.brain.state : (st?.action ?? 'listen'),
+          whisperSide: side,
+        });
+        ch.setClip(req, sit);
+        const run = (this.frame + v.slot) % this.animEvery === 0 || v.animDt === 0;
+        if (run) {
+          ch.update(v.animDt || 1e-4, a.yaw, a.headYaw - a.yaw, sit);
+          v.animDt = 0;
+        }
+      } else {
+        v.body.visible = true;
+      }
+      // Body capsule from hips/feet to shoulders (fallback look).
       const bottom = sit ? 0.42 : 0.05;
       const top = eye - 0.17;
       // Capsule geometry is 1 m of cylinder + 2r of caps; scale it to span bottom..top.
@@ -371,10 +455,18 @@ export class RoomView {
       const holdingNote = w.notes.some((n) => n.state === 'moving' && n.carrier === a.id);
       v.hand.visible = holdingNote;
       v.hand.position.set(f.x * 0.28, sit ? 0.78 : 1.0, f.z * 0.28);
-      const st = w.student(a.id);
-      v.phone.visible = st?.action === 'phone';
+      const st2 = w.student(a.id);
+      v.phone.visible = st2?.action === 'phone';
       v.phone.position.set(f.x * 0.2, sit ? 0.62 : 1.1, f.z * 0.2);
       v.phone.rotation.y = a.yaw;
+      if (ch && ch.handAnchor(_handPos, _handQuat)) {
+        v.root.worldToLocal(_handPos);
+        if (v.phone.visible && v.phone.parent) {
+          v.phone.position.copy(_handPos);
+          v.phone.quaternion.copy(_handQuat).multiply(PHONE_BASIS);
+        }
+        if (holdingNote) v.hand.position.copy(_handPos);
+      }
       // Debug suspicion bar
       const s = w.suspicion.get(a.id)?.s ?? 0;
       v.susBar.visible = this.debug && s > 0.01;
@@ -559,6 +651,7 @@ export class RoomView {
   }
 
   dispose(): void {
+    for (const v of this.agents.values()) v.char?.dispose();
     this.room.dispose();
     this.scene.traverse((o) => {
       const m = o as THREE.Mesh;

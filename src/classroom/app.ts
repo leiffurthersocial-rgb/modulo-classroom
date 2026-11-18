@@ -43,6 +43,7 @@ import {
   type Settings,
 } from './quality';
 import { PbrLibrary } from './assets/pbr';
+import { charactersSettled } from './render/characters';
 import { placeDecor } from './render/decor';
 
 export interface ShotOptions {
@@ -400,7 +401,8 @@ export class ClassroomApp {
     }
 
     if (this.shot) {
-      if (!this.pbr.settled) return; // screenshot mode waits for the PBR materials
+      // Screenshot mode waits for the PBR materials and the character models.
+      if (!this.pbr.settled || !charactersSettled()) return;
       if (this.shotFrames >= this.shot.frames) return;
       this.tickSim(this.bot ? this.bot.command(w) : idleCommand(this.yaw, this.pitch), false);
       this.renderWorld(TICK_DT, 1);
