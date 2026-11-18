@@ -22,9 +22,9 @@ interface Spot {
 export function decorSpots(layout: RoomLayout): Spot[] {
   const [W, , D] = layout.room.size;
   const spots: Spot[] = [];
-  // Plants: back-right corner on the floor, and one on the window sill box near the front.
+  // Plants: back-right corner on the floor, and one on the sill ledge of the front window.
   spots.push({ key: 'plant', pos: [W - 0.45, 0, D - 0.45], rotY: 0.6, height: 1.0 });
-  spots.push({ key: 'plant-small', pos: [W - 0.3, 0.86, 0.75], rotY: 1.2, height: 0.35 });
+  spots.push({ key: 'plant-small', pos: [W - 0.3, 0.86, 2.2], rotY: 1.2, height: 0.35 });
   // Books: a stack on the teacher's desk and on a few student tables.
   const desk = layout.props.find((p) => p.kind === 'standing-desk');
   if (desk) {

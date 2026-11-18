@@ -99,7 +99,7 @@ describe('segmentHitsBox', () => {
 
 describe('lineOfSight with real table slabs', () => {
   const w = new World({ seed: 1, lessonType: 'lecture', teacher: 'strict' });
-  const p = w.player; // seated at s-b3 behind table t-b3
+  const p = w.player; // seated at s-b4 behind table t-b4
   const phone = samplePoint(p, 'device');
   const far = { x: p.pos.x, y: 1.62, z: 2.5 };
   const near = { x: p.pos.x, y: 1.62, z: p.pos.z - 1.2 };

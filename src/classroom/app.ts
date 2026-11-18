@@ -888,6 +888,11 @@ export class ClassroomApp {
     const w = this.world!;
     const [W, , D] = w.layout.room.size;
     const T = w.teacher;
+    // The top view looks down from above the slatted ceiling: hide it so the floor plan shows.
+    for (const n of ['ceiling', 'ceiling-slats']) {
+      const c = this.view?.room.root.getObjectByName(n);
+      if (c) c.visible = cam !== 'top';
+    }
     switch (cam) {
       case 'overview':
         this.camera.position.set(0.5, 2.35, D - 0.4);

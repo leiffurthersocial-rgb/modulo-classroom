@@ -615,13 +615,19 @@ def make_window():
     return it.build()
 
 
+# Ledge runs in wall-local x (= world z - 4.25) for classroom-a: z 0.3..3.1 and 3.7..6.75.
+LEDGE_SEGMENTS = ((-3.95, -1.15), (-0.55, 2.5))
+
+
 def make_radiator():
     """Deep white cantilevered sill ledge along the window wall (the old radiator item; the node
-    keeps its name). Origin = floor, centred along x, wall at z=0. Segments leave gaps at +-0.3 (the
-    concrete column) and a stop at +2.45 (the sink). A slim radiator grille sits in the ledge top."""
+    keeps its name). Origin = floor, centred along x, wall at z=0. The node is centred on the wall
+    (classroom-a: 8.5 m deep, so local x = world z - 4.25). Segments leave a 0.6 m gap at the
+    concrete column (world z 3.4) and stop at the sink (world z 6.75). A slim radiator grille sits
+    in the ledge top. If the room or its openings change, update LEDGE below and layout json."""
     it = Item('radiator')
     DP, TOPY, TH = 0.28, 0.80, 0.045
-    for a, b in ((-3.2, -0.3), (0.3, 2.45)):
+    for a, b in LEDGE_SEGMENTS:
         w, cx = b - a, (a + b) / 2
         it.add(box((w, TH, DP), (cx, TOPY - TH / 2, DP / 2)), 'white_paint', bevel=(0.003, 1))
         it.add(box((w, 0.115, 0.02), (cx, TOPY - TH - 0.0575 + 0.0, DP - 0.01)), 'white_paint',

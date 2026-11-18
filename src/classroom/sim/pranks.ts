@@ -94,10 +94,10 @@ const TASK_POS: Record<string, V2> = {
   'marker-missing': { x: 1.2, z: 0.35 },
   'no-signal': { x: 1.2, z: 0.35 },
   gust: { x: 1.2, z: 0.35 },
-  'posters-swapped': { x: 5.6, z: 6.75 },
+  'posters-swapped': { x: 6.6, z: 8.2 },
   'plane-on-desk': { x: 1.2, z: 0.35 },
   sticker: { x: 5.6, z: 0.6 },
-  'radiator-knock': { x: 8.5, z: 2.6 },
+  'radiator-knock': { x: 10.3, z: 4.9 },
   'doccam-flipped': { x: 1.2, z: 0.35 },
 };
 

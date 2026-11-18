@@ -108,7 +108,7 @@ describe('notes (feature flag on)', () => {
   it('player -> neighbour note resolves within 60 s', () => {
     const w = new World(notesOn);
     const tpl = NOTES.find((n) => !n.answers)!.id;
-    expect(w.player.sittingIn).toBe('s-b3');
+    expect(w.player.sittingIn).toBe('s-b4');
     expect(sendNote(w, 'player', 'mara', tpl)).toBe(true);
     const ev: SimEvent[] = [];
     for (let i = 0; i < 1200; i++) {
