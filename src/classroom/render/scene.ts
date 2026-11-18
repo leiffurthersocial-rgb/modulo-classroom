@@ -8,6 +8,9 @@ import type { Agent } from '../sim/types';
 import type { World } from '../sim/world';
 import { buildGreybox, type GreyboxRoom } from './greybox';
 import type { QualitySettings } from '../quality';
+import { Atmosphere } from './atmosphere';
+import { createLightRig, LightController, pickMood, type Mood } from './lighting';
+import { applyWindowMood, buildWindowFrames, collectWindowMaterials } from './windows';
 
 interface AgentView {
   root: THREE.Group;
@@ -57,24 +60,7 @@ export function createRoomLights(layout: World['layout']): {
   sun: THREE.DirectionalLight;
   fill: THREE.PointLight;
 } {
-  const [W, H, D] = layout.room.size;
-  const hemi = new THREE.HemisphereLight(0xe3ebf2, 0x3a2e24, 1.15);
-  const sun = new THREE.DirectionalLight(0xfff1dc, 2.3);
-  sun.position.set(W + 6, 5.5, D * 0.35);
-  sun.target.position.set(W * 0.4, 0, D * 0.5);
-  sun.castShadow = true;
-  const sc = sun.shadow.camera;
-  sc.left = -6;
-  sc.right = 6;
-  sc.top = 6;
-  sc.bottom = -6;
-  sc.near = 1;
-  sc.far = 20;
-  sun.shadow.bias = -0.0005;
-  sun.shadow.normalBias = 0.02;
-  const fill = new THREE.PointLight(0xfff6ea, 7, 13, 2);
-  fill.position.set(W / 2, H - 0.3, D / 2);
-  return { hemi, sun, fill };
+  return createLightRig(layout); // render/lighting.ts
 }
 
 export class RoomView {
@@ -86,6 +72,11 @@ export class RoomView {
   private sun: THREE.DirectionalLight;
   private fill: THREE.PointLight;
   private glow: THREE.PointLight;
+  private lighting: LightController;
+  private atmos: Atmosphere;
+  private glass: THREE.ShaderMaterial[];
+  /** Lighting mood for this lesson (exposure etc. is read by the post pipeline). */
+  readonly mood: Mood;
   private screen: THREE.Mesh;
   private screenCanvas: HTMLCanvasElement;
   private screenTex: THREE.CanvasTexture;
@@ -115,6 +106,20 @@ export class RoomView {
     this.fill = lights.fill;
     this.glow = new THREE.PointLight(0x9ec4ff, 0, 1.6, 2);
     this.scene.add(this.hemi, this.sun, this.sun.target, this.fill, this.glow);
+    this.lighting = new LightController(
+      layout,
+      lights,
+      pickMood(
+        world.lessonType,
+        world.seed,
+        typeof location === 'undefined' ? '' : location.search,
+      ),
+    );
+    this.mood = this.lighting.mood;
+    this.atmos = new Atmosphere(layout, this.mood, this.lighting.sunDir);
+    this.scene.add(this.lighting.group, this.atmos.group, buildWindowFrames(layout));
+    this.glass = collectWindowMaterials(this.room.root);
+    applyWindowMood(this.glass, this.mood);
 
     // Pull-down projector screen over the board (visible in dim lessons).
     this.screenCanvas = document.createElement('canvas');
@@ -321,17 +326,18 @@ export class RoomView {
       this.sun.shadow.map = null;
     }
     this.glow.visible = q.glowLights > 0;
+    this.lighting.applyQuality(q);
+    this.atmos.applyQuality(q);
   }
 
   sync(w: World, alpha: number, camPos: THREE.Vector3): void {
     const renderT = w.t + alpha * TICK_DT;
     const o = w.objects;
     const dim = o.lightsDim;
-    const k = dim ? 0.22 : 1;
-    this.hemi.intensity = 1.15 * (dim ? 0.3 : 1);
-    this.sun.intensity = 2.3 * (dim ? 0.25 : 1);
-    this.fill.intensity = 7 * k;
     this.screen.visible = dim || o.projectorInput === 2;
+    this.lighting.update(dim, this.screen.visible);
+    this.atmos.update(renderT, this.lighting.daylight());
+    applyWindowMood(this.glass, this.mood, renderT);
     this.beam.visible = dim;
     if (this.screen.visible) this.drawScreen(w, renderT);
 

@@ -2,6 +2,8 @@
 // Instanced where things repeat (tables, chair parts, ceiling slats) so draw calls stay low.
 import * as THREE from 'three';
 import { facingDir, type RoomLayout, type Vec2, wallFrame } from '../sim/layout';
+import { createWindowGlassMaterial } from './windows';
+import { createPoster } from './posters';
 
 export const GREYBOX_COLORS = {
   carpet: 0x4a3a2e,
@@ -110,7 +112,7 @@ export function buildGreybox(layout: RoomLayout): GreyboxRoom {
     root.add(m);
     occluders.push(m);
   };
-  const glassMat = mat(C.window, { emissive: C.window, emissiveIntensity: 0.9, roughness: 0.1 });
+  const glassMat = createWindowGlassMaterial(); // procedural outdoor view (render/windows.ts)
   for (const win of windows) {
     const sill = win.sill ?? 0.9;
     addRight(cursor, win.offset, 0, H);
@@ -246,7 +248,7 @@ export function buildGreybox(layout: RoomLayout): GreyboxRoom {
         mesh = box(fw, fh, 0.02, mat(C.pinboard));
         break;
       case 'poster':
-        mesh = box(fw, fh, 0.01, mat(C.poster[posterIdx++ % C.poster.length]!));
+        mesh = createPoster(fw, fh, posterIdx++); // framed procedural art (render/posters.ts)
         break;
       default:
         mesh = box(fw, fh, 0.02, mat(0x888888));

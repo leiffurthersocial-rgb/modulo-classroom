@@ -13,6 +13,14 @@ export interface QualitySettings {
   audioVoices: number;
   /** PBR texture tier (px): Battery Saver 512, Low/Medium 1k, High/Ultra 2k. */
   textureTier: 512 | 1024 | 2048;
+  /** Post pipeline: off = plain render (tone mapping only), low = SMAA + output, high = AO + bloom + SMAA. */
+  post: 'off' | 'low' | 'high';
+  /** Ambient occlusion (needs post 'high'). */
+  ao: boolean;
+  /** Floating dust motes in the window light (0 = off). */
+  dust: number;
+  /** Volumetric sun shafts through the windows (noon mood only). */
+  shafts: boolean;
 }
 
 export const PRESETS: Record<Exclude<PresetId, 'custom'>, QualitySettings> = {
@@ -26,6 +34,10 @@ export const PRESETS: Record<Exclude<PresetId, 'custom'>, QualitySettings> = {
     npcAnimEvery: 1,
     audioVoices: 32,
     textureTier: 2048,
+    post: 'high',
+    ao: true,
+    dust: 400,
+    shafts: true,
   },
   high: {
     pixelRatio: 1.5,
@@ -37,6 +49,10 @@ export const PRESETS: Record<Exclude<PresetId, 'custom'>, QualitySettings> = {
     npcAnimEvery: 1,
     audioVoices: 32,
     textureTier: 2048,
+    post: 'high',
+    ao: true,
+    dust: 200,
+    shafts: true,
   },
   medium: {
     pixelRatio: 1.25,
@@ -48,6 +64,10 @@ export const PRESETS: Record<Exclude<PresetId, 'custom'>, QualitySettings> = {
     npcAnimEvery: 1,
     audioVoices: 24,
     textureTier: 1024,
+    post: 'low',
+    ao: false,
+    dust: 60,
+    shafts: false,
   },
   low: {
     pixelRatio: 1,
@@ -59,6 +79,10 @@ export const PRESETS: Record<Exclude<PresetId, 'custom'>, QualitySettings> = {
     npcAnimEvery: 2,
     audioVoices: 16,
     textureTier: 1024,
+    post: 'off',
+    ao: false,
+    dust: 0,
+    shafts: false,
   },
   battery: {
     pixelRatio: 0.85,
@@ -70,6 +94,10 @@ export const PRESETS: Record<Exclude<PresetId, 'custom'>, QualitySettings> = {
     npcAnimEvery: 2,
     audioVoices: 12,
     textureTier: 512,
+    post: 'off',
+    ao: false,
+    dust: 0,
+    shafts: false,
   },
 };
 

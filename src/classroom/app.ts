@@ -12,6 +12,7 @@ import { type Action, InputManager } from './input/input';
 import { DeviceView } from './render/device';
 import { estimateGpuMemory } from './render/memory';
 import { RoomView } from './render/scene';
+import { PostPipeline } from './render/post';
 import { loadRecord, saveRecord, hasSave, clearSave } from './save/save';
 import { Bot, type BotStyle } from './sim/bots';
 import { SimClock, TICK_DT } from './sim/clock';
@@ -82,6 +83,8 @@ export class ClassroomApp {
   readonly renderer: THREE.WebGLRenderer;
   /** Real PBR materials/HDRI/models over the greybox (?pbr=0 disables, ?lab=1 uses /lab picks). */
   readonly pbr: PbrLibrary;
+  /** Post pipeline (AO/bloom/SMAA by preset; plain render on Low/Battery). */
+  private post: PostPipeline;
   readonly camera = new THREE.PerspectiveCamera(72, 1, 0.03, 60);
   readonly settings: Settings;
   readonly input: InputManager;
@@ -146,6 +149,7 @@ export class ClassroomApp {
     this.renderer.toneMapping = THREE.AgXToneMapping;
     this.renderer.toneMappingExposure = 1.1;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    this.post = new PostPipeline(this.renderer);
     const qp = new URLSearchParams(location.search);
     this.pbr = new PbrLibrary(this.renderer, qp.get('pbr') !== '0', qp.get('lab') === '1');
     host.appendChild(this.renderer.domElement);
@@ -802,7 +806,7 @@ export class ClassroomApp {
         0.8 * dev.brightness * (w.objects.lightsDim ? 1.6 : 1),
       );
     } else view.setGlow(null, 0, 0);
-    this.renderer.render(view.scene, this.camera);
+    this.post.render(view.scene, this.camera, q, view.mood.exposure);
     if (!this.bench && (!this.shot || this.shot.hud)) this.updateHud();
     this.updateAudio();
   }
