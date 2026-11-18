@@ -31,7 +31,7 @@ export class BlockDrop {
       this.spawn = Math.max(0.35, 0.9 - this.score / 600);
       this.blocks.push({
         x: 0.08 + this.rnd() * 0.84,
-        y: -0.05,
+        y: 0.06,
         v: 0.25 + this.rnd() * 0.2 + this.score / 2000,
         good: this.rnd() > 0.25,
       });
@@ -63,6 +63,9 @@ export class BlockDrop {
     }
     g.fillStyle = '#ffd23f';
     g.fillRect(this.x * w - w * 0.11, h * 0.9, w * 0.22, h * 0.025);
+    // Header band so falling blocks never cover the title/score.
+    g.fillStyle = '#0a1128';
+    g.fillRect(0, 0, w, h * 0.11);
     g.fillStyle = '#fff';
     g.font = `600 ${Math.round(w * 0.075)}px system-ui, sans-serif`;
     g.textAlign = 'left';

@@ -1,8 +1,8 @@
-// UI feature flags. Note passing is switched off for now: no key, button, composer, hint or
-// wishlist entry. To bring it back, flip this to true (or import the sim's flag once it exists).
-import { CHALLENGES } from '../sim/data';
+// UI feature flags. Note passing is switched off for now (src/classroom/data/features.json):
+// no key, button, composer, hint or wishlist entry. Flip "notes" there to bring it back.
+import { CHALLENGES, FEATURES } from '../sim/data';
 
-export const NOTES_ENABLED = false;
+export const NOTES_ENABLED = FEATURES.notes;
 
 /** Wishlist challenges that make sense with the current feature flags. */
 export function visibleChallenges(): typeof CHALLENGES {

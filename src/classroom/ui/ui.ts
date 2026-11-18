@@ -752,6 +752,7 @@ export class UI {
     this.open(
       `<h1>Credits</h1>
       <p>Modulo: Classroom. Design, code, characters and placeholder content are original to this project. All characters are fictional.</p>
+      <p class="sub2">Furniture and character models: original, made for this project (Blender scripts in tools/blender/).</p>
       <h2>Assets</h2>
       ${assets ? `<ul class="credits">${assets}</ul>` : '<p class="sub2">No third-party assets loaded.</p>'}
       <p class="sub2">Materials, models and sky light from Poly Haven and ambientCG (CC0, thank you!). Full list with sources: assets/LICENSES.json.</p>
