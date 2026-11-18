@@ -157,7 +157,79 @@
       ],
       ["Smiley. Wiping."],
       ["Hm."]
-    ]
+    ],
+    "hit": [["OW! Who threw that?!", "Who— who threw that?!"], ["Who did that?!"], ["Hey!"]],
+    "hitBack": [
+      ["Who threw that?! Show yourselves!", "That hit me in the back of the head!"],
+      ["Who did that?!"],
+      ["Hey!"]
+    ],
+    "hitPlane": [
+      ["Was that a paper plane? In MY classroom?", "A plane. To the back of the head. Wonderful."],
+      ["Who threw that?"],
+      ["Hm!"]
+    ],
+    "hunt": [
+      ["Nobody moves. Nobody.", "I will find out who did that."],
+      ["Eyes front, all of you."],
+      ["Hm."]
+    ],
+    "interrogate": [
+      ["{name}. Was it you?", "Look at me, {name}. Was it you?"],
+      ["{name}? Was it you?"],
+      ["{name}?"]
+    ],
+    "identified": [["YOU. I saw that, {name}.", "I knew it. {name}."], ["{name}!"], ["You!"]],
+    "identifiedAnon": [["YOU. Yes, you!"], ["You!"], ["You."]],
+    "collective": [
+      [
+        "Nobody? Fine. We'll all do some questions then.",
+        "Nobody owns up? Then everyone gets a question."
+      ],
+      ["Nobody? Then everyone answers."],
+      ["Hm."]
+    ],
+    "calmDown": [
+      ["Right. Let's get on, shall we.", "Deep breath. Where were we."],
+      ["Moving on."],
+      ["Mm."]
+    ],
+    "sick": [
+      [
+        "Is everyone coming down with something? Let's get some air in here.",
+        "That's a lot of coughing. Window."
+      ],
+      ["Coughing. Again."],
+      ["Hm."]
+    ],
+    "sillyAnswer": [
+      ["…That is not a question I expected today.", "I'll… note that down."],
+      ["Right. Sit down."],
+      ["Hm."]
+    ],
+    "lightsFlick": [
+      ["Who is playing with the lights?", "Lights. Who touched the lights?"],
+      ["Lights. Again?"],
+      ["Hm."]
+    ],
+    "drumHush": [
+      ["Who is drumming?", "Is someone drumming on the table?"],
+      ["Stop that tapping."],
+      ["Hm."]
+    ],
+    "humHush": [["Is somebody humming?", "Who is humming?"], ["Humming. In my lesson."], ["Hm."]],
+    "crash": [
+      ["Is everyone all right?", "What was that crash?"],
+      ["Careful with the furniture."],
+      ["Hm."]
+    ],
+    "rise": [
+      ["Rise and shine, {name}.", "Good of you to join us, {name}."],
+      ["Wake up, {name}."],
+      ["{name}."]
+    ],
+    "riseAnon": [["You there. Wake up."], ["Wake up."], ["Hm."]],
+    "snoreHunt": [["Is that… snoring?", "Who is snoring?"], ["Snoring. Wonderful."], ["Hm."]]
   },
   "student": {
     "whisper": [["psst—", "did you see that?"], ["…"], ["…"]],
@@ -179,6 +251,38 @@
     "chat": [["Did you finish the homework?", "This room is freezing."], ["Hey."], ["Mm."]],
     "prankLove": [["legend.", "*quietly delighted*"], ["heh."], ["…"]],
     "prankHate": [["Seriously?", "Grow up."], ["Ugh."], ["…"]],
-    "deny": [["Wasn't us."], ["No idea."], ["…"]]
+    "deny": [["Wasn't us."], ["No idea."], ["…"]],
+    "hey": [["Hey!", "Ow— hey!"], ["Hey!"], ["…"]],
+    "coverFor": [
+      ["It came from the window!", "I saw it, it came from over there!"],
+      ["Dunno, behind me?"],
+      ["…"]
+    ],
+    "pointAt": [["It was {target}!", "{target} did it, I saw!"], ["{target}!"], ["…"]],
+    "honest": [["Not me, {teacher}.", "I didn't, I swear."], ["Not me."], ["…"]],
+    "throwBack": [["Take that!", "Incoming!"], ["Catch!"], ["…"]],
+    "cheer": [["Swish!", "Nice shot!"], ["Ooh!"], ["…"]],
+    "boo": [["Ohh, so close.", "Airball."], ["Aww."], ["…"]],
+    "drumJoin": [["*taps along*", "*joins the beat*"], ["*tap tap*"], ["…"]],
+    "humJoin": [["mm-mm-mmm…", "*hums along*"], ["mm-mm…"], ["…"]],
+    "faceLaugh": [["pfft—", "*tries not to laugh*"], ["*snort*"], ["…"]],
+    "faceRoll": [["Seriously?", "Really."], ["Ugh."], ["…"]],
+    "swapYes": [["Okay, quick.", "Fine, but be fast."], ["Okay."], ["…"]],
+    "swapNo": [["Nope.", "Not now."], ["No."], ["…"]],
+    "crashLaugh": [["Are you okay?! haha", "*gasps, then giggles*"], ["*snort*"], ["…"]],
+    "snoreGiggle": [["(psst, they're asleep)", "*stifles a giggle*"], ["*snort*"], ["…"]],
+    "sillyQuestion": [
+      [
+        "Is it true pigeons aren't real?",
+        "If I fold this paper enough, does it become a book?",
+        "Can we have class on the roof?",
+        "Is Tuesday a state of mind?"
+      ],
+      ["But what if the board is a window?"],
+      ["Why?"]
+    ],
+    "sillyLaugh": [["*stifled laughter*", "hahaha—"], ["*giggle*"], ["…"]],
+    "sigh": [["*sighs*"], ["*sigh*"], ["…"]],
+    "cough2": [["*cough* *cough*"], ["*ahem*"], ["*cough*"]]
   }
 }

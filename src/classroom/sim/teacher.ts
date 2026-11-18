@@ -6,6 +6,9 @@ import { type RoutineKey } from './data';
 import { dist2, turnToward, type V2, wrapAngle, yawTo } from './geom';
 import { facingDir } from './layout';
 import type { PenaltyKind } from './record';
+import { stopAct } from './actions';
+import { type Incident, updateIncident, updateMood } from './incident';
+import { queueReact } from './reactions';
 import { interceptNote } from './social';
 import type { CaughtCard, World } from './world';
 import type { EvidenceKind } from './types';
@@ -26,14 +29,26 @@ export type TeacherState =
   | 'watch'
   | 'confront'
   | 'penalty'
-  | 'task';
+  | 'task'
+  | 'flinch'
+  | 'hunt'
+  | 'interrogate';
 
-export const ALARM_STATES: TeacherState[] = ['watch', 'confront', 'penalty'];
+export const ALARM_STATES: TeacherState[] = [
+  'watch',
+  'confront',
+  'penalty',
+  'flinch',
+  'hunt',
+  'interrogate',
+];
 
 export interface TeacherRequest {
   kind: 'question' | 'handout' | 'leave';
   target?: string;
   pop?: boolean;
+  /** A joke question (raise-hand prank): the class laughs, the teacher loses patience. */
+  silly?: boolean;
 }
 
 export interface TeacherTask {
@@ -64,7 +79,14 @@ export interface TeacherBrain {
   task: TeacherTask | null;
   taskDone: string[];
   heard: { pos: V2; loud: number; kind: string }[];
-  pendingPunish: { target: string; kind: string; severity: number; summary: string }[];
+  pendingPunish: {
+    target: string;
+    kind: string;
+    severity: number;
+    summary: string;
+    /** Extra "how you got caught" lines for the summary card. */
+    extra?: string[];
+  }[];
   seen: string[];
   watchLowT: number;
   watchStartT: number;
@@ -75,6 +97,12 @@ export interface TeacherBrain {
   arrived: boolean;
   stuckT: number;
   question: TeacherRequest | null;
+  /** Mood 0..1: raised by being hit; faster patrols, sharper senses; decays (see incident.ts). */
+  anger: number;
+  angerPeak: number;
+  /** Lasting extra strictness for the rest of the lesson (a collective consequence). */
+  strictBonus: number;
+  incident: Incident | null;
 }
 
 export function newTeacherBrain(): TeacherBrain {
@@ -109,6 +137,10 @@ export function newTeacherBrain(): TeacherBrain {
     arrived: false,
     stuckT: 0,
     question: null,
+    anger: 0,
+    angerPeak: 0,
+    strictBonus: 0,
+    incident: null,
   };
 }
 
@@ -128,6 +160,9 @@ const SEVERITY: Partial<Record<EvidenceKind, number>> = {
   talking: 0.35,
   reported: 0.55,
   absorbed: 0.3,
+  sleeping: 0.45,
+  mischief: 0.35,
+  racket: 0.4,
 };
 
 export const EVIDENCE_TEXT: Record<EvidenceKind, string> = {
@@ -146,6 +181,9 @@ export const EVIDENCE_TEXT: Record<EvidenceKind, string> = {
   talking: 'Talking during the lesson',
   reported: 'Reported by a classmate',
   absorbed: 'Not paying attention',
+  sleeping: 'Sleeping in class',
+  mischief: 'Fooling around',
+  racket: 'Making a racket',
 };
 
 const POINT_TEXT: Record<string, string> = {
@@ -176,7 +214,7 @@ const PENALTY_TEXT: Record<PenaltyKind, string> = {
 
 // -------------------------------------------------------------------------------------------------
 
-function setState(w: World, s: TeacherState, dur = 999): void {
+export function setState(w: World, s: TeacherState, dur = 999): void {
   const b = w.brain;
   b.state = s;
   b.stateT = 0;
@@ -194,7 +232,7 @@ function setState(w: World, s: TeacherState, dur = 999): void {
   w.emit({ type: 'teacher-state', kind: s, target: b.target ?? undefined });
 }
 
-function spot(w: World, k: string, fb: [number, number]): V2 {
+export function spot(w: World, k: string, fb: [number, number]): V2 {
   const s = w.layout.spots?.[k] ?? fb;
   return { x: s[0], z: s[1] };
 }
@@ -235,7 +273,7 @@ function range(w: World, r: [number, number]): number {
 // -------------------------------------------------------------------------------------------------
 // Routine choice (utility with buckets: requests/tasks > routine)
 
-function pickRoutine(w: World): void {
+export function pickRoutine(w: World): void {
   const b = w.brain;
   const r = w.rules();
   b.target = null;
@@ -257,6 +295,13 @@ function pickRoutine(w: World): void {
     if (k === b.lastRoutine) v *= 0.45; // inertia against repeating (and against ping-pong)
     if (k === 'leave' && (r.test || r.detention || w.t < 30)) v = 0;
     if (k === 'board' && r.test) v *= 0.2;
+    // An angry teacher patrols and checks desks rather than writing or sitting at the laptop.
+    const mad = b.anger;
+    if (k === 'patrol') v *= 1 + 1.2 * mad;
+    if (k === 'behind' || k === 'check') v *= 1 + 0.9 * mad;
+    if (k === 'laptop') v *= 1 - 0.7 * mad;
+    if (k === 'board') v *= 1 - 0.4 * mad;
+    if (k === 'leave' && mad > 0.3) v = 0;
     v *= 1 + P.variance * (w.rngTeacher.next() - 0.5) * 2;
     return [k, Math.max(0, v)] as const;
   });
@@ -429,7 +474,7 @@ function startTask(w: World, t: TeacherTask): void {
 // -------------------------------------------------------------------------------------------------
 // Movement and head
 
-function moveToward(w: World, goal: V2, speedMul = 1): boolean {
+export function moveToward(w: World, goal: V2, speedMul = 1): boolean {
   const T = w.teacher;
   if (dist2(T.pos, goal) < 0.15) {
     T.moving = false;
@@ -450,7 +495,7 @@ function moveToward(w: World, goal: V2, speedMul = 1): boolean {
     return true;
   }
   const d = dist2(T.pos, next);
-  const step = w.profile.walkSpeed * speedMul * TICK_DT;
+  const step = w.profile.walkSpeed * speedMul * (1 + 0.35 * w.brain.anger) * TICK_DT;
   const prev = { ...T.pos };
   if (d <= step) {
     T.pos = { ...next };
@@ -492,7 +537,13 @@ function updateHead(w: World): void {
   const b = w.brain;
   let desired = T.headYaw;
   let rate = (w.profile.turnSpeed * Math.PI) / 180;
-  if (b.state === 'watch' || b.state === 'confront') {
+  if (b.state === 'flinch' && b.incident) {
+    desired = yawTo(T.pos, b.incident.origin);
+    rate *= 5;
+  } else if (b.state === 'hunt' && b.incident) {
+    desired = yawTo(T.pos, b.incident.origin) + Math.sin(b.stateT * 1.7) * 0.6;
+    rate *= 1.3;
+  } else if (b.state === 'watch' || b.state === 'confront') {
     const a = b.target ? w.agent(b.target) : undefined;
     if (a) desired = yawTo(T.pos, a.pos);
     rate *= b.state === 'watch' ? 0.6 : 1; // slow, readable head turn = the telegraph
@@ -520,7 +571,7 @@ function updateHead(w: World): void {
 // -------------------------------------------------------------------------------------------------
 // Penalties
 
-function punish(w: World, targetId: string): void {
+export function punish(w: World, targetId: string): void {
   const st = w.susp(targetId);
   const a = w.agent(targetId);
   if (!a) return;
@@ -530,6 +581,13 @@ function punish(w: World, targetId: string): void {
     w.say('teacher', 'teacher', 'confront', { name: a.name });
     if (s) {
       s.warnedT = w.t;
+      if (w.t - s.lastLaughT < 8 && s.laughAt === 'player') {
+        // Told off for laughing at your funny face: the rebels think it was worth it.
+        if (s.def.traits.rebellious >= 0.5)
+          w.relations.change(targetId, 1, 'got told off for laughing, worth it', w);
+        else w.relations.change(targetId, -4, 'got told off for laughing at your face', w);
+        s.laughAt = null;
+      }
       s.action = 'listen';
       s.actionT = 0;
       s.needs.anxious = Math.min(1, s.needs.anxious + 0.4);
@@ -543,6 +601,7 @@ function punish(w: World, targetId: string): void {
     return;
   }
   const ps = w.ps;
+  stopAct(w, 'caught');
   const ev = st.lastEvidence;
   const pending = b.pendingPunish.find((x) => x.target === 'player');
   b.pendingPunish = b.pendingPunish.filter((x) => x.target !== 'player');
@@ -550,6 +609,8 @@ function punish(w: World, targetId: string): void {
   const severity = pending?.severity ?? SEVERITY[(ev?.kind ?? 'device') as EvidenceKind] ?? 0.5;
   let summary =
     pending?.summary ?? EVIDENCE_TEXT[(ev?.kind ?? 'device') as EvidenceKind] ?? 'Misbehaving';
+  if (kind === 'mischief' && ps.fun.lastActText) summary = `Fooling around (${ps.fun.lastActText})`;
+  if (kind === 'racket' && ps.fun.lastActText) summary = `Making a racket (${ps.fun.lastActText})`;
   if (kind === 'device' && ps.device.kind === 'laptop') summary = 'Gaming/watching on the laptop';
   if (kind === 'device' && ps.device.kind === 'phone') summary = 'Using the phone in class';
   const telegraphLead = Math.max(0, w.t - b.watchStartT);
@@ -561,6 +622,7 @@ function punish(w: World, targetId: string): void {
         : `Seen: ${POINT_TEXT[ev.point] ?? 'you'}, ${ZONE_TEXT[ev.zone]}, ${ev.dist.toFixed(1)} m away.`,
     );
   }
+  if (pending?.extra) lines.push(...pending.extra);
   lines.push(`Exposure: ${st.exposure.toFixed(1)} s in view.`);
   lines.push(`Warning signs: they started watching you ${telegraphLead.toFixed(1)} s before.`);
 
@@ -661,6 +723,9 @@ const GLANCE_KINDS = new Set([
   'drop',
   'buzz',
   'laugh',
+  'pap',
+  'hum',
+  'snore',
 ]);
 const INVESTIGATE_KINDS = new Set([
   'thud',
@@ -671,6 +736,8 @@ const INVESTIGATE_KINDS = new Set([
   'device-audio',
   'game-beep',
   'step',
+  'drum',
+  'crash',
 ]);
 
 export function updateTeacher(w: World): void {
@@ -679,6 +746,7 @@ export function updateTeacher(w: World): void {
   const dt = TICK_DT;
   b.stateT += dt;
   b.investigateCd = Math.max(0, b.investigateCd - dt);
+  updateMood(w);
 
   // --- Alarm bucket: suspicion ------------------------------------------------------------------
   if (T.present && b.state !== 'away' && b.state !== 'leave') {
@@ -727,7 +795,7 @@ export function updateTeacher(w: World): void {
         setState(w, 'investigate', 3.5);
         b.goal = w.nav.nearestWalkable(h.pos) ?? h.pos;
         b.lookAt = h.pos;
-        b.investigateCd = 6;
+        b.investigateCd = 6 * (1 - 0.5 * b.anger);
         w.say('teacher', 'teacher', 'investigate');
         w.emit({ type: 'investigate', pos: h.pos, kind: h.kind });
       } else if (GLANCE_KINDS.has(h.kind) || h.loud > 0.3) {
@@ -739,6 +807,11 @@ export function updateTeacher(w: World): void {
 
   // --- State behaviour ------------------------------------------------------------------------
   switch (b.state) {
+    case 'flinch':
+    case 'hunt':
+    case 'interrogate':
+      updateIncident(w);
+      break;
     case 'watch': {
       const a = b.target ? w.agent(b.target) : undefined;
       const st = w.susp(b.target ?? '');
@@ -909,10 +982,14 @@ export function updateTeacher(w: World): void {
         b.confrontBarked = true;
         b.speaking = true;
         b.dur = b.stateT + 5;
-        if (!b.question?.pop) w.say('teacher', 'teacher', 'question', { name: a.name });
+        if (b.question?.silly && a.id === 'player') startSillyQuestion(w);
+        else if (!b.question?.pop) w.say('teacher', 'teacher', 'question', { name: a.name });
       }
       if (b.confrontBarked && b.stateT >= b.dur) {
-        if (a.id === 'player') {
+        if (a.id === 'player' && b.question?.silly) {
+          w.ps.handRaised = false;
+          w.emit({ type: 'bark', who: 'teacher', text: 'Right. Sit up. Eyes on the board.', kind: 'answer' });
+        } else if (a.id === 'player') {
           w.ps.handRaised = false;
           const goodAnswer = w.ps.working || w.stats.workSeconds > 20;
           w.record.trust[w.profile.id] =
@@ -984,7 +1061,31 @@ export function updateTeacher(w: World): void {
   updateHead(w);
 }
 
-function approachSpot(w: World, target: V2): V2 {
+/** The player asked a joke question: the class laughs, the teacher loses a little patience. */
+function startSillyQuestion(w: World): void {
+  const b = w.brain;
+  w.say('player', 'student', 'sillyQuestion');
+  w.say('teacher', 'teacher', 'sillyAnswer');
+  const snappy = b.anger > 0.4;
+  w.record.trust[w.profile.id] = (w.record.trust[w.profile.id] ?? 0) - (snappy ? 6 : 3);
+  b.anger = Math.min(1, b.anger + 0.06 + 0.04 * w.profile.strictness);
+  let k = 0;
+  for (const s of w.students) {
+    if (!s.agent.present) continue;
+    const t = s.def.traits;
+    const fan = t.rebellious >= 0.35 || w.relations.toPlayer(s.def.id) >= 10;
+    if (fan && k < 5) {
+      k++;
+      queueReact(w, s, 'laugh', 0.5 + k * 0.25, 'player');
+      if (t.rebellious >= 0.5 && w.rngSocial.chance(0.5))
+        w.relations.change(s.def.id, 1, 'laughed at your silly question', w);
+    } else if (t.goody >= 0.6) queueReact(w, s, 'sigh', 0.8);
+  }
+  w.stats.sillyQuestions++;
+  w.emit({ type: 'silly-question', value: k });
+}
+
+export function approachSpot(w: World, target: V2): V2 {
   const T = w.teacher;
   const d = dist2(T.pos, target) || 1;
   const p = {

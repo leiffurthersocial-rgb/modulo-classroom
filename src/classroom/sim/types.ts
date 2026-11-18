@@ -44,6 +44,8 @@ export interface Agent {
   present: boolean;
   /** Distance walked since the last footstep event. */
   stepAcc?: number;
+  /** Reaction/action clip override (render reads it): plays while `until` is in the future. */
+  anim?: { clip: string; until: number; once?: boolean };
 }
 
 export type EvidenceKind =
@@ -61,7 +63,10 @@ export type EvidenceKind =
   | 'talking'
   | 'sprinting'
   | 'reported'
-  | 'absorbed';
+  | 'absorbed'
+  | 'sleeping'
+  | 'mischief'
+  | 'racket';
 
 export type SamplePoint = 'head' | 'torso' | 'handL' | 'handR' | 'device' | 'lap';
 
@@ -81,6 +86,16 @@ export interface NoiseEvent {
   source: string | null;
 }
 
+export type ActId = 'cough' | 'drum' | 'hum' | 'lean-back' | 'nap' | 'silly-question';
+export const ACT_IDS: readonly ActId[] = [
+  'cough',
+  'drum',
+  'hum',
+  'lean-back',
+  'nap',
+  'silly-question',
+];
+
 export type ItemKind = 'paper-ball' | 'paper-plane' | 'note' | 'marker' | 'sticker' | 'cheatsheet';
 
 export interface Item {
@@ -90,6 +105,12 @@ export interface Item {
   pos: V2;
   y: number;
   heldBy: string | null;
+  /** Who threw it (set while in flight / until it lands). */
+  thrower?: string;
+  /** It hit somebody (the flight is the short bounce at their feet). */
+  hit?: boolean;
+  /** Dropped into the bin: removed at the end of the tick. */
+  removed?: boolean;
   /** In-flight animation (render reads it): from → to over [t0, t1]. */
   flight?: {
     from: V2;
@@ -147,6 +168,8 @@ export interface PlayerCommand {
   make?: 'paper-ball' | 'paper-plane';
   note?: { template: string; to: string };
   raiseHand?: boolean;
+  /** Self-actions (cough, drum, hum, lean back, nap, silly question). One-shot; toggles where it makes sense. */
+  act?: ActId;
   /** Mini-game score reported by the client (sim keeps the best). */
   gameScore?: number;
 }

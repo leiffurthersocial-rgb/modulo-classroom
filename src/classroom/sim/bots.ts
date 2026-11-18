@@ -1,16 +1,33 @@
 // Scripted bot players for the headless balance runner and tests. Bots only use cues a human
 // could perceive: where the teacher is and looks, what they're doing, barks/telegraph events.
-import { dist2, type V2, wrapAngle, yawDir, yawTo } from './geom';
+import { clamp, dist2, type V2, wrapAngle, yawDir, yawTo } from './geom';
 import { NOTES, PRANKS } from './data';
 import { NavGrid } from './nav';
 import { personBox } from './perception';
 import { interactables } from './player';
 import type { Rng } from './rng';
-import { idleCommand, type PlayerCommand, type SimEvent } from './types';
+import { type ActId, idleCommand, type PlayerCommand, type SimEvent } from './types';
 import type { World } from './world';
 
-export type BotStyle = 'angel' | 'gamer' | 'sneaky' | 'prankster' | 'postman' | 'chaos';
-export const BOT_STYLES: BotStyle[] = ['angel', 'gamer', 'sneaky', 'prankster', 'postman', 'chaos'];
+export type BotStyle =
+  | 'angel'
+  | 'gamer'
+  | 'sneaky'
+  | 'prankster'
+  | 'postman'
+  | 'chaos'
+  | 'sniper'
+  | 'jester';
+export const BOT_STYLES: BotStyle[] = [
+  'angel',
+  'gamer',
+  'sneaky',
+  'prankster',
+  'postman',
+  'chaos',
+  'sniper',
+  'jester',
+];
 
 export class Bot {
   readonly style: BotStyle;
@@ -31,6 +48,10 @@ export class Bot {
   private lieLowUntil = -1;
   private nextChaos = 0;
   private holdThrow = 0;
+  private nextThrow = 25;
+  private nextAct = 20;
+  private actUntil = 0;
+  private activeAct: ActId | null = null;
   private lastPos: V2 = { x: 0, z: 0 };
   private stuck = 0;
 
@@ -49,6 +70,8 @@ export class Bot {
         this.alarmT = e.t;
       // Told off? A sensible prankster lies low for a while.
       if (e.type === 'penalty') this.lieLowUntil = e.t + 150;
+      // A sniper lies low after a hit, however it ended.
+      if (e.type === 'teacher-hit' && e.who === 'player') this.nextThrow = e.t + 90;
     }
   }
 
@@ -157,6 +180,89 @@ export class Bot {
             };
             this.nextPrank = w.t + 40 + this.rng.next() * 50;
           }
+        }
+        break;
+      }
+      case 'sniper': {
+        // Paper ball at the teacher's back while she writes (the "funny and safe" shot).
+        cmd.work = !p.holding;
+        const T = w.teacher;
+        const b = w.brain;
+        if (!p.holding && p.sittingIn && w.t >= this.nextThrow - 5 && !danger) cmd.make = 'paper-ball';
+        if (p.holding && p.sittingIn && w.t >= this.nextThrow && T.present && b.state === 'board') {
+          const d = dist2(T.pos, p.pos);
+          const away = Math.abs(wrapAngle(yawTo(p.pos, T.pos) + Math.PI - T.headYaw)) > 2.3;
+          const lane = w.students.every(
+            (s) =>
+              !s.agent.present ||
+              Math.abs(wrapAngle(yawTo(p.pos, s.agent.pos) - yawTo(p.pos, T.pos))) > 0.12 ||
+              dist2(p.pos, s.agent.pos) > d,
+          );
+          if (d < 8 && away && lane && w.t - this.alarmT > 3) {
+            cmd.yaw = yawTo(p.pos, T.pos);
+            const range = d / 0.7;
+            cmd.throwPower = clamp((range / 0.8 - 1.5) / 6.5, 0.1, 1);
+            this.nextThrow = w.t + 60 + this.rng.next() * 60;
+          } else if (d >= 8 || !away) this.nextThrow = Math.max(this.nextThrow, w.t + 1);
+        }
+        break;
+      }
+      case 'jester': {
+        cmd.work = !this.activeAct;
+        const T = w.teacher;
+        // Stop whatever it is as soon as it feels risky or the time is up.
+        if (this.activeAct && (danger || w.t > this.actUntil || !p.sittingIn)) {
+          cmd.act = this.activeAct;
+          if (this.activeAct === 'cough') this.activeAct = null;
+          this.activeAct = null;
+          this.nextAct = w.t + 12 + this.rng.next() * 25;
+        } else if (!this.activeAct && w.t >= this.nextAct && p.sittingIn && !danger && this.safeSince > 3) {
+          const options: [ActId | 'face' | 'bin', number][] = [
+            ['cough', 3],
+            ['drum', 2],
+            ['hum', 2],
+            ['lean-back', 1.5],
+            ['nap', 1],
+            ['silly-question', 1],
+            ['face', 2],
+            ['bin', 2],
+          ];
+          const sum = options.reduce((a, o) => a + o[1], 0);
+          let roll = this.rng.next() * sum;
+          let pick = options[0]![0];
+          for (const [k, v] of options) {
+            roll -= v;
+            if (roll <= 0) {
+              pick = k;
+              break;
+            }
+          }
+          this.nextAct = w.t + 10 + this.rng.next() * 25;
+          if (pick === 'face') {
+            const nb = w.students
+              .filter((s) => s.agent.present && dist2(s.agent.pos, p.pos) < 1.6)
+              .sort((a, b2) => dist2(a.agent.pos, p.pos) - dist2(b2.agent.pos, p.pos))[0];
+            if (nb) cmd.interact = { target: nb.agent.id, verb: 'face' };
+          } else if (pick === 'bin') {
+            if (!p.holding) cmd.make = 'paper-ball';
+            else {
+              const bin = w.layout.spots?.bin;
+              if (bin) {
+                const dx = bin[0] - p.pos.x;
+                const dz = bin[1] - p.pos.z;
+                const d = Math.hypot(dx, dz);
+                cmd.yaw = yawTo(p.pos, { x: bin[0], z: bin[1] });
+                cmd.throwPower = clamp(((d - 0.3) / 0.8 - 1.5) / 6.5, 0.05, 1);
+              }
+            }
+          } else {
+            cmd.act = pick;
+            if (pick !== 'cough' && pick !== 'silly-question') {
+              this.activeAct = pick;
+              this.actUntil = w.t + (pick === 'nap' ? 18 : pick === 'lean-back' ? 3 : 6);
+            }
+          }
+          void T;
         }
         break;
       }

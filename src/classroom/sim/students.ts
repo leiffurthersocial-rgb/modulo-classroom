@@ -6,6 +6,7 @@ import { dist2, turnToward, type V2, wrapAngle, yawTo } from './geom';
 import { facingDir } from './layout';
 import { lineOfSight, personBox, samplePoint, EYE_HEIGHT } from './perception';
 import { deviceOpen } from './player';
+import type { Reaction } from './reactions';
 import { sendNote, updateReplies } from './social';
 import type { Agent, Evidence } from './types';
 import type { World } from './world';
@@ -43,6 +44,15 @@ export interface StudentState {
   warnedT: number;
   lookAt: V2 | null;
   lookT: number;
+  /** Scheduled reactions (laugh in 0.4 s, throw it back in 1.5 s, …). */
+  react: Reaction[];
+  throwFlash: number;
+  lastThrowT: number;
+  lastLaughT: number;
+  /** Who made them laugh last (so being told off for it can sour or sweeten things). */
+  laughAt: string | null;
+  drumUntil: number;
+  humUntil: number;
 }
 
 const BREAK_SPOTS: V2[] = [
@@ -56,6 +66,7 @@ export function studentEvidence(w: World, s: StudentState): Evidence[] {
   const r = w.rules();
   const out: Evidence[] = [];
   if (s.action === 'phone') out.push({ kind: 'device', weight: 0.9, point: 'device' });
+  if (s.throwFlash > 0) out.push({ kind: 'throw', weight: 1.0, point: 'handR' });
   if (s.action === 'whisper' && !r.talkOk)
     out.push({ kind: 'talking', weight: 0.35, point: 'head' });
   if (w.notes.some((n) => n.state === 'moving' && n.carrier === s.agent.id))
@@ -155,7 +166,8 @@ function chooseAction(w: World, s: StudentState): void {
   const t = s.def.traits;
   const n = s.needs;
   const tDist = T.present ? dist2(T.pos, s.agent.pos) : 99;
-  const pressure = tDist < 2.8 || w.t - s.warnedT < 40 || w.brain.target === s.agent.id;
+  const pressure =
+    tDist < 2.8 || w.t - s.warnedT < 40 || w.brain.target === s.agent.id || w.brain.anger > 0.3;
   const scores: [StudentAction, number][] = [];
   const add = (a: StudentAction, v: number) => v > 0 && scores.push([a, v]);
   if (r.test) {
@@ -433,7 +445,8 @@ function reactToPlayer(w: World, s: StudentState): void {
   }
   // Friends warn you when the teacher closes in while you're on your device.
   const T = w.teacher;
-  if (showing && aff >= 40 && d < 3 && T.present) {
+  const napping = w.ps.fun.act?.id === 'nap';
+  if ((showing || napping) && aff >= 40 && d < 3 && T.present) {
     const td = dist2(T.pos, p.pos);
     const approaching =
       (w.brain.target === 'player' &&

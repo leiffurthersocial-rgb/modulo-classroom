@@ -21,6 +21,7 @@ import { facingDir, type RoomLayout, type Seat } from './layout';
 import { scheduleLessonEvents, updateLesson, type LessonState } from './lesson';
 import { NavGrid } from './nav';
 import { updatePerception } from './perception-system';
+import { updateReactions } from './reactions';
 import { updatePlayer, type PlayerState, newPlayerState } from './player';
 import { updatePranks, type PrankRun } from './pranks';
 import { applyOffense, type PenaltyKind, type StudentRecord, newRecord } from './record';
@@ -96,6 +97,8 @@ export interface RoomObjects {
   ghostSmiley: 'none' | 'hidden' | 'shown';
   /** A hidden birdsong alarm is currently chirping in the bin. */
   birdAlarm: boolean;
+  /** Seconds the lights stay off after somebody flicks the switch. */
+  lightsOff: number;
 }
 
 export interface Interactable {
@@ -123,6 +126,27 @@ export interface LessonStats {
   cheated: boolean;
   caughtCards: CaughtCard[];
   affinityStart: Record<string, number>;
+  /** Paper ball / plane hits this lesson. */
+  hits: { teacher: number; students: number };
+  studentThrows: number;
+  /** Times nobody owned up and the class got the collective consequence. */
+  classPenalties: number;
+  /** Hits on the teacher that were never pinned on the player. */
+  cleanHits: number;
+  binMade: number;
+  binMissed: number;
+  binBest: number;
+  sillyQuestions: number;
+  facesLaughed: number;
+  lightFlicks: number;
+  coughChainBest: number;
+  drummersBest: number;
+  napSeconds: number;
+  leanBest: number;
+  crashes: number;
+  swaps: number;
+  /** How often each self-action was used. */
+  acts: Record<string, number>;
 }
 
 export interface CaughtCard {
@@ -172,6 +196,8 @@ export class World {
   stats: LessonStats;
   /** Strikes added to the record during this lesson (see LESSON_STRIKE_CAP). */
   lessonStrikes = 0;
+  /** Paper-ball fight heat (decays): at 3+ more classmates join in. */
+  fight = { heat: 0, lastT: -99 };
   private nextItemId = 1;
   private seatsById = new Map<string, Seat>();
 
@@ -277,6 +303,7 @@ export class World {
       postersFlipped: false,
       ghostSmiley: 'none',
       birdAlarm: false,
+      lightsOff: 0,
     };
     const affinityStart: Record<string, number> = {};
     for (const s of this.students) affinityStart[s.def.id] = this.relations.toPlayer(s.def.id);
@@ -294,6 +321,23 @@ export class World {
       cheated: false,
       caughtCards: [],
       affinityStart,
+      hits: { teacher: 0, students: 0 },
+      studentThrows: 0,
+      classPenalties: 0,
+      cleanHits: 0,
+      binMade: 0,
+      binMissed: 0,
+      binBest: 0,
+      sillyQuestions: 0,
+      facesLaughed: 0,
+      lightFlicks: 0,
+      coughChainBest: 0,
+      drummersBest: 0,
+      napSeconds: 0,
+      leanBest: 0,
+      crashes: 0,
+      swaps: 0,
+      acts: {},
     };
     this.lesson = scheduleLessonEvents(this, opts.startPhase ?? 0);
   }
@@ -455,10 +499,12 @@ export class World {
     updatePlayer(this, cmd);
     updateStudents(this);
     updateNotes(this);
+    updateReactions(this);
     updatePranks(this);
     updatePerception(this);
     updateTeacher(this);
     this.objects.doorOpen = Math.max(0, this.objects.doorOpen - TICK_DT);
+    this.objects.lightsOff = Math.max(0, this.objects.lightsOff - TICK_DT);
   }
 
   get over(): boolean {
@@ -523,5 +569,12 @@ function newStudent(agent: Agent, def: StudentDef): StudentState {
     warnedT: -99,
     lookAt: null,
     lookT: 0,
+    react: [],
+    throwFlash: 0,
+    lastThrowT: -99,
+    lastLaughT: -99,
+    laughAt: null,
+    drumUntil: 0,
+    humUntil: 0,
   };
 }

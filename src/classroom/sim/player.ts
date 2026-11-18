@@ -2,19 +2,23 @@
 // cheat, throwing, cover actions, prank setup, notes. Bots drive exactly the same code. Pure TS.
 import { TICK_DT } from './clock';
 import { NOTES, PRANKS } from './data';
-import {
-  clamp,
-  dist2,
-  resolveCircleBox,
-  surfaceAt,
-  type V2,
-  wrapAngle,
-  yawDir,
-  yawTo,
-} from './geom';
+import { clamp, dist2, resolveCircleBox, surfaceAt, type V2, wrapAngle, yawTo } from './geom';
 import { facingDir } from './layout';
+import {
+  beginFunVerb,
+  canStartFunVerb,
+  completeFunVerb,
+  type FunState,
+  type FunVerb,
+  funVerbDuration,
+  newFunState,
+  startAct,
+  stopAct,
+  updateActs,
+} from './actions';
 import { canStartPrank, completePrank, prankOffered, prankVerbsFor } from './pranks';
 import { sendNote } from './social';
+import { launchItem, updateFlights } from './throwing';
 import type { DeviceState, Evidence, PlayerCommand } from './types';
 import type { Interactable, World } from './world';
 
@@ -23,7 +27,7 @@ const SPEED = { stand: 1.35, crouch: 0.65, sprint: 2.8 };
 const REACH = 1.5;
 
 export interface PlayerAction {
-  kind: 'sharpen' | 'prank' | 'handin' | 'bin' | 'chat';
+  kind: 'sharpen' | 'prank' | 'handin' | 'bin' | 'chat' | FunVerb;
   t: number;
   dur: number;
   target: string;
@@ -46,6 +50,9 @@ export interface PlayerState {
   chatted: string[];
   makeCount: number;
   throwFlash: number;
+  /** Seconds left of the "you got hit by a paper ball" flinch (camera). */
+  hitFlash: number;
+  fun: FunState;
   passingNote: boolean;
   lastNoteT: number;
   peekBark: Record<string, boolean>;
@@ -80,6 +87,8 @@ export function newPlayerState(): PlayerState {
     chatted: [],
     makeCount: 0,
     throwFlash: 0,
+    hitFlash: 0,
+    fun: newFunState(),
     passingNote: false,
     lastNoteT: -99,
     peekBark: {},
@@ -176,6 +185,14 @@ export function playerEvidence(w: World): Evidence[] {
   if (ps.action?.kind === 'chat' && !r.talkOk)
     out.push({ kind: 'talking', weight: 0.4, point: 'head' });
   if (ps.throwFlash > 0) out.push({ kind: 'throw', weight: 1.0, point: 'handR' });
+  if (ps.fun.act?.id === 'nap' && ps.fun.sleepT > 0.6)
+    out.push({ kind: 'sleeping', weight: 0.4, point: 'head' });
+  if (ps.fun.heat > 0.25)
+    out.push({ kind: 'mischief', weight: Math.min(0.8, ps.fun.heat * 0.6), point: 'head' });
+  if (ps.action && (ps.action.kind === 'face' || ps.action.kind === 'swap-seat' || ps.action.kind === 'flick-lights'))
+    out.push({ kind: 'mischief', weight: 0.5, point: 'torso' });
+  if (ps.fun.swap && p.sittingIn === p.seat && w.profile.knowsNames && !r.break && !r.seatFree)
+    out.push({ kind: 'wrong-seat', weight: 0.3, point: 'head' });
   if (p.holding && !r.break && !r.seatFree) {
     const it = w.items.find((i) => i.id === p.holding);
     if (it && (it.kind === 'paper-ball' || it.kind === 'paper-plane'))
@@ -222,6 +239,7 @@ export function standUp(w: World): void {
   p.pos = { x: seat.pos[0] - f[0] * 0.15, z: seat.pos[1] - f[1] * 0.15 };
   p.sittingIn = null;
   p.stance = 'stand';
+  stopAct(w, 'stood up');
   if (w.ps.device.kind === 'laptop') closeDevice(w);
   w.noise(p.pos, 1.6, 'chair', 'player');
   w.emit({ type: 'stand', who: 'player' });
@@ -304,8 +322,17 @@ function interact(w: World, target: string, verb: string): void {
     return;
   }
   if (verb === 'stand') return standUp(w);
-  if (p.sittingIn && verb !== 'chat' && verb !== 'whisper' && verb !== 'pickup')
+  if (p.sittingIn && verb !== 'chat' && verb !== 'whisper' && verb !== 'pickup' && verb !== 'face' && verb !== 'swap-seat')
     return hint(w, 'Stand up first.');
+  if (verb === 'face' || verb === 'swap-seat' || verb === 'flick-lights') {
+    const err = canStartFunVerb(w, verb, target);
+    if (err) return hint(w, err);
+    if (verb === 'flick-lights' && p.sittingIn) return hint(w, 'Stand up first.');
+    ps.action = { kind: verb, t: 0, dur: funVerbDuration(verb), target };
+    beginFunVerb(w, verb, target);
+    w.emit({ type: 'action', kind: verb, target, value: ps.action.dur });
+    return;
+  }
   if (verb.startsWith('prank:')) {
     const id = verb.slice(6);
     const err = canStartPrank(w, id, target);
@@ -375,66 +402,9 @@ function throwHeld(w: World, power: number, yaw: number): void {
   const p = w.player;
   const item = w.items.find((i) => i.id === p.holding);
   if (!item) return;
-  const plane = item.kind === 'paper-plane';
-  const maxD = (plane ? 1.5 + power * 5 : 1.5 + power * 6.5) * (p.sittingIn ? 0.8 : 1);
-  const dir = yawDir(yaw);
-  const from = { x: p.pos.x + dir.x * 0.3, z: p.pos.z + dir.z * 0.3 };
-  let to = { ...from };
-  let onTable = false;
-  for (let d = 0.3; d <= maxD; d += 0.1) {
-    const q = { x: p.pos.x + dir.x * d, z: p.pos.z + dir.z * d };
-    const hitWall =
-      q.x < 0.1 ||
-      q.z < 0.1 ||
-      q.x > w.layout.room.size[0] - 0.1 ||
-      q.z > w.layout.room.size[2] - 0.1;
-    const col = w.geo.colliders.find(
-      (b) => (b.kind === 'column' || b.kind === 'wall') && resolveCircleBox(q, 0.05, b) !== q,
-    );
-    if (hitWall || col) break;
-    to = q;
-  }
-  // Land on a table/desk if the end point is above one.
-  for (const b of w.geo.colliders) {
-    if ((b.kind === 'table' || b.kind === 'desk') && resolveCircleBox(to, 0.01, b) !== to) {
-      onTable = true;
-      break;
-    }
-  }
-  const dur = Math.max(0.25, dist2(from, to) / (plane ? 3.2 : 7));
-  item.heldBy = null;
-  item.pos = to;
-  item.y = onTable ? 0.76 : 0.03;
-  item.onTable = onTable;
-  item.flight = {
-    from,
-    to,
-    y0: p.stance === 'sit' ? 0.9 : 1.3,
-    y1: item.y,
-    t0: w.t,
-    t1: w.t + dur,
-    arc: plane ? 0.35 : 0.8,
-  };
+  launchItem(w, p, item, yaw, power);
   p.holding = null;
   w.ps.throwFlash = 0.35;
-  w.emit({ type: 'throw', who: 'player', target: item.id, value: dur });
-}
-
-function updateFlights(w: World): void {
-  for (const it of w.items) {
-    const f = it.flight;
-    if (!f || f.done || w.t < f.t1) continue;
-    f.done = true;
-    if (it.kind === 'paper-plane') {
-      w.noise(it.pos, 1.8, 'plane', null);
-      const desk = w.geo.colliders.find((b) => b.id === 'teacher-desk');
-      if (desk && resolveCircleBox(it.pos, 0.01, desk) !== it.pos)
-        completePrank(w, 'paper-plane', 'teacher-desk', it.id);
-    } else {
-      w.noise(it.pos, 5.5, 'thud', null);
-    }
-    w.emit({ type: 'land', target: it.id, pos: { ...it.pos } });
-  }
 }
 
 export function updatePlayer(w: World, cmd: PlayerCommand): void {
@@ -446,6 +416,7 @@ export function updatePlayer(w: World, cmd: PlayerCommand): void {
   p.headYaw = cmd.yaw;
   p.pitch = cmd.pitch;
   ps.throwFlash = Math.max(0, ps.throwFlash - dt);
+  ps.hitFlash = Math.max(0, ps.hitFlash - dt);
   ps.device.fumble = Math.max(0, ps.device.fumble - dt);
 
   if (cmd.device) deviceCommand(w, cmd.device);
@@ -454,6 +425,7 @@ export function updatePlayer(w: World, cmd: PlayerCommand): void {
     w.brain.requests.push({ kind: 'question', target: 'player', pop: false });
     w.emit({ type: 'raise-hand', who: 'player' });
   }
+  if (cmd.act) startAct(w, cmd.act);
   if (cmd.make && !p.holding) {
     if (ps.makeCount >= 8) hint(w, 'Out of spare paper.');
     else {
@@ -539,6 +511,8 @@ export function updatePlayer(w: World, cmd: PlayerCommand): void {
     if (a.t >= a.dur) {
       if (a.kind === 'prank' && a.prankId) completePrank(w, a.prankId, a.target);
       if (a.kind === 'handin') w.stats.workSeconds += 5;
+      if (a.kind === 'face' || a.kind === 'swap-seat' || a.kind === 'flick-lights')
+        completeFunVerb(w, a.kind, a.target);
       w.emit({ type: 'action-done', kind: a.kind, target: a.target });
       ps.action = null;
     }
@@ -549,7 +523,7 @@ export function updatePlayer(w: World, cmd: PlayerCommand): void {
   // Work / peek / cheat -------------------------------------------------------------------------
   const d = ps.device;
   const handsFree = !d.kind || d.mode === 'decoy';
-  ps.working = cmd.work && !!p.sittingIn && handsFree && !cmd.peek && !cmd.cheat;
+  ps.working = cmd.work && !!p.sittingIn && handsFree && !cmd.peek && !cmd.cheat && !ps.fun.act;
   ps.peeking = null;
   ps.cheating = false;
   if (ps.working) {
@@ -606,6 +580,7 @@ export function updatePlayer(w: World, cmd: PlayerCommand): void {
   // Sneaking stats --------------------------------------------------------------------------
   if (outOfSeatIllegal(w) && w.teacher.present && w.susp('player').s < 0.3)
     w.stats.sneakSeconds += dt;
+  updateActs(w);
   updateFlights(w);
 }
 
@@ -742,6 +717,12 @@ export function interactables(w: World): Interactable[] {
   camVerbs.push(...prankVerbsFor(w, 'doc-camera'));
   if (camVerbs.length)
     add('doc-camera', 'doccam', 'Document camera', { x: 0.85, z: 1.55, y: 1.3 }, camVerbs, 1.2);
+  if (!p.sittingIn && (w.ps.fun.cooldowns.lights ?? -99) <= w.t) {
+    const dr = spot('door', [0.85, 6.75]);
+    add('light-switch', 'switch', 'Light switch', { x: dr.x, z: dr.z, y: 1.3 }, [
+      { verb: 'flick-lights', label: 'Flick the lights', risk: 'risky' },
+    ], 1.4);
+  }
   const win = spot('window', [8.55, 1.4]);
   add(
     'window-a',
@@ -783,6 +764,10 @@ export function interactables(w: World): Interactable[] {
       r.talkOk || r.break
         ? [{ verb: 'chat', label: `Chat with ${s.def.name}` }]
         : [{ verb: 'whisper', label: `Whisper to ${s.def.name}`, risk: 'risky' }];
+    if (canStartFunVerb(w, 'face', s.agent.id) === null)
+      verbs.push({ verb: 'face', label: `Pull a funny face at ${s.def.name}`, risk: 'risky' });
+    if (!r.break && p.sittingIn && s.agent.sittingIn && w.relations.toPlayer(s.agent.id) >= 15 && !w.ps.fun.swap && !r.test)
+      verbs.push({ verb: 'swap-seat', label: `Swap seats with ${s.def.name}`, risk: 'risky' });
     out.push({
       id: s.agent.id,
       kind: 'student',

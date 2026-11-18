@@ -14,7 +14,7 @@ import {
 } from './perception';
 import { playerEvidence } from './player';
 import { studentEvidence } from './students';
-import type { Agent, Evidence } from './types';
+import type { Agent, Evidence, EvidenceKind, SamplePoint } from './types';
 import type { World } from './world';
 
 /** Base suspicion fill rate per second for weight-1 evidence in the inner cone at close range. */
@@ -32,7 +32,42 @@ const NOISE_BLAME: Record<string, number> = {
   buzz: 0.6,
   paper: 0.15,
   wobble: 0.1,
+  cough: 0.12,
+  sneeze: 0.2,
+  drum: 0.35,
+  hum: 0.3,
+  snore: 0.3,
+  crash: 0.5,
+  click: 0.35,
 };
+
+/** What a heard (and attributed) noise counts as when the teacher pins it on someone. */
+const NOISE_EVIDENCE: Record<string, EvidenceKind> = {
+  whisper: 'talking',
+  laugh: 'talking',
+  'step-run': 'sprinting',
+  drum: 'racket',
+  hum: 'racket',
+  cough: 'racket',
+  sneeze: 'racket',
+  crash: 'racket',
+  snore: 'sleeping',
+  click: 'mischief',
+};
+
+/** Can the teacher see `a` (at a sample point) right now, with their current gaze and the lights? */
+export function teacherCanSee(w: World, a: Agent, point: SamplePoint = 'torso'): boolean {
+  const T = w.teacher;
+  if (!T.present) return false;
+  const occ: Box[] = [...w.geo.occluders];
+  for (const o of w.allAgents()) if (o.present && o.id !== 'teacher') occ.push(personBox(o));
+  const eye = { x: T.pos.x, y: EYE_HEIGHT[T.stance] + 0.05, z: T.pos.z };
+  const pt = samplePoint(a, point);
+  const dim = w.objects.lightsOff > 0 ? 0.45 : w.objects.lightsDim ? 0.85 : 1;
+  const zone = visionZone(w.profile.vision, T.pos, T.headYaw, { x: pt.x, z: pt.z }, dim);
+  if (!zone) return false;
+  return lineOfSight(eye, pt, occ, ['teacher', a.id], zone.dist < NEAR_OVER_TABLE);
+}
 
 export function updatePerception(w: World): void {
   const T = w.teacher;
@@ -41,7 +76,9 @@ export function updatePerception(w: World): void {
   for (const a of w.allAgents()) if (a.present && a.id !== 'teacher') occluders.push(personBox(a));
   const eye = { x: T.pos.x, y: EYE_HEIGHT[T.stance] + 0.05, z: T.pos.z };
   const rules = w.rules();
-  const dimScale = w.objects.lightsDim ? 0.85 : 1;
+  const dimScale = w.objects.lightsOff > 0 ? 0.45 : w.objects.lightsDim ? 0.85 : 1;
+  // An angry teacher (or one the class has been collectively punished by) is sharper.
+  const sharp = 1 + 0.35 * b.anger + b.strictBonus;
   const distracted = b.distracted && b.glancing <= 0 ? 0.35 : 1;
   b.seen = [];
 
@@ -87,6 +124,7 @@ export function updatePerception(w: World): void {
       const d =
         BASE_RATE *
         w.profile.visionRate *
+        sharp *
         hit.zone.factor *
         light *
         hit.e.weight *
@@ -115,7 +153,7 @@ export function updatePerception(w: World): void {
   const quiet = rules.quiet ?? 1;
   for (const n of w.noises) {
     if (n.source === 'teacher') continue;
-    let r = n.radius * w.profile.hearing * quiet * (T.present ? 1 : 0.25);
+    let r = n.radius * w.profile.hearing * quiet * (T.present ? 1 : 0.25) * (1 + 0.45 * b.anger);
     // Fairness: an off-screen teacher far away hears the player at half range (Splinter Cell).
     if (n.source === 'player') {
       const d = Math.hypot(T.pos.x - n.pos.x, T.pos.z - n.pos.z);
@@ -134,18 +172,11 @@ export function updatePerception(w: World): void {
         if ((st.graceUntil ?? -1) > w.t) continue;
         st.s = Math.min(1.6, st.s + loud * blame * (rules.detention ? 2 : 1));
         st.lastEvidence = {
-          kind:
-            n.kind === 'whisper' || n.kind === 'laugh'
-              ? 'talking'
-              : n.kind === 'step-run'
-                ? 'sprinting'
-                : 'device',
+          kind: NOISE_EVIDENCE[n.kind] ?? 'device',
           point: 'head',
           zone: 'heard',
           dist: Math.hypot(T.pos.x - src.pos.x, T.pos.z - src.pos.z),
         };
-        if (n.kind === 'device-audio' || n.kind === 'game-beep' || n.kind === 'buzz')
-          st.lastEvidence.kind = 'device';
         st.lastEvidenceT = w.t;
         continue;
       }

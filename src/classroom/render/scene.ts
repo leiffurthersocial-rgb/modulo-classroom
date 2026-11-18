@@ -536,11 +536,8 @@ export class RoomView {
       const fl = it.flight;
       if (fl && renderT < fl.t1) {
         const u = Math.max(0, (renderT - fl.t0) / (fl.t1 - fl.t0));
-        m.position.set(
-          fl.from.x + (fl.to.x - fl.from.x) * u,
-          fl.y0 + (fl.y1 - fl.y0) * u + Math.sin(u * Math.PI) * fl.arc,
-          fl.from.z + (fl.to.z - fl.from.z) * u,
-        );
+        const at = flightAt(it, renderT)!;
+        m.position.set(at.x, at.y, at.z);
         m.rotation.set(u * 9, u * 5, 0);
       } else {
         m.position.set(it.pos.x, it.y + 0.03, it.pos.z);
